@@ -7,7 +7,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<HomeModel>(
-        create: (_) => HomeModel(),
+        create: (_) => HomeModel()..loadmodel(),
         builder: (context, snapshot) {
           return Scaffold(
             appBar: AppBar(
