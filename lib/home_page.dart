@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:posture_correction/camera_page.dart';
 import 'package:posture_correction/home_model.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +17,10 @@ class HomePage extends StatelessWidget {
             body: Consumer<HomeModel>(builder: (context, model, child) {
               return Center(
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => CameraPage()));
+                  },
                   child: Container(
                     height: 200,
                     width: 200,
