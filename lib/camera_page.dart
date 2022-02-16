@@ -27,7 +27,10 @@ class CameraPage extends StatelessWidget {
                       future: model.initializeController,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
-                          return CameraPreview(model.controller!);
+                          return CameraPreview(
+                            model.controller!,
+                            child: model.predict(),
+                          );
                         } else {
                           return Center(
                             child: CircularProgressIndicator(),

@@ -30,7 +30,7 @@ class HomePage extends StatelessWidget {
                     ),
                     child: Center(
                         child: Text(
-                      "start",
+                      "predict",
                       style: TextStyle(fontSize: 40.0, color: Colors.white),
                     )),
                   ),

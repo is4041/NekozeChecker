@@ -1,19 +1,54 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:tflite/tflite.dart';
 
 class CameraModel extends ChangeNotifier {
+  CameraController? controller;
   List<CameraDescription> cam = [];
   Future<void>? initializeController;
+  // Map<int, dynamic> keyPoints = {};
+  bool isDetecting = false;
 
-  CameraController? controller;
   Future getCamera() async {
     cam = await availableCameras();
     final lastCamera = cam.last;
-    controller = CameraController(
-      lastCamera,
-      ResolutionPreset.high,
-    );
+    controller = CameraController(lastCamera, ResolutionPreset.high,
+        imageFormatGroup: ImageFormatGroup.bgra8888);
     initializeController = controller?.initialize();
     notifyListeners();
+  }
+
+  poseEstimation(CameraImage img) async {
+    List? results;
+    results = await Tflite.runPoseNetOnFrame(
+      bytesList: img.planes.map((plane) {
+        return plane.bytes;
+      }).toList(),
+      imageHeight: img.height,
+      imageWidth: img.width,
+      numResults: 1,
+    );
+    return results;
+  }
+
+  predict() {
+    controller?.startImageStream((CameraImage img) async {
+      if (!isDetecting) {
+        isDetecting = true;
+        List recognition = await poseEstimation(img);
+        if (recognition == null) {
+          throw Exception("Invalid prediction result");
+        }
+        if (recognition.isNotEmpty) {
+          print(recognition);
+          notifyListeners();
+        } else {
+          print("no information");
+        }
+        isDetecting = false;
+        notifyListeners();
+      }
+    });
   }
 }
