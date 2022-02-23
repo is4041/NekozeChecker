@@ -27,9 +27,13 @@ class CameraPage extends StatelessWidget {
                       future: model.initializeController,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
-                          return CameraPreview(
-                            model.controller!,
-                            child: model.predict(),
+                          return CustomPaint(
+                            foregroundPainter:
+                                CirclePainter(model.recognition!),
+                            child: CameraPreview(
+                              model.controller!,
+                              child: model.predict(),
+                            ),
                           );
                         } else {
                           return Center(
@@ -54,4 +58,33 @@ class CameraPage extends StatelessWidget {
           );
         });
   }
+}
+
+class CirclePainter extends CustomPainter {
+  final List? params;
+  CirclePainter(this.params);
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint();
+    paint.color = Colors.white;
+
+    if (params!.isNotEmpty) {
+      for (var re in params!) {
+        var result = re["keypoints"].values.map((k) {
+          // print("部位:${k["part"]}");
+          // print("x座標:${k["x"]}");
+          // print("y座標:${k["y"]}");
+          canvas.drawCircle(
+              Offset(size.width * k["x"], size.height * k["y"]), 5, paint);
+        });
+        print(params);
+        print(result);
+      }
+    } else {
+      print("no information");
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
