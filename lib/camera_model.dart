@@ -7,8 +7,8 @@ class CameraModel extends ChangeNotifier {
   CameraController? controller;
   List<CameraDescription> cam = [];
   Future<void>? initializeController;
-  // Map<int, dynamic> keyPoints = {};
   bool isDetecting = false;
+  List? recognition = [];
 
   Future getCamera() async {
     cam = await availableCameras();
@@ -20,8 +20,7 @@ class CameraModel extends ChangeNotifier {
   }
 
   poseEstimation(CameraImage img) async {
-    List? results;
-    results = await Tflite.runPoseNetOnFrame(
+    final results = await Tflite.runPoseNetOnFrame(
       bytesList: img.planes.map((plane) {
         return plane.bytes;
       }).toList(),
@@ -36,19 +35,26 @@ class CameraModel extends ChangeNotifier {
     controller?.startImageStream((CameraImage img) async {
       if (!isDetecting) {
         isDetecting = true;
-        List recognition = await poseEstimation(img);
+        recognition = await poseEstimation(img);
         if (recognition == null) {
           throw Exception("Invalid prediction result");
         }
-        if (recognition.isNotEmpty) {
-          print(recognition);
+        if (recognition?.length != null) {
           notifyListeners();
         } else {
-          print("no information");
+          if (kDebugMode) {
+            print("no information");
+          }
         }
         isDetecting = false;
         notifyListeners();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    controller?.dispose();
   }
 }
