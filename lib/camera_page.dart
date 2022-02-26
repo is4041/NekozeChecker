@@ -1,5 +1,4 @@
 import 'package:camera/camera.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -28,15 +27,14 @@ class CameraPage extends StatelessWidget {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           return CustomPaint(
-                            foregroundPainter:
-                                CirclePainter(model.recognition!),
+                            foregroundPainter: Painter(model.recognition!),
                             child: CameraPreview(
                               model.controller!,
                               child: model.predict(),
                             ),
                           );
                         } else {
-                          return Center(
+                          return const Center(
                             child: CircularProgressIndicator(),
                           );
                         }
@@ -60,28 +58,43 @@ class CameraPage extends StatelessWidget {
   }
 }
 
-class CirclePainter extends CustomPainter {
-  final List? params;
-  CirclePainter(this.params);
+class Painter extends CustomPainter {
+  List? params;
+  bool beyond = false;
+  Painter(this.params);
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint();
-    paint.color = Colors.white;
 
     if (params!.isNotEmpty) {
       for (var re in params!) {
         var result = re["keypoints"].values.map((k) {
-          // print("部位:${k["part"]}");
-          // print("x座標:${k["x"]}");
-          // print("y座標:${k["y"]}");
-          canvas.drawCircle(
-              Offset(size.width * k["x"], size.height * k["y"]), 5, paint);
+          if (k["part"] == "nose" ||
+              k["part"] == "leftEye" ||
+              k["part"] == "rightEye" ||
+              k["part"] == "leftEar" ||
+              k["part"] == "rightEar") {
+            paint.color = Colors.white;
+            canvas.drawCircle(
+                Offset(size.width * k["x"], size.height * k["y"]), 5, paint);
+            if (k["part"] == "nose" && k["y"] > 0.5) {
+              paint.color = Colors.red;
+              paint.strokeWidth = 3;
+              canvas.drawLine(Offset(0, size.height / 2),
+                  Offset(size.width, size.height / 2), paint);
+              beyond = true;
+            } else if (!beyond) {
+              paint.color = Colors.greenAccent;
+              paint.strokeWidth = 3;
+              canvas.drawLine(Offset(0, size.height / 2),
+                  Offset(size.width, size.height / 2), paint);
+            }
+          }
         });
-        print(params);
         print(result);
       }
     } else {
-      print("no information");
+      print("empty");
     }
   }
 

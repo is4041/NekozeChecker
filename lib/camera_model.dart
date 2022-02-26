@@ -1,5 +1,4 @@
 import 'package:camera/camera.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tflite/tflite.dart';
 
@@ -40,14 +39,9 @@ class CameraModel extends ChangeNotifier {
           throw Exception("Invalid prediction result");
         }
         if (recognition?.length != null) {
+          isDetecting = false;
           notifyListeners();
-        } else {
-          if (kDebugMode) {
-            print("no information");
-          }
         }
-        isDetecting = false;
-        notifyListeners();
       }
     });
   }
