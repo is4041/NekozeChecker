@@ -1,9 +1,15 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'camera_model.dart';
 import 'home_page.dart';
+
+final AudioCache _cache = AudioCache();
+AudioPlayer? audioPlayer;
+bool _soundLoop = false;
+bool _executeFuture = true;
 
 class CameraPage extends StatelessWidget {
   @override
@@ -15,8 +21,26 @@ class CameraPage extends StatelessWidget {
             body: Consumer<CameraModel>(builder: (context, model, child) {
               if (model.controller == null) {
                 return Center(
-                  child: Container(
-                    child: Text("No Camera"),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        "No Camera",
+                        style: TextStyle(fontSize: 35),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      FloatingActionButton(
+                        onPressed: () {
+                          Navigator.pop(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomePage()));
+                        },
+                        child: Icon(Icons.arrow_back_ios),
+                      )
+                    ],
                   ),
                 );
               }
@@ -83,21 +107,37 @@ class Painter extends CustomPainter {
               canvas.drawLine(Offset(0, size.height / 2),
                   Offset(size.width, size.height / 2), paint);
               beyond = true;
+              NotificationSound(beyond);
             } else if (!beyond) {
               paint.color = Colors.greenAccent;
               paint.strokeWidth = 3;
               canvas.drawLine(Offset(0, size.height / 2),
                   Offset(size.width, size.height / 2), paint);
             }
+            NotificationSound(beyond);
           }
         });
         print(result);
       }
-    } else {
-      print("empty");
     }
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+NotificationSound(bool beyond) async {
+  if (beyond && !_soundLoop) {
+    _soundLoop = true;
+    _executeFuture = true;
+    Future.delayed(const Duration(seconds: 3), () async {
+      if (_executeFuture) {
+        audioPlayer = await _cache.loop("sounds/notification.mp3");
+      }
+    });
+  } else if (!beyond && _soundLoop) {
+    _soundLoop = false;
+    _executeFuture = false;
+    await audioPlayer?.stop();
+  }
 }
