@@ -8,12 +8,13 @@ import 'home_page.dart';
 
 final AudioCache _cache = AudioCache();
 AudioPlayer? audioPlayer;
-bool _soundLoop = false;
-bool _executeFuture = true;
+bool? soundLoop;
+bool? executeFuture;
 
 class CameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    soundLoop = false;
     return ChangeNotifierProvider<CameraModel>(
         create: (_) => CameraModel()..getCamera(),
         builder: (context, snapshot) {
@@ -66,7 +67,14 @@ class CameraPage extends StatelessWidget {
                   Align(
                       alignment: Alignment.bottomCenter,
                       child: FloatingActionButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          //3秒対策
+                          executeFuture = false;
+
+                          // Future.delayed(const Duration(seconds: 1), () async {
+                          //   await audioPlayer?.stop();
+                          // });
+                          await audioPlayer?.stop();
                           Navigator.pop(
                               context,
                               MaterialPageRoute(
@@ -127,17 +135,17 @@ class Painter extends CustomPainter {
 }
 
 NotificationSound(bool beyond) async {
-  if (beyond && !_soundLoop) {
-    _soundLoop = true;
-    _executeFuture = true;
+  if (beyond && !soundLoop!) {
+    soundLoop = true;
+    executeFuture = true;
     Future.delayed(const Duration(seconds: 3), () async {
-      if (_executeFuture) {
+      if (executeFuture!) {
         audioPlayer = await _cache.loop("sounds/notification.mp3");
       }
     });
-  } else if (!beyond && _soundLoop) {
-    _soundLoop = false;
-    _executeFuture = false;
+  } else if (!beyond && soundLoop!) {
+    soundLoop = false;
+    executeFuture = false;
     await audioPlayer?.stop();
   }
 }
