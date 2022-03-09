@@ -10,6 +10,7 @@ final AudioCache _cache = AudioCache();
 AudioPlayer? audioPlayer;
 bool? soundLoop;
 bool? executeFuture;
+int loopCount = 0;
 
 class CameraPage extends StatelessWidget {
   @override
@@ -68,12 +69,7 @@ class CameraPage extends StatelessWidget {
                       alignment: Alignment.bottomCenter,
                       child: FloatingActionButton(
                         onPressed: () async {
-                          //3秒対策
                           executeFuture = false;
-
-                          // Future.delayed(const Duration(seconds: 1), () async {
-                          //   await audioPlayer?.stop();
-                          // });
                           await audioPlayer?.stop();
                           Navigator.pop(
                               context,
@@ -97,7 +93,6 @@ class Painter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint();
-
     if (params!.isNotEmpty) {
       for (var re in params!) {
         var result = re["keypoints"].values.map((k) {
@@ -138,11 +133,15 @@ NotificationSound(bool beyond) async {
   if (beyond && !soundLoop!) {
     soundLoop = true;
     executeFuture = true;
-    Future.delayed(const Duration(seconds: 3), () async {
-      if (executeFuture!) {
-        audioPlayer = await _cache.loop("sounds/notification.mp3");
-      }
-    });
+    loopCount++;
+    if (loopCount < 2) {
+      Future.delayed(const Duration(seconds: 3), () async {
+        loopCount = 0;
+        if (executeFuture!) {
+          audioPlayer = await _cache.loop("sounds/notification.mp3");
+        }
+      });
+    }
   } else if (!beyond && soundLoop!) {
     soundLoop = false;
     executeFuture = false;
