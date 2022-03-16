@@ -11,13 +11,17 @@ AudioPlayer? audioPlayer;
 bool? soundLoop;
 bool? executeFuture;
 int loopCount = 0;
+int notificationCounter = 0;
 
 class CameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     soundLoop = false;
+    notificationCounter = 0;
     return ChangeNotifierProvider<CameraModel>(
-        create: (_) => CameraModel()..getCamera(),
+        create: (_) => CameraModel()
+          ..getCamera()
+          ..startTimer(),
         builder: (context, snapshot) {
           return Scaffold(
             body: Consumer<CameraModel>(builder: (context, model, child) {
@@ -41,7 +45,7 @@ class CameraPage extends StatelessWidget {
                                   builder: (context) => HomePage()));
                         },
                         child: Icon(Icons.arrow_back_ios),
-                      )
+                      ),
                     ],
                   ),
                 );
@@ -71,6 +75,12 @@ class CameraPage extends StatelessWidget {
                         onPressed: () async {
                           executeFuture = false;
                           await audioPlayer?.stop();
+                          model.stopTimer();
+                          //todo
+                          final result = model.seconds / notificationCounter;
+                          print("結果");
+                          print("平均:${result}秒に1回猫背になっています");
+                          //todo
                           Navigator.pop(
                               context,
                               MaterialPageRoute(
@@ -91,7 +101,7 @@ class Painter extends CustomPainter {
   bool beyond = false;
   Painter(this.params);
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(Canvas canvas, Size size) async {
     final paint = Paint();
     if (params!.isNotEmpty) {
       for (var re in params!) {
@@ -116,35 +126,43 @@ class Painter extends CustomPainter {
               paint.strokeWidth = 3;
               canvas.drawLine(Offset(0, size.height / 2),
                   Offset(size.width, size.height / 2), paint);
+              NotificationSound(beyond);
             }
-            NotificationSound(beyond);
           }
         });
         print(result);
       }
+    } else {
+      soundLoop = false;
+      executeFuture = false;
+      await audioPlayer?.stop();
+    }
+  }
+
+  NotificationSound(bool beyond) async {
+    if (beyond && !soundLoop!) {
+      soundLoop = true;
+      executeFuture = true;
+      loopCount++;
+      if (loopCount < 2) {
+        Future.delayed(const Duration(seconds: 3), () async {
+          loopCount = 0;
+          if (executeFuture!) {
+            audioPlayer = await _cache.loop("sounds/notification.mp3");
+            //デバッグモードでだけ発生するバグ対策
+            executeFuture = false;
+            notificationCounter++;
+            print("通知回数:${notificationCounter}");
+          }
+        });
+      }
+    } else if (!beyond && soundLoop!) {
+      soundLoop = false;
+      executeFuture = false;
+      await audioPlayer?.stop();
     }
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-}
-
-NotificationSound(bool beyond) async {
-  if (beyond && !soundLoop!) {
-    soundLoop = true;
-    executeFuture = true;
-    loopCount++;
-    if (loopCount < 2) {
-      Future.delayed(const Duration(seconds: 3), () async {
-        loopCount = 0;
-        if (executeFuture!) {
-          audioPlayer = await _cache.loop("sounds/notification.mp3");
-        }
-      });
-    }
-  } else if (!beyond && soundLoop!) {
-    soundLoop = false;
-    executeFuture = false;
-    await audioPlayer?.stop();
-  }
 }

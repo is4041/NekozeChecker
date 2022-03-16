@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tflite/tflite.dart';
@@ -8,6 +10,8 @@ class CameraModel extends ChangeNotifier {
   Future<void>? initializeController;
   bool isDetecting = false;
   List? recognition = [];
+  Timer? timer;
+  int seconds = 0;
 
   Future getCamera() async {
     cam = await availableCameras();
@@ -16,6 +20,17 @@ class CameraModel extends ChangeNotifier {
         imageFormatGroup: ImageFormatGroup.bgra8888);
     initializeController = controller?.initialize();
     notifyListeners();
+  }
+
+  startTimer() {
+    timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+      seconds++;
+      print("${seconds}秒");
+    });
+  }
+
+  stopTimer() {
+    timer?.cancel();
   }
 
   poseEstimation(CameraImage img) async {
