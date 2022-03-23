@@ -11,13 +11,11 @@ AudioPlayer? audioPlayer;
 bool? soundLoop;
 bool? executeFuture;
 int loopCount = 0;
-int notificationCounter = 0;
 
 class CameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     soundLoop = false;
-    notificationCounter = 0;
     return ChangeNotifierProvider<CameraModel>(
         create: (_) => CameraModel()
           ..getCamera()
@@ -57,7 +55,8 @@ class CameraPage extends StatelessWidget {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           return CustomPaint(
-                            foregroundPainter: Painter(model.recognition!),
+                            foregroundPainter:
+                                Painter(model.recognition, model),
                             child: CameraPreview(
                               model.controller!,
                               child: model.predict(),
@@ -76,11 +75,7 @@ class CameraPage extends StatelessWidget {
                           executeFuture = false;
                           await audioPlayer?.stop();
                           model.stopTimer();
-                          //todo
-                          final result = model.seconds / notificationCounter;
-                          print("結果");
-                          print("平均:${result}秒に1回猫背になっています");
-                          //todo
+                          model.calculate();
                           Navigator.pop(
                               context,
                               MaterialPageRoute(
@@ -98,8 +93,9 @@ class CameraPage extends StatelessWidget {
 
 class Painter extends CustomPainter {
   List? params;
+  final CameraModel model;
   bool beyond = false;
-  Painter(this.params);
+  Painter(this.params, this.model);
   @override
   void paint(Canvas canvas, Size size) async {
     final paint = Paint();
@@ -120,13 +116,13 @@ class Painter extends CustomPainter {
               canvas.drawLine(Offset(0, size.height / 2),
                   Offset(size.width, size.height / 2), paint);
               beyond = true;
-              NotificationSound(beyond);
+              notificationSound(beyond);
             } else if (!beyond) {
               paint.color = Colors.greenAccent;
               paint.strokeWidth = 3;
               canvas.drawLine(Offset(0, size.height / 2),
                   Offset(size.width, size.height / 2), paint);
-              NotificationSound(beyond);
+              notificationSound(beyond);
             }
           }
         });
@@ -139,7 +135,7 @@ class Painter extends CustomPainter {
     }
   }
 
-  NotificationSound(bool beyond) async {
+  notificationSound(bool beyond) async {
     if (beyond && !soundLoop!) {
       soundLoop = true;
       executeFuture = true;
@@ -149,10 +145,9 @@ class Painter extends CustomPainter {
           loopCount = 0;
           if (executeFuture!) {
             audioPlayer = await _cache.loop("sounds/notification.mp3");
-            //デバッグモードでだけ発生するバグ対策
+            //バグ対策
             executeFuture = false;
-            notificationCounter++;
-            print("通知回数:${notificationCounter}");
+            model.counter();
           }
         });
       }
