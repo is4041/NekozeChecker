@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:tflite/tflite.dart';
 
 class CameraModel extends ChangeNotifier {
@@ -9,9 +10,10 @@ class CameraModel extends ChangeNotifier {
   List<CameraDescription> cam = [];
   Future<void>? initializeController;
   bool isDetecting = false;
-  List? recognition = [];
+  List recognition = [];
   Timer? timer;
   int seconds = 0;
+  int notificationCounter = 0;
 
   Future getCamera() async {
     cam = await availableCameras();
@@ -23,7 +25,7 @@ class CameraModel extends ChangeNotifier {
   }
 
   startTimer() {
-    timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       seconds++;
       print("${seconds}秒");
     });
@@ -31,6 +33,28 @@ class CameraModel extends ChangeNotifier {
 
   stopTimer() {
     timer?.cancel();
+  }
+
+  counter() {
+    notificationCounter++;
+    print("通知回数:${notificationCounter}");
+  }
+
+  calculate() {
+    final result = seconds / notificationCounter;
+    print("結果");
+    print("平均:${result}秒に1回猫背になっています");
+  }
+
+  predict() {
+    controller?.startImageStream((CameraImage img) async {
+      if (!isDetecting) {
+        isDetecting = true;
+        recognition = await poseEstimation(img);
+        isDetecting = false;
+        notifyListeners();
+      }
+    });
   }
 
   poseEstimation(CameraImage img) async {
@@ -43,22 +67,6 @@ class CameraModel extends ChangeNotifier {
       numResults: 1,
     );
     return results;
-  }
-
-  predict() {
-    controller?.startImageStream((CameraImage img) async {
-      if (!isDetecting) {
-        isDetecting = true;
-        recognition = await poseEstimation(img);
-        if (recognition == null) {
-          throw Exception("Invalid prediction result");
-        }
-        if (recognition?.length != null) {
-          isDetecting = false;
-          notifyListeners();
-        }
-      }
-    });
   }
 
   @override
