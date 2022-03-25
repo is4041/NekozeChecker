@@ -4,18 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'camera_model.dart';
-import 'home_page.dart';
+import '../home/home_page.dart';
 
 final AudioCache _cache = AudioCache();
 AudioPlayer? audioPlayer;
-bool? soundLoop;
+bool soundLoop = false;
 bool? executeFuture;
 int loopCount = 0;
 
 class CameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    soundLoop = false;
     return ChangeNotifierProvider<CameraModel>(
         create: (_) => CameraModel()
           ..getCamera()
@@ -136,7 +135,7 @@ class Painter extends CustomPainter {
   }
 
   notificationSound(bool beyond) async {
-    if (beyond && !soundLoop!) {
+    if (beyond && !soundLoop) {
       soundLoop = true;
       executeFuture = true;
       loopCount++;
@@ -145,13 +144,12 @@ class Painter extends CustomPainter {
           loopCount = 0;
           if (executeFuture!) {
             audioPlayer = await _cache.loop("sounds/notification.mp3");
-            //バグ対策
             executeFuture = false;
             model.counter();
           }
         });
       }
-    } else if (!beyond && soundLoop!) {
+    } else if (!beyond && soundLoop) {
       soundLoop = false;
       executeFuture = false;
       await audioPlayer?.stop();

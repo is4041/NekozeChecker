@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1050262055904-ssp0mafrtsr9auqk3r6r9ir9ivp5qi2c.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1050262055904-ssp0mafrtsr9auqk3r6r9ir9ivp5qi2c</string>
+	<key>API_KEY</key>
+	<string>AIzaSyB9NMC6XgiEb40HuHKfD0HfE609PNWlp_k</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1050262055904</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.postureCorrection</string>
+	<key>PROJECT_ID</key>
+	<string>posture-correction-22872</string>
+	<key>STORAGE_BUCKET</key>
+	<string>posture-correction-22872.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1050262055904:ios:c1cc57632450d6cc2c1985</string>
+</dict>
+</plist>
