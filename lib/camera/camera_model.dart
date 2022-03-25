@@ -13,7 +13,7 @@ class CameraModel extends ChangeNotifier {
   List recognition = [];
   Timer? timer;
   int seconds = 0;
-  int notificationCounter = 0;
+  int numberOfNotifications = 0;
 
   Future getCamera() async {
     cam = await availableCameras();
@@ -36,12 +36,12 @@ class CameraModel extends ChangeNotifier {
   }
 
   counter() {
-    notificationCounter++;
-    print("通知回数:${notificationCounter}");
+    numberOfNotifications++;
+    print("通知回数:${numberOfNotifications}");
   }
 
   calculate() {
-    final result = seconds / notificationCounter;
+    final result = seconds / numberOfNotifications;
     print("結果");
     print("平均:${result}秒に1回猫背になっています");
   }

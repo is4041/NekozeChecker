@@ -38,6 +38,8 @@ dependencies:
   tflite: ^1.1.2
   camera: ^0.9.4+11
   audioplayers: ^0.20.1
+  firebase_core: ^1.13.1
+  cloud_firestore: ^3.1.10
 
 dev_dependencies:
   flutter_test:
