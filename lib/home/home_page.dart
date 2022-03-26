@@ -5,20 +5,43 @@ import 'package:posture_correction/camera/camera_page.dart';
 import 'package:posture_correction/home/home_model.dart';
 import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
-  final Stream<QuerySnapshot> _usersStream =
-      FirebaseFirestore.instance.collection('measurements').snapshots();
+import '../utils.dart';
 
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<HomeModel>(
-        create: (_) => HomeModel()..loadmodel(),
+        create: (_) => HomeModel()
+          ..loadModel()
+          ..fetchData(),
         builder: (context, snapshot) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text("posture correction"),
+              title: const Text("HOME"),
             ),
             body: Consumer<HomeModel>(builder: (context, model, child) {
+              final List<Data>? data = model.data;
+              if (data == null) {
+                return Center(child: CircularProgressIndicator());
+              }
+              final List<Widget> widgets = data
+                  .map((data) => Column(
+                        children: [
+                          Text(
+                            "使用時間:${data.seconds}",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          Text(
+                            "検知回数:${data.numberOfNotifications}",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          Text(
+                            "平均'${data.averageTime}'に1回猫背になっています",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ))
+                  .toList();
               return Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -44,31 +67,17 @@ class HomePage extends StatelessWidget {
                         )),
                       ),
                     ),
-                    StreamBuilder<QuerySnapshot>(
-                      stream: _usersStream,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Text("Loading");
-                        }
-                        return ListView(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          children: snapshot.data!.docs
-                              .map((DocumentSnapshot document) {
-                            Map<String, dynamic> data =
-                                document.data()! as Map<String, dynamic>;
-                            return Column(
-                              children: [
-                                Text(data["seconds"]),
-                                Text(data["numberOfNotifications"]),
-                                Text(data["average"]),
-                              ],
-                            );
-                          }).toList(),
-                        );
-                      },
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      height: 200,
+                      width: 200,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black12)),
+                      child: ListView(
+                        children: widgets,
+                      ),
                     )
                   ],
                 ),
