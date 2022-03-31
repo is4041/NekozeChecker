@@ -37,6 +37,6 @@ class HomeModel extends ChangeNotifier {
       return Data(seconds, numberOfNotifications, average);
     }).toList();
     this.data = data;
-    // print(data);
+    notifyListeners();
   }
 }

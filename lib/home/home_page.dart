@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:posture_correction/camera/camera_page.dart';
@@ -22,7 +21,7 @@ class HomePage extends StatelessWidget {
             body: Consumer<HomeModel>(builder: (context, model, child) {
               final List<Data>? data = model.data;
               if (data == null) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
               final List<Widget> widgets = data
                   .map((data) => Column(
@@ -71,7 +70,7 @@ class HomePage extends StatelessWidget {
                       height: 20,
                     ),
                     Container(
-                      height: 200,
+                      height: 150,
                       width: 200,
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black12)),
