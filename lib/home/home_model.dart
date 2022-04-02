@@ -8,7 +8,6 @@ import '../utils.dart';
 
 class HomeModel extends ChangeNotifier {
   List<Data>? data;
-
   Future loadModel() async {
     Tflite.close();
     try {
