@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:camera/camera.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tflite/tflite.dart';
@@ -14,6 +15,7 @@ class CameraModel extends ChangeNotifier {
   Timer? timer;
   int seconds = 0;
   int numberOfNotifications = 0;
+  double averageTime = 0;
 
   Future getCamera() async {
     cam = await availableCameras();
@@ -41,9 +43,12 @@ class CameraModel extends ChangeNotifier {
   }
 
   calculate() {
-    final result = seconds / numberOfNotifications;
-    print("結果");
-    print("平均:${result}秒に1回猫背になっています");
+    if (numberOfNotifications != 0) {
+      averageTime = seconds / numberOfNotifications;
+    } else {
+      averageTime = seconds.toDouble();
+    }
+    print("平均:${averageTime}秒に1回猫背になっています");
   }
 
   predict() {
@@ -67,6 +72,14 @@ class CameraModel extends ChangeNotifier {
       numResults: 1,
     );
     return results;
+  }
+
+  addData() async {
+    await FirebaseFirestore.instance.collection("measurements").add({
+      "seconds": seconds.toString(),
+      "numberOfNotifications": numberOfNotifications.toString(),
+      "averageTime": averageTime.toString(),
+    });
   }
 
   @override

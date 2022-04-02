@@ -21,21 +21,23 @@ class HomePage extends StatelessWidget {
             body: Consumer<HomeModel>(builder: (context, model, child) {
               final List<Data>? data = model.data;
               if (data == null) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: SizedBox());
               }
               final List<Widget> widgets = data
                   .map((data) => Column(
                         children: [
                           Text(
-                            "使用時間:${data.seconds}",
+                            "使用時間:${data.seconds}秒",
                             style: TextStyle(fontSize: 20),
                           ),
                           Text(
-                            "検知回数:${data.numberOfNotifications}",
+                            "検知回数:${data.numberOfNotifications}回",
                             style: TextStyle(fontSize: 20),
                           ),
                           Text(
-                            "平均'${data.averageTime}'に1回猫背になっています",
+                            data.numberOfNotifications != "0"
+                                ? "約${data.averageTime}秒に1回猫背になっています"
+                                : "猫背にはなっていません",
                             style: TextStyle(fontSize: 20),
                           ),
                         ],
@@ -69,8 +71,12 @@ class HomePage extends StatelessWidget {
                     SizedBox(
                       height: 20,
                     ),
+                    Text("今週の平均",
+                        style: TextStyle(
+                          fontSize: 20.0,
+                        )),
                     Container(
-                      height: 150,
+                      height: 120,
                       width: 200,
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black12)),

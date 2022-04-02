@@ -36,6 +36,7 @@ class CameraPage extends StatelessWidget {
                       ),
                       FloatingActionButton(
                         onPressed: () {
+                          model.stopTimer();
                           Navigator.pop(
                               context,
                               MaterialPageRoute(
@@ -75,6 +76,7 @@ class CameraPage extends StatelessWidget {
                           await audioPlayer?.stop();
                           model.stopTimer();
                           model.calculate();
+                          model.addData();
                           Navigator.pop(
                               context,
                               MaterialPageRoute(
