@@ -22,8 +22,28 @@ class CameraModel extends ChangeNotifier {
     final lastCamera = cam.last;
     controller = CameraController(lastCamera, ResolutionPreset.high,
         imageFormatGroup: ImageFormatGroup.bgra8888);
-    initializeController = controller?.initialize();
+    await controller?.initialize();
+    controller?.startImageStream((CameraImage img) async {
+      if (!isDetecting) {
+        isDetecting = true;
+        recognition = await poseEstimation(img);
+        isDetecting = false;
+        notifyListeners();
+      }
+    });
     notifyListeners();
+  }
+
+  poseEstimation(CameraImage img) async {
+    final results = await Tflite.runPoseNetOnFrame(
+      bytesList: img.planes.map((plane) {
+        return plane.bytes;
+      }).toList(),
+      imageHeight: img.height,
+      imageWidth: img.width,
+      numResults: 1,
+    );
+    return results;
   }
 
   startTimer() {
@@ -49,29 +69,6 @@ class CameraModel extends ChangeNotifier {
       averageTime = seconds.toDouble();
     }
     print("平均:${averageTime}秒に1回猫背になっています");
-  }
-
-  predict() {
-    controller?.startImageStream((CameraImage img) async {
-      if (!isDetecting) {
-        isDetecting = true;
-        recognition = await poseEstimation(img);
-        isDetecting = false;
-        notifyListeners();
-      }
-    });
-  }
-
-  poseEstimation(CameraImage img) async {
-    final results = await Tflite.runPoseNetOnFrame(
-      bytesList: img.planes.map((plane) {
-        return plane.bytes;
-      }).toList(),
-      imageHeight: img.height,
-      imageWidth: img.width,
-      numResults: 1,
-    );
-    return results;
   }
 
   addData() async {
