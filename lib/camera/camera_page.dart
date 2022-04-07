@@ -11,6 +11,7 @@ AudioPlayer? audioPlayer;
 bool soundLoop = false;
 bool? executeFuture;
 int loopCount = 0;
+bool detection = false;
 
 class CameraPage extends StatelessWidget {
   @override
@@ -50,24 +51,12 @@ class CameraPage extends StatelessWidget {
               }
               return Stack(
                 children: [
-                  FutureBuilder<void>(
-                      future: model.initializeController,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          return CustomPaint(
-                            foregroundPainter:
-                                Painter(model.recognition, model),
-                            child: CameraPreview(
-                              model.controller!,
-                              child: model.predict(),
-                            ),
-                          );
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      }),
+                  CustomPaint(
+                    foregroundPainter: Painter(model.recognition, model),
+                    child: CameraPreview(
+                      model.controller!,
+                    ),
+                  ),
                   Align(
                       alignment: Alignment.bottomCenter,
                       child: FloatingActionButton(
@@ -101,6 +90,10 @@ class Painter extends CustomPainter {
   void paint(Canvas canvas, Size size) async {
     final paint = Paint();
     if (params!.isNotEmpty) {
+      if (detection == false) {
+        model.startTimer();
+      }
+      detection = true;
       for (var re in params!) {
         var result = re["keypoints"].values.map((k) {
           if (k["part"] == "nose" ||
@@ -129,9 +122,11 @@ class Painter extends CustomPainter {
         });
         print(result);
       }
-    } else {
+    } else if (detection == true) {
+      detection = false;
       soundLoop = false;
       executeFuture = false;
+      model.stopTimer();
       await audioPlayer?.stop();
     }
   }
