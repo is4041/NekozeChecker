@@ -91,11 +91,13 @@ class Painter extends CustomPainter {
     final paint = Paint();
     if (params!.isNotEmpty) {
       if (detection == false) {
-        model.startTimer();
+        // model.startTimer();
       }
       detection = true;
       for (var re in params!) {
-        var result = re["keypoints"].values.map((k) {
+        final result = re["keypoints"].values.map((k)
+            // re["keypoints"].value.forEach((k)
+            {
           if (k["part"] == "nose" ||
               k["part"] == "leftEye" ||
               k["part"] == "rightEye" ||
