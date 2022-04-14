@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:posture_correction/camera/camera_page.dart';
@@ -83,7 +84,7 @@ class HomePage extends StatelessWidget {
                       child: ListView(
                         children: widgets,
                       ),
-                    )
+                    ),
                   ],
                 ),
               );
