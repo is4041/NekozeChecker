@@ -40,7 +40,28 @@ class SignInPage extends StatelessWidget {
                           SignInButton(Buttons.Google,
                               text: "Sign in with Google", onPressed: () async {
                             model.startLoading();
-                            await model.signInWithGoogle();
+                            try {
+                              await model.signInWithGoogle();
+                            } catch (e) {
+                              if (e.toString() !=
+                                  "Null check operator used on a null value") {
+                                await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text(e.toString()),
+                                        actions: [
+                                          TextButton(
+                                            child: const Text("ok"),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          )
+                                        ],
+                                      );
+                                    });
+                              }
+                            }
                             model.endLoading();
                           }),
                           const SizedBox(height: 20),
@@ -49,7 +70,7 @@ class SignInPage extends StatelessWidget {
                             onTap: () async {
                               model.startLoading();
                               try {
-                                await model.onSignInWithAnonymousUser();
+                                await model.signInWithAnonymousUser();
                               } catch (e) {
                                 await showDialog(
                                     context: context,

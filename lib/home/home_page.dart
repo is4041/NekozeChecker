@@ -13,7 +13,8 @@ class HomePage extends StatelessWidget {
     return ChangeNotifierProvider<HomeModel>(
         create: (_) => HomeModel()
           ..loadModel()
-          ..fetchData(),
+          ..fetchData()
+          ..getTotalAverage(),
         builder: (context, snapshot) {
           return Scaffold(
             appBar: AppBar(
@@ -21,29 +22,30 @@ class HomePage extends StatelessWidget {
             ),
             body: Consumer<HomeModel>(builder: (context, model, child) {
               final List<Data>? data = model.data;
-              if (data == null) {
-                return const Center(child: SizedBox());
-              }
-              final List<Widget> widgets = data
-                  .map((data) => Column(
-                        children: [
-                          Text(
-                            "使用時間:${data.seconds}秒",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          Text(
-                            "検知回数:${data.numberOfNotifications}回",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          Text(
-                            data.numberOfNotifications != "0"
-                                ? "約${data.averageTime}秒に1回猫背になっています"
-                                : "猫背にはなっていません",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ],
-                      ))
-                  .toList();
+              // final data = model.data;
+              // if (data == null) {
+              //   return const Center(child: SizedBox());
+              // }
+              // final List<Widget> widgets = data
+              //     .map((data) => Column(
+              //           children: [
+              //             Text(
+              //               "使用時間:${data.seconds}秒",
+              //               style: TextStyle(fontSize: 20),
+              //             ),
+              //             Text(
+              //               "検知回数:${data.numberOfNotifications}回",
+              //               style: TextStyle(fontSize: 20),
+              //             ),
+              //             Text(
+              //               data.numberOfNotifications != "0"
+              //                   ? "約${data.averageTime}秒に1回猫背になっています"
+              //                   : "猫背にはなっていません",
+              //               style: TextStyle(fontSize: 20),
+              //             ),
+              //           ],
+              //         ))
+              //     .toList();
               return Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -81,9 +83,10 @@ class HomePage extends StatelessWidget {
                       width: 200,
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black12)),
-                      child: ListView(
-                        children: widgets,
-                      ),
+                      // child: ListView(
+                      //     children: widgets,
+                      //     ),
+                      child: Text("平均約${model.totalAverage}秒に一回猫背になっています"),
                     ),
                   ],
                 ),

@@ -1,13 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:tflite/tflite.dart';
 
+import '../camera/camera_model.dart';
 import '../utils.dart';
 
+final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
 class HomeModel extends ChangeNotifier {
-  List<Data>? data;
+  String totalAverage = "*";
+  List<Data>? data = [];
   Future loadModel() async {
     Tflite.close();
     try {
@@ -33,9 +39,19 @@ class HomeModel extends ChangeNotifier {
       final String seconds = data["seconds"];
       final String numberOfNotifications = data["numberOfNotifications"];
       final String average = data["averageTime"];
-      return Data(seconds, numberOfNotifications, average);
+      final String userId = data["userId"];
+      return Data(seconds, numberOfNotifications, average, userId);
     }).toList();
     this.data = data;
+    notifyListeners();
+  }
+
+  getTotalAverage() async {
+    final userId = firebaseAuth.currentUser!.uid;
+    DocumentSnapshot snapshot = await firestore.doc("users/$userId").get();
+    final data = snapshot.data() as Map<String, dynamic>;
+    totalAverage = data["totalAverage"];
+    print(totalAverage);
     notifyListeners();
   }
 }
