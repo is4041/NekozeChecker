@@ -12,14 +12,17 @@ bool soundLoop = false;
 bool? executeFuture;
 int loopCount = 0;
 bool detection = false;
+bool? isCounting;
+bool? isAdjusting;
 
 class CameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    isAdjusting = true;
+    // isCounting = false;
+    isCounting = true;
     return ChangeNotifierProvider<CameraModel>(
-        create: (_) => CameraModel()
-          ..getCamera()
-          ..startTimer(),
+        create: (_) => CameraModel()..getCamera(),
         builder: (context, snapshot) {
           return Scaffold(
             body: Consumer<CameraModel>(builder: (context, model, child) {
@@ -37,13 +40,9 @@ class CameraPage extends StatelessWidget {
                       ),
                       FloatingActionButton(
                         onPressed: () {
-                          model.stopTimer();
-                          Navigator.pop(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomePage()));
+                          Navigator.of(context).pop();
                         },
-                        child: Icon(Icons.arrow_back_ios),
+                        child: const Icon(Icons.arrow_back_ios),
                       ),
                     ],
                   ),
@@ -58,21 +57,77 @@ class CameraPage extends StatelessWidget {
                     ),
                   ),
                   Align(
-                      alignment: Alignment.bottomCenter,
+                      alignment: const Alignment(0, 0.9),
                       child: FloatingActionButton(
                         onPressed: () async {
+                          isCounting = false;
+                          isAdjusting = false;
                           executeFuture = false;
                           await audioPlayer?.stop();
                           model.stopTimer();
                           model.calculate();
-                          model.addData();
-                          Navigator.pop(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomePage()));
+                          if (model.seconds > 300) {
+                            await model.addData();
+                            await model.calculateTotalAverage();
+                            model.upDateTotalAverage();
+                          } else {
+                            await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("使用時間が5分未満ですがデータを保存しますか？"),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text("ok"),
+                                        onPressed: () async {
+                                          await model.addData();
+                                          await model.calculateTotalAverage();
+                                          model.upDateTotalAverage();
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text("cancel"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  );
+                                });
+                          }
+
+                          Navigator.of(context).pop();
                         },
-                        child: Icon(Icons.arrow_back_ios),
+                        child: const Icon(Icons.stop),
+                        backgroundColor: Colors.red,
                       )),
+                  // if (!isCounting! && isAdjusting!)
+                  //   Container(
+                  //     width: double.infinity,
+                  //     height: double.infinity,
+                  //     color: Colors.grey.withOpacity(0.5),
+                  //     child: Center(
+                  //       child: Column(
+                  //         mainAxisSize: MainAxisSize.min,
+                  //         children: [
+                  //           Text(
+                  //             "位置調整してください",
+                  //             style:
+                  //                 TextStyle(fontSize: 30, color: Colors.white),
+                  //           ),
+                  //           SizedBox(
+                  //             height: 150,
+                  //           ),
+                  //           ElevatedButton(
+                  //               onPressed: () {
+                  //                 isCounting = true;
+                  //               },
+                  //               child: Text("ok"))
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   )
                 ],
               );
             }),
@@ -90,14 +145,13 @@ class Painter extends CustomPainter {
   void paint(Canvas canvas, Size size) async {
     final paint = Paint();
     if (params!.isNotEmpty) {
-      if (detection == false) {
-        // model.startTimer();
+      if (isCounting! && !detection) {
+        detection = true;
+        model.startTimer();
+        print("Timer Start");
       }
-      detection = true;
       for (var re in params!) {
-        final result = re["keypoints"].values.map((k)
-            // re["keypoints"].value.forEach((k)
-            {
+        re["keypoints"].values.forEach((k) {
           if (k["part"] == "nose" ||
               k["part"] == "leftEye" ||
               k["part"] == "rightEye" ||
@@ -112,23 +166,28 @@ class Painter extends CustomPainter {
               canvas.drawLine(Offset(0, size.height / 2),
                   Offset(size.width, size.height / 2), paint);
               beyond = true;
-              notificationSound(beyond);
+              if (isCounting!) {
+                notificationSound(beyond);
+              }
             } else if (!beyond) {
               paint.color = Colors.greenAccent;
               paint.strokeWidth = 3;
               canvas.drawLine(Offset(0, size.height / 2),
                   Offset(size.width, size.height / 2), paint);
-              notificationSound(beyond);
+              if (isCounting!) {
+                notificationSound(beyond);
+              }
             }
           }
         });
-        print(result);
       }
-    } else if (detection == true) {
+    } else if (detection) {
       detection = false;
+      print("検知不可");
       soundLoop = false;
       executeFuture = false;
       model.stopTimer();
+      print("Timer Stop");
       await audioPlayer?.stop();
     }
   }

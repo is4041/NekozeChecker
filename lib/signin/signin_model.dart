@@ -1,9 +1,11 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:posture_correction/signin/signin_page.dart';
 
-// final auth = FirebaseAuth.instance;
 final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
 class SignInModel extends ChangeNotifier {
@@ -21,21 +23,25 @@ class SignInModel extends ChangeNotifier {
 
   signInWithGoogle() async {
     final user = await googleSignIn.signIn();
-    if (user == null) {
-    } else {
-      final auth = await user.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: auth.accessToken,
-        idToken: auth.idToken,
-      );
-      await FirebaseAuth.instance.signInWithCredential(credential);
-    }
-    notifyListeners();
+
+    final auth = await user!.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: auth.accessToken,
+      idToken: auth.idToken,
+    );
+    final userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    final uid = userCredential.user!.uid;
+    FirebaseFirestore.instance.collection("users").doc(uid).set(
+        {"userId": uid, "totalAverage": "0", "createdAt": Timestamp.now()});
   }
 
-  onSignInWithAnonymousUser() async {
+  signInWithAnonymousUser() async {
     try {
       await firebaseAuth.signInAnonymously();
+      final uid = firebaseAuth.currentUser!.uid;
+      FirebaseFirestore.instance.collection("users").doc(uid).set(
+          {"userId": uid, "totalAverage": "0", "createdAt": Timestamp.now()});
     } catch (e) {
       throw ("error");
     }
