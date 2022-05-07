@@ -3,12 +3,8 @@ import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:tflite/tflite.dart';
-
-import '../utils.dart';
 
 final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 final userId = firebaseAuth.currentUser!.uid;
@@ -22,7 +18,7 @@ class CameraModel extends ChangeNotifier {
   int seconds = 0;
   int numberOfNotifications = 0;
   dynamic averageTime = 0;
-  double totalAverage = 0;
+  dynamic totalAverage;
 
   Future getCamera() async {
     cam = await availableCameras();
@@ -32,14 +28,9 @@ class CameraModel extends ChangeNotifier {
     await controller?.initialize();
 
     controller?.startImageStream((CameraImage img) async {
-      // final isolate = IsolateData(cameraImage: img);
       if (!isDetecting) {
         isDetecting = true;
-        // recognition = (await poseEstimation(img))!;
-        recognition = await compute<CameraImage, dynamic>(poseEstimation, img);
-        //todo compute
-        // final result = await compute(heavyTask, 1000000000);
-        // print(result);
+        recognition = await poseEstimation(img);
         isDetecting = false;
         notifyListeners();
       }
@@ -47,32 +38,7 @@ class CameraModel extends ChangeNotifier {
     notifyListeners();
   }
 
-// compute　例
-//   static String heavyTask(int value) {
-//     String res = "";
-//     for (int i = 0; i < value; ++i) {
-//       if (i == value - 1) res = "finish";
-//     }
-//     return res;
-//   }
-
-  static Future<List?> poseEstimation(CameraImage img) async {
-    // try {
-    //   final results = await Tflite.runPoseNetOnFrame(
-    //     bytesList: img.planes.map((plane) {
-    //       return plane.bytes;
-    //     }).toList(),
-    //     imageHeight: img.height,
-    //     imageWidth: img.width,
-    //     numResults: 1,
-    //   );
-    //   return results!;
-    // } catch (e) {
-    //   print("1");
-    //   print(e);
-    //   print("2");
-    //   return null;
-    // }
+  static Future<List> poseEstimation(CameraImage img) async {
     final results = await Tflite.runPoseNetOnFrame(
       bytesList: img.planes.map((plane) {
         return plane.bytes;
@@ -101,10 +67,10 @@ class CameraModel extends ChangeNotifier {
   }
 
   calculate() {
-    if (numberOfNotifications != 0) {
+    if (numberOfNotifications > 0) {
       averageTime = seconds / numberOfNotifications;
     } else {
-      averageTime = "*";
+      averageTime = "＊";
     }
     print("平均:${averageTime}秒に1回猫背になっています");
   }
@@ -118,7 +84,7 @@ class CameraModel extends ChangeNotifier {
       "userId": userId,
       "seconds": seconds.toString(),
       "numberOfNotifications": numberOfNotifications.toString(),
-      "averageTime": averageTime != "*" ? averageTime.toStringAsFixed(2) : "*",
+      "averageTime": averageTime != "＊" ? averageTime.toStringAsFixed(2) : "＊",
     });
   }
 
@@ -129,29 +95,33 @@ class CameraModel extends ChangeNotifier {
         await FirebaseFirestore.instance.collection("measurements").get();
     for (var doc in snapshot.docs) {
       if (doc.get("userId") == userId.toString()) {
-        //todo 変更箇所？
         totalSecondsArray.add(double.parse(doc.get("seconds")));
         totalNotificationsArray
             .add(double.parse(doc.get("numberOfNotifications")));
       }
     }
-    print("秒数：${totalSecondsArray}");
-    final totalOfSeconds = totalSecondsArray.reduce((a, b) => a + b);
-    print("合計秒数:${totalOfSeconds}秒");
-    print("通知数：${totalNotificationsArray}");
 
-    final totalOfNotifications =
-        totalNotificationsArray.reduce((a, b) => a + b);
-    print("合計通知回数:${totalOfNotifications}回");
-    totalAverage = totalOfSeconds / totalOfNotifications;
-    print("平均秒数:${totalAverage.round()}秒(四捨五入)");
+    if (totalSecondsArray.isNotEmpty && totalNotificationsArray.isNotEmpty) {
+      final totalOfSeconds = totalSecondsArray.reduce((a, b) => a + b);
+
+      final totalOfNotifications =
+          totalNotificationsArray.reduce((a, b) => a + b);
+      if (totalOfNotifications > 0) {
+        totalAverage = totalOfSeconds / totalOfNotifications;
+        print("平均秒数:${totalAverage}秒(四捨五入)");
+      } else {
+        totalAverage = "＊";
+      }
+    } else {
+      totalAverage = "＊";
+    }
   }
 
-  void upDateTotalAverage() async {
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(userId)
-        .update({"totalAverage": totalAverage.round().toString()});
+  upDateTotalAverage() async {
+    await FirebaseFirestore.instance.collection("users").doc(userId).update({
+      "totalAverage":
+          totalAverage.toString() != "＊" ? totalAverage.round().toString() : "＊"
+    });
   }
 
   @override
@@ -160,8 +130,3 @@ class CameraModel extends ChangeNotifier {
     controller?.dispose();
   }
 }
-
-// class IsolateData {
-//   IsolateData({required this.cameraImage});
-//   final CameraImage cameraImage;
-// }

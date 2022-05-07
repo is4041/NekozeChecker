@@ -5,7 +5,7 @@ import 'package:posture_correction/camera/camera_page.dart';
 import 'package:posture_correction/home/home_model.dart';
 import 'package:provider/provider.dart';
 
-import '../utils.dart';
+import '../data.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -13,7 +13,6 @@ class HomePage extends StatelessWidget {
     return ChangeNotifierProvider<HomeModel>(
         create: (_) => HomeModel()
           ..loadModel()
-          ..fetchData()
           ..getTotalAverage(),
         builder: (context, snapshot) {
           return Scaffold(
@@ -21,41 +20,46 @@ class HomePage extends StatelessWidget {
               title: const Text("HOME"),
             ),
             body: Consumer<HomeModel>(builder: (context, model, child) {
-              final List<Data>? data = model.data;
-              // final data = model.data;
-              // if (data == null) {
-              //   return const Center(child: SizedBox());
-              // }
-              // final List<Widget> widgets = data
-              //     .map((data) => Column(
-              //           children: [
-              //             Text(
-              //               "使用時間:${data.seconds}秒",
-              //               style: TextStyle(fontSize: 20),
-              //             ),
-              //             Text(
-              //               "検知回数:${data.numberOfNotifications}回",
-              //               style: TextStyle(fontSize: 20),
-              //             ),
-              //             Text(
-              //               data.numberOfNotifications != "0"
-              //                   ? "約${data.averageTime}秒に1回猫背になっています"
-              //                   : "猫背にはなっていません",
-              //               style: TextStyle(fontSize: 20),
-              //             ),
-              //           ],
-              //         ))
-              //     .toList();
               return Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     InkWell(
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        final value = await Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => CameraPage()));
+                        model.getTotalAverage();
+                        if (value != null) {
+                          await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("計測結果"),
+                                  content: Container(
+                                    width: 100,
+                                    height: 300,
+                                    child: Column(
+                                      children: [
+                                        Text(value[0] != "＊"
+                                            ? "平均約${value[0]}秒に1回猫背になっています"
+                                            : "猫背にはなっていません"),
+                                        Text("計測時間：${value[1]}秒"),
+                                        Text("通知回数：${value[2]}回"),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text("Close"))
+                                  ],
+                                );
+                              });
+                        }
                       },
                       child: Container(
                         height: 200,
@@ -74,19 +78,27 @@ class HomePage extends StatelessWidget {
                     SizedBox(
                       height: 20,
                     ),
-                    Text("今週の平均",
-                        style: TextStyle(
-                          fontSize: 20.0,
-                        )),
-                    Container(
-                      height: 120,
-                      width: 200,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black12)),
-                      // child: ListView(
-                      //     children: widgets,
-                      //     ),
-                      child: Text("平均約${model.totalAverage}秒に一回猫背になっています"),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("全体平均",
+                            style: TextStyle(
+                              fontSize: 20.0,
+                            )),
+                        Container(
+                            height: 60,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black12)),
+                            child: Text(
+                              model.totalAverage != "＊"
+                                  ? "平均約${model.totalAverage}秒に一回猫背になっています"
+                                  : "データなし",
+                              style: TextStyle(
+                                fontSize: 20.0,
+                              ),
+                            )),
+                      ],
                     ),
                   ],
                 ),

@@ -19,8 +19,7 @@ class CameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     isAdjusting = true;
-    // isCounting = false;
-    isCounting = true;
+    isCounting = false;
     return ChangeNotifierProvider<CameraModel>(
         create: (_) => CameraModel()..getCamera(),
         builder: (context, snapshot) {
@@ -69,7 +68,7 @@ class CameraPage extends StatelessWidget {
                           if (model.seconds > 300) {
                             await model.addData();
                             await model.calculateTotalAverage();
-                            model.upDateTotalAverage();
+                            await model.upDateTotalAverage();
                           } else {
                             await showDialog(
                                 context: context,
@@ -82,7 +81,7 @@ class CameraPage extends StatelessWidget {
                                         onPressed: () async {
                                           await model.addData();
                                           await model.calculateTotalAverage();
-                                          model.upDateTotalAverage();
+                                          await model.upDateTotalAverage();
                                           Navigator.of(context).pop();
                                         },
                                       ),
@@ -97,37 +96,65 @@ class CameraPage extends StatelessWidget {
                                 });
                           }
 
-                          Navigator.of(context).pop();
+                          Navigator.of(context).pop([
+                            model.averageTime.toString(),
+                            model.seconds.toString(),
+                            model.numberOfNotifications.toString()
+                          ]);
                         },
                         child: const Icon(Icons.stop),
                         backgroundColor: Colors.red,
                       )),
-                  // if (!isCounting! && isAdjusting!)
-                  //   Container(
-                  //     width: double.infinity,
-                  //     height: double.infinity,
-                  //     color: Colors.grey.withOpacity(0.5),
-                  //     child: Center(
-                  //       child: Column(
-                  //         mainAxisSize: MainAxisSize.min,
-                  //         children: [
-                  //           Text(
-                  //             "位置調整してください",
-                  //             style:
-                  //                 TextStyle(fontSize: 30, color: Colors.white),
-                  //           ),
-                  //           SizedBox(
-                  //             height: 150,
-                  //           ),
-                  //           ElevatedButton(
-                  //               onPressed: () {
-                  //                 isCounting = true;
-                  //               },
-                  //               child: Text("ok"))
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   )
+                  if (!isCounting! && isAdjusting!)
+                    Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: Colors.grey.withOpacity(0.5),
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "位置・音量を\n調整してください",
+                              style:
+                                  TextStyle(fontSize: 30, color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              "（okを押すと計測が始まります）",
+                              style:
+                                  TextStyle(fontSize: 20, color: Colors.white),
+                            ),
+                            const SizedBox(
+                              height: 150,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ElevatedButton(
+                                    onPressed: () async {
+                                      executeFuture = false;
+                                      await audioPlayer?.stop();
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("戻る")),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      isCounting = true;
+                                    },
+                                    child: Text("ok")),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  if (isCounting! && !detection)
+                    Center(
+                        child: Text(
+                      "計測停止中",
+                      style: TextStyle(fontSize: 30, color: Colors.white),
+                    )),
                 ],
               );
             }),
@@ -166,17 +193,17 @@ class Painter extends CustomPainter {
               canvas.drawLine(Offset(0, size.height / 2),
                   Offset(size.width, size.height / 2), paint);
               beyond = true;
-              if (isCounting!) {
-                notificationSound(beyond);
-              }
+              // if (isCounting!) {
+              notificationSound(beyond);
+              // }
             } else if (!beyond) {
               paint.color = Colors.greenAccent;
               paint.strokeWidth = 3;
               canvas.drawLine(Offset(0, size.height / 2),
                   Offset(size.width, size.height / 2), paint);
-              if (isCounting!) {
-                notificationSound(beyond);
-              }
+              // if (isCounting!) {
+              notificationSound(beyond);
+              // }
             }
           }
         });
@@ -198,12 +225,14 @@ class Painter extends CustomPainter {
       executeFuture = true;
       loopCount++;
       if (loopCount < 2) {
-        Future.delayed(const Duration(seconds: 3), () async {
+        Future.delayed(const Duration(seconds: 5), () async {
           loopCount = 0;
           if (executeFuture!) {
             audioPlayer = await _cache.loop("sounds/notification.mp3");
             executeFuture = false;
-            model.counter();
+            if (isCounting!) {
+              model.counter();
+            }
           }
         });
       }
