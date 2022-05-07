@@ -5,45 +5,25 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:tflite/tflite.dart';
 
-import '../camera/camera_model.dart';
-import '../utils.dart';
+import '../data.dart';
 
 final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class HomeModel extends ChangeNotifier {
-  String totalAverage = "*";
-  List<Data>? data = [];
+  dynamic totalAverage = "＊";
+
   Future loadModel() async {
     Tflite.close();
     try {
       String? res;
       res = await Tflite.loadModel(
-          model: "assets/posenet_mv1_075_float_from_checkpoints.tflite");
-      if (kDebugMode) {
-        print(res);
-      }
+        model: "assets/posenet_mv1_075_float_from_checkpoints.tflite",
+      );
+      print(res);
     } on PlatformException {
-      if (kDebugMode) {
-        print("Failed to load model");
-      }
+      print("Failed to load model");
     }
-  }
-
-  void fetchData() async {
-    final QuerySnapshot snapshot =
-        await FirebaseFirestore.instance.collection('measurements').get();
-
-    final List<Data> data = snapshot.docs.map((DocumentSnapshot document) {
-      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-      final String seconds = data["seconds"];
-      final String numberOfNotifications = data["numberOfNotifications"];
-      final String average = data["averageTime"];
-      final String userId = data["userId"];
-      return Data(seconds, numberOfNotifications, average, userId);
-    }).toList();
-    this.data = data;
-    notifyListeners();
   }
 
   getTotalAverage() async {
@@ -51,6 +31,7 @@ class HomeModel extends ChangeNotifier {
     DocumentSnapshot snapshot = await firestore.doc("users/$userId").get();
     final data = snapshot.data() as Map<String, dynamic>;
     totalAverage = data["totalAverage"];
+    print("結果");
     print(totalAverage);
     notifyListeners();
   }
