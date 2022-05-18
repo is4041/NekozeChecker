@@ -31,7 +31,7 @@ class CameraPage extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text(
-                        "No Camera",
+                        "Camera is not available",
                         style: TextStyle(fontSize: 35),
                       ),
                       const SizedBox(
@@ -69,6 +69,7 @@ class CameraPage extends StatelessWidget {
                             await model.addData();
                             await model.calculateTotalAverage();
                             await model.upDateTotalAverage();
+                            await model.lastMeasuredOn();
                           } else {
                             await showDialog(
                                 context: context,
@@ -82,6 +83,7 @@ class CameraPage extends StatelessWidget {
                                           await model.addData();
                                           await model.calculateTotalAverage();
                                           await model.upDateTotalAverage();
+                                          await model.lastMeasuredOn();
                                           Navigator.of(context).pop();
                                         },
                                       ),
