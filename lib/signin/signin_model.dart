@@ -32,16 +32,26 @@ class SignInModel extends ChangeNotifier {
     final userCredential =
         await FirebaseAuth.instance.signInWithCredential(credential);
     final uid = userCredential.user!.uid;
-    FirebaseFirestore.instance.collection("users").doc(uid).set(
-        {"userId": uid, "totalAverage": "0", "createdAt": Timestamp.now()});
+    FirebaseFirestore.instance.collection("users").doc(uid).set({
+      "userId": uid,
+      "dailyAverage": "＊",
+      "totalAverage": "＊",
+      "createdAt": Timestamp.now(),
+      "lastMeasuredOn": "",
+    });
   }
 
   signInWithAnonymousUser() async {
     try {
       await firebaseAuth.signInAnonymously();
       final uid = firebaseAuth.currentUser!.uid;
-      FirebaseFirestore.instance.collection("users").doc(uid).set(
-          {"userId": uid, "totalAverage": "0", "createdAt": Timestamp.now()});
+      FirebaseFirestore.instance.collection("users").doc(uid).set({
+        "userId": uid,
+        "dailyAverage": "＊",
+        "totalAverage": "＊",
+        "createdAt": Timestamp.now(),
+        "lastMeasuredOn": "",
+      });
     } catch (e) {
       throw ("error");
     }

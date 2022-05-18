@@ -5,14 +5,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:tflite/tflite.dart';
 
+import '../camera/camera_model.dart';
 import '../data.dart';
+import '../utils.dart';
 
-final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class HomeModel extends ChangeNotifier {
-  dynamic totalAverage = "＊";
-
   Future loadModel() async {
     Tflite.close();
     try {
@@ -26,13 +25,32 @@ class HomeModel extends ChangeNotifier {
     }
   }
 
-  getTotalAverage() async {
-    final userId = firebaseAuth.currentUser!.uid;
+  getAverage() async {
+    final today = Timestamp.now().toDate().toString().substring(0, 10);
+
     DocumentSnapshot snapshot = await firestore.doc("users/$userId").get();
     final data = snapshot.data() as Map<String, dynamic>;
-    totalAverage = data["totalAverage"];
-    print("結果");
-    print(totalAverage);
+
+    if (today == data["lastMeasuredOn"]) {
+      Utils.dailyAverage = data["dailyAverage"];
+    } else {
+      await upDateDailyAverage();
+      Utils.dailyAverage = "＊";
+    }
+
+    if (Utils.totalAverage == null) {
+      DocumentSnapshot snapshot = await firestore.doc("users/$userId").get();
+      final data = snapshot.data() as Map<String, dynamic>;
+
+      Utils.totalAverage = data["totalAverage"];
+    }
     notifyListeners();
+  }
+
+  upDateDailyAverage() async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(userId)
+        .update({"dailyAverage": "＊"});
   }
 }

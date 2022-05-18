@@ -85,7 +85,7 @@ class History extends StatelessWidget {
                                   // Text(data.createdAt),
                                 ],
                               ),
-                              trailing: Text(data.createdAt.substring(0, 10)),
+                              trailing: Text(data.createdAt),
                             ),
                           ),
                         ),
