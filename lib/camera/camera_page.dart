@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -8,16 +10,17 @@ import '../home/home_page.dart';
 
 final AudioCache _cache = AudioCache();
 AudioPlayer? audioPlayer;
-bool soundLoop = false;
-bool? executeFuture;
-int loopCount = 0;
+bool? soundLoop;
 bool detection = false;
 bool? isCounting;
 bool? isAdjusting;
+bool? fiveSec = false;
+Timer? timer;
 
 class CameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    soundLoop = false;
     isAdjusting = true;
     isCounting = false;
     return ChangeNotifierProvider<CameraModel>(
@@ -59,10 +62,9 @@ class CameraPage extends StatelessWidget {
                       alignment: const Alignment(0, 0.9),
                       child: FloatingActionButton(
                         onPressed: () async {
-                          isCounting = false;
-                          isAdjusting = false;
-                          executeFuture = false;
+                          timer?.cancel();
                           await audioPlayer?.stop();
+                          isCounting = false;
                           model.stopTimer();
                           model.calculate();
                           if (model.seconds > 300) {
@@ -97,9 +99,10 @@ class CameraPage extends StatelessWidget {
                                   );
                                 });
                           }
+                          await audioPlayer?.stop();
 
                           Navigator.of(context).pop([
-                            model.averageTime.toString(),
+                            model.averageTime.toStringAsFixed(2),
                             model.seconds.toString(),
                             model.numberOfNotifications.toString()
                           ]);
@@ -123,7 +126,7 @@ class CameraPage extends StatelessWidget {
                               textAlign: TextAlign.center,
                             ),
                             Text(
-                              "（okを押すと計測が始まります）",
+                              "（OKを押すと計測が始まります）",
                               style:
                                   TextStyle(fontSize: 20, color: Colors.white),
                             ),
@@ -135,16 +138,18 @@ class CameraPage extends StatelessWidget {
                               children: [
                                 ElevatedButton(
                                     onPressed: () async {
-                                      executeFuture = false;
+                                      timer?.cancel();
                                       await audioPlayer?.stop();
                                       Navigator.of(context).pop();
+                                      print(detection);
                                     },
                                     child: Text("戻る")),
                                 ElevatedButton(
                                     onPressed: () {
+                                      isAdjusting = false;
                                       isCounting = true;
                                     },
-                                    child: Text("ok")),
+                                    child: Text("OK")),
                               ],
                             )
                           ],
@@ -189,58 +194,60 @@ class Painter extends CustomPainter {
             paint.color = Colors.white;
             canvas.drawCircle(
                 Offset(size.width * k["x"], size.height * k["y"]), 5, paint);
+            //noseのkeypointsが中央ライン以下にあるとき
             if (k["part"] == "nose" && k["y"] > 0.5) {
               paint.color = Colors.red;
               paint.strokeWidth = 3;
               canvas.drawLine(Offset(0, size.height / 2),
                   Offset(size.width, size.height / 2), paint);
               beyond = true;
-              // if (isCounting!) {
               notificationSound(beyond);
-              // }
+              //noseのkeypointsが中央ライン以上にあるとき
             } else if (!beyond) {
               paint.color = Colors.greenAccent;
               paint.strokeWidth = 3;
               canvas.drawLine(Offset(0, size.height / 2),
                   Offset(size.width, size.height / 2), paint);
-              // if (isCounting!) {
               notificationSound(beyond);
-              // }
             }
           }
         });
       }
-    } else if (detection) {
+      //顔認識できない場合の処理
+    } else if (detection || isAdjusting!) {
+      timer?.cancel();
       detection = false;
-      print("検知不可");
+      print("計測停止中");
       soundLoop = false;
-      executeFuture = false;
-      model.stopTimer();
+      await model.stopTimer();
       print("Timer Stop");
       await audioPlayer?.stop();
     }
   }
 
   notificationSound(bool beyond) async {
-    if (beyond && !soundLoop) {
+    //中央ライン以下の時の処理
+    if (beyond && !soundLoop!) {
       soundLoop = true;
-      executeFuture = true;
-      loopCount++;
-      if (loopCount < 2) {
-        Future.delayed(const Duration(seconds: 5), () async {
-          loopCount = 0;
-          if (executeFuture!) {
-            audioPlayer = await _cache.loop("sounds/notification.mp3");
-            executeFuture = false;
-            if (isCounting!) {
-              model.counter();
-            }
-          }
-        });
-      }
-    } else if (!beyond && soundLoop) {
+      print("5秒後警告");
+      timer = Timer(Duration(seconds: 5), () async {
+        fiveSec = true;
+        await model.stopTimer();
+        audioPlayer = await _cache.loop("sounds/notification.mp3");
+        if (isCounting!) {
+          await model.counter();
+        }
+      });
+      //中央ライン以上の時の処理
+    } else if (!beyond && soundLoop!) {
       soundLoop = false;
-      executeFuture = false;
+      print("AlertCancel");
+      if (fiveSec == true) {
+        fiveSec = false;
+        await model.startTimer();
+      }
+
+      timer?.cancel();
       await audioPlayer?.stop();
     }
   }

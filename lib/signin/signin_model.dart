@@ -34,8 +34,8 @@ class SignInModel extends ChangeNotifier {
     final uid = userCredential.user!.uid;
     FirebaseFirestore.instance.collection("users").doc(uid).set({
       "userId": uid,
-      "dailyAverage": "＊",
-      "totalAverage": "＊",
+      "dailyAverage": "",
+      "totalAverage": "",
       "createdAt": Timestamp.now(),
       "lastMeasuredOn": "",
     });
@@ -47,8 +47,8 @@ class SignInModel extends ChangeNotifier {
       final uid = firebaseAuth.currentUser!.uid;
       FirebaseFirestore.instance.collection("users").doc(uid).set({
         "userId": uid,
-        "dailyAverage": "＊",
-        "totalAverage": "＊",
+        "dailyAverage": "",
+        "totalAverage": "",
         "createdAt": Timestamp.now(),
         "lastMeasuredOn": "",
       });
