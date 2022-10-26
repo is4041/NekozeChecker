@@ -6,14 +6,20 @@ import 'package:provider/provider.dart';
 
 import '../data.dart';
 
-class History extends StatelessWidget {
+class HistoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<HistoryModel>(
         create: (_) => HistoryModel()..fetchData(),
         builder: (context, snapshot) {
           return Scaffold(
-            appBar: AppBar(title: Text("履歴")),
+            appBar: AppBar(
+              title: Text(
+                "履歴",
+                style: TextStyle(color: Colors.green),
+              ),
+              backgroundColor: Colors.white,
+            ),
             body: Center(
               child: Consumer<HistoryModel>(builder: (context, model, child) {
                 final List<Data>? data = model.data;
@@ -32,38 +38,79 @@ class History extends StatelessWidget {
                               SlidableAction(
                                 onPressed: (_) async {
                                   await showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title:
-                                              Text("合計平均値が変化しますがデータを削除しますか？"),
-                                          actions: [
-                                            TextButton(
-                                              child: const Text("はい"),
-                                              onPressed: () async {
-                                                await model.delete(data);
-                                                await model
-                                                    .calculateTotalAverage();
-                                                await model
-                                                    .upDateTotalAverage();
-                                                model.fetchData();
-                                                Navigator.of(context).pop();
-                                                final snackBar = SnackBar(
-                                                    backgroundColor: Colors.red,
-                                                    content: Text("削除しました"));
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(snackBar);
-                                              },
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text("合計平均値が変化しますがデータを削除しますか？"),
+                                        actions: [
+                                          TextButton(
+                                            child: const Text(
+                                              "はい",
+                                              style:
+                                                  TextStyle(color: Colors.red),
                                             ),
-                                            TextButton(
-                                              child: Text("いいえ"),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            )
-                                          ],
-                                        );
-                                      });
+                                            onPressed: () async {
+                                              await model.delete(data);
+                                              await model
+                                                  .calculateTotalAverage();
+                                              await model.upDateTotalAverage();
+                                              model.fetchData();
+                                              Navigator.of(context).pop();
+                                              final snackBar = SnackBar(
+                                                  backgroundColor: Colors.red,
+                                                  content: Text("削除しました"));
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(snackBar);
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: Text("いいえ"),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          )
+                                        ],
+                                      );
+                                    },
+                                  );
+
+                                  // await showDialog(
+                                  //   context: context,
+                                  //   builder: (context) {
+                                  //     return CupertinoAlertDialog(
+                                  //       title:
+                                  //           Text("合計平均値が変化しますが\nデータを削除しますか？"),
+                                  //       actions: [
+                                  //         CupertinoDialogAction(
+                                  //           child: Text(
+                                  //             "はい",
+                                  //             style:
+                                  //                 TextStyle(color: Colors.red),
+                                  //           ),
+                                  //           onPressed: () async {
+                                  //             await model.delete(data);
+                                  //             await model
+                                  //                 .calculateTotalAverage();
+                                  //             await model.upDateTotalAverage();
+                                  //             model.fetchData();
+                                  //             Navigator.of(context).pop();
+                                  //             final snackBar = SnackBar(
+                                  //                 backgroundColor: Colors.red,
+                                  //                 content: Text("削除しました"));
+                                  //             ScaffoldMessenger.of(context)
+                                  //                 .showSnackBar(snackBar);
+                                  //           },
+                                  //         ),
+                                  //         CupertinoDialogAction(
+                                  //           child: Text("いいえ"),
+                                  //           onPressed: () {
+                                  //             Navigator.pop(context);
+                                  //           },
+                                  //         ),
+                                  //       ],
+                                  //     );
+                                  //   },
+                                  // );
                                 },
                                 backgroundColor: Colors.red,
                                 icon: Icons.delete,
@@ -76,23 +123,35 @@ class History extends StatelessWidget {
                               title: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("計測時間：${data.seconds}秒"),
+                                  Text(int.parse(data.seconds) ~/ 60 > 0
+                                      ? "計測時間：${int.parse(data.seconds) ~/ 60}分${int.parse(data.seconds) % 60}秒"
+                                      : "計測時間：${int.parse(data.seconds) % 60}秒"),
                                   Text("通知回数：${data.numberOfNotifications}回"),
-                                  Text(data.averageTime != "＊"
-                                      ? "${data.averageTime}秒に1回猫背"
-                                      : "猫背にはなっていません"),
-                                  // Text("userId：${data.userId}"),
-                                  // Text(data.createdAt),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        data.averageTime != ""
+                                            ? "${data.averageTime}分"
+                                            : "猫背は検知されていません",
+                                        style: TextStyle(
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        data.averageTime != "" ? "に一回猫背" : "",
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
-                              trailing: Text(data.createdAt),
+                              trailing: Text(data.createdAt.substring(0, 10)),
                             ),
                           ),
                         ),
                       ),
                     )
                     .toList();
-                // if(widgets.toString() != "infinity")
+
                 return ListView(
                   children: widgets,
                 );

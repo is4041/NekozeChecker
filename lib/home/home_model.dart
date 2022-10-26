@@ -35,7 +35,7 @@ class HomeModel extends ChangeNotifier {
       Utils.dailyAverage = data["dailyAverage"];
     } else {
       await upDateDailyAverage();
-      Utils.dailyAverage = "＊";
+      Utils.dailyAverage = "";
     }
 
     if (Utils.totalAverage == null) {
@@ -51,6 +51,6 @@ class HomeModel extends ChangeNotifier {
     await FirebaseFirestore.instance
         .collection("users")
         .doc(userId)
-        .update({"dailyAverage": "＊"});
+        .update({"dailyAverage": ""});
   }
 }

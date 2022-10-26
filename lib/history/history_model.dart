@@ -17,9 +17,9 @@ class HistoryModel extends ChangeNotifier {
 
     final List<Data> data = snapshot.docs.map((DocumentSnapshot document) {
       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-      final String seconds = data["seconds"];
+      final String seconds = data["measuringSec"];
       final String numberOfNotifications = data["numberOfNotifications"];
-      final String average = data["averageTime"];
+      final String average = data["averageMin"];
       final String userId = data["userId"];
       final String createdAt = data["createdAt"];
       final String id = document.id;
@@ -39,76 +39,82 @@ class HistoryModel extends ChangeNotifier {
         await FirebaseFirestore.instance.collection("measurements").get();
     for (var doc in snapshot.docs) {
       if (doc.get("userId") == userId.toString()) {
-        if (doc.get("createdAt") == today) {
-          dailyTotalSecondsArray.add(double.parse(doc.get("seconds")));
+        //当日の計測（秒数、警告回数）を配列に追加
+        if (doc.get("createdAt").toString().substring(0, 10) == today) {
+          dailyTotalSecondsArray.add(double.parse(doc.get("measuringSec")));
           dailyTotalNotificationsArray
               .add(double.parse(doc.get("numberOfNotifications")));
         }
-
-        totalSecondsArray.add(double.parse(doc.get("seconds")));
+        //全データの計測（秒数、警告回数）を配列に追加
+        totalSecondsArray.add(double.parse(doc.get("measuringSec")));
         totalNotificationsArray
             .add(double.parse(doc.get("numberOfNotifications")));
       }
     }
-
+    //当日の計測データ（秒数、警告回数）がisNotEmptyでなければそれぞれのデータの合計値を割り出す
     if (dailyTotalSecondsArray.isNotEmpty &&
         dailyTotalNotificationsArray.isNotEmpty) {
-      print("dailySec:$dailyTotalSecondsArray");
-      print("dailyNot:$dailyTotalNotificationsArray");
-      final totalOfSeconds = dailyTotalSecondsArray.reduce((a, b) => a + b);
+      print("本日の計測秒数リスト: $dailyTotalSecondsArray");
+      print("本日の警告回数リスト: $dailyTotalNotificationsArray");
+      final totalOfDailySeconds =
+          dailyTotalSecondsArray.reduce((a, b) => a + b);
+      print("本日の計測秒数の総計: $totalOfDailySeconds");
 
-      final totalOfNotifications =
+      final totalOfDailyNotifications =
           dailyTotalNotificationsArray.reduce((a, b) => a + b);
-      if (totalOfNotifications > 0) {
-        dailyAverage = totalOfSeconds / totalOfNotifications;
-        print("今日の平均:${dailyAverage.round()}秒(四捨五入済)");
+      print("本日の警告回数の総計: $totalOfDailyNotifications");
+      //当日の計測データの平均値を割り出す（計測時間÷警告回数＝何秒に一度警告されたか）
+      if (totalOfDailyNotifications > 0) {
+        dailyAverage = totalOfDailySeconds / totalOfDailyNotifications / 60;
+        print("本日の平均:${dailyAverage.round()}分(四捨五入)");
+        //警告回数が0なら計算不可のため＊を代入
       } else {
-        dailyAverage = "＊";
+        dailyAverage = "";
       }
+      //データなしでは計算不可のため＊を代入
     } else {
-      dailyAverage = "＊";
+      dailyAverage = "";
     }
-
+    //上記の全データver
     if (totalSecondsArray.isNotEmpty && totalNotificationsArray.isNotEmpty) {
-      print("totalSec$totalSecondsArray");
-      print("totalNot$totalNotificationsArray");
+      print("全ての計測秒数リスト: $totalSecondsArray");
+      print("全ての警告回数リスト: $totalNotificationsArray");
       final totalOfSeconds = totalSecondsArray.reduce((a, b) => a + b);
+      print("全ての計測秒数の総計: $totalOfSeconds");
 
       final totalOfNotifications =
           totalNotificationsArray.reduce((a, b) => a + b);
+      print("全ての警告回数の総計: $totalOfNotifications");
       if (totalOfNotifications > 0) {
-        totalAverage = totalOfSeconds / totalOfNotifications;
-        print("全体の平均:${totalAverage.round()}秒(四捨五入済)");
+        totalAverage = totalOfSeconds / totalOfNotifications / 60;
+        print("全体の平均:${totalAverage.round()}分(四捨五入)");
       } else {
-        totalAverage = "＊";
+        totalAverage = "";
       }
     } else {
-      totalAverage = "＊";
+      totalAverage = "";
     }
   }
 
   upDateTotalAverage() async {
     await FirebaseFirestore.instance.collection("users").doc(userId).update({
-      "dailyAverage": dailyAverage.toString() != "＊"
-          ? dailyAverage.round().toString()
-          : "＊",
+      "dailyAverage":
+          dailyAverage.toString() != "" ? dailyAverage.round().toString() : "",
       "totalAverage":
-          totalAverage.toString() != "＊" ? totalAverage.round().toString() : "＊"
+          totalAverage.toString() != "" ? totalAverage.round().toString() : ""
     });
 
-    if (dailyAverage.toString() != "＊") {
+    if (dailyAverage.toString() != "") {
       Utils.dailyAverage = dailyAverage.round().toString();
     } else {
       Utils.dailyAverage = dailyAverage;
     }
 
-    if (totalAverage.toString() != "＊") {
+    if (totalAverage.toString() != "") {
       Utils.totalAverage = totalAverage.round().toString();
     } else {
       Utils.totalAverage = totalAverage;
     }
-    print("fromHistoryModel:${Utils.dailyAverage}s");
-    print("fromHistoryModel:${Utils.totalAverage}s");
   }
 
   Future delete(Data data) async {
