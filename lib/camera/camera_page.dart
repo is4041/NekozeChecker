@@ -14,8 +14,8 @@ bool? soundLoop;
 bool detection = false;
 bool? isCounting;
 bool? isAdjusting;
-bool? fiveSec = false;
-Timer? timer;
+Timer? notificationTimer;
+// bool? nekoze;
 
 class CameraPage extends StatelessWidget {
   @override
@@ -23,6 +23,7 @@ class CameraPage extends StatelessWidget {
     soundLoop = false;
     isAdjusting = true;
     isCounting = false;
+    // nekoze  = false;
     return ChangeNotifierProvider<CameraModel>(
         create: (_) => CameraModel()..getCamera(),
         builder: (context, snapshot) {
@@ -59,57 +60,59 @@ class CameraPage extends StatelessWidget {
                     ),
                   ),
                   Align(
-                      alignment: const Alignment(0, 0.9),
-                      child: FloatingActionButton(
-                        onPressed: () async {
-                          timer?.cancel();
-                          await audioPlayer?.stop();
-                          isCounting = false;
-                          model.stopTimer();
-                          model.calculate();
-                          if (model.seconds > 300) {
-                            await model.addData();
-                            await model.calculateTotalAverage();
-                            await model.upDateTotalAverage();
-                            await model.lastMeasuredOn();
-                          } else {
-                            await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text("使用時間が5分未満ですがデータを保存しますか？"),
-                                    actions: [
-                                      TextButton(
-                                        child: const Text("ok"),
-                                        onPressed: () async {
-                                          await model.addData();
-                                          await model.calculateTotalAverage();
-                                          await model.upDateTotalAverage();
-                                          await model.lastMeasuredOn();
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: Text("cancel"),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      )
-                                    ],
-                                  );
-                                });
-                          }
-                          await audioPlayer?.stop();
+                    alignment: const Alignment(0, 0.9),
+                    child: FloatingActionButton(
+                      onPressed: () async {
+                        notificationTimer?.cancel();
+                        await audioPlayer?.stop();
+                        isCounting = false;
+                        model.stopTimer();
+                        model.stopBadPostureTimer();
+                        model.calculate();
+                        if (model.measuringSec > 300) {
+                          await model.addData();
+                          await model.calculateTotalAverage();
+                          await model.upDateTotalAverage();
+                          await model.lastMeasuredOn();
+                        } else {
+                          await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("使用時間が5分未満ですがデータを保存しますか？"),
+                                  actions: [
+                                    TextButton(
+                                      child: const Text("ok"),
+                                      onPressed: () async {
+                                        await model.addData();
+                                        await model.calculateTotalAverage();
+                                        await model.upDateTotalAverage();
+                                        await model.lastMeasuredOn();
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: Text("cancel"),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    )
+                                  ],
+                                );
+                              });
+                        }
+                        await audioPlayer?.stop();
 
-                          Navigator.of(context).pop([
-                            model.averageTime.toStringAsFixed(2),
-                            model.seconds.toString(),
-                            model.numberOfNotifications.toString()
-                          ]);
-                        },
-                        child: const Icon(Icons.stop),
-                        backgroundColor: Colors.red,
-                      )),
+                        Navigator.of(context).pop([
+                          model.averageTime.toStringAsFixed(2),
+                          model.measuringSec.toString(),
+                          model.numberOfNotifications.toString()
+                        ]);
+                      },
+                      child: const Icon(Icons.stop),
+                      backgroundColor: Colors.red,
+                    ),
+                  ),
                   if (!isCounting! && isAdjusting!)
                     Container(
                       width: double.infinity,
@@ -138,16 +141,16 @@ class CameraPage extends StatelessWidget {
                               children: [
                                 ElevatedButton(
                                     onPressed: () async {
-                                      timer?.cancel();
+                                      notificationTimer?.cancel();
                                       await audioPlayer?.stop();
                                       Navigator.of(context).pop();
-                                      print(detection);
                                     },
                                     child: Text("戻る")),
                                 ElevatedButton(
                                     onPressed: () {
                                       isAdjusting = false;
                                       isCounting = true;
+                                      // nekoze = true;
                                     },
                                     child: Text("OK")),
                               ],
@@ -179,6 +182,7 @@ class Painter extends CustomPainter {
   void paint(Canvas canvas, Size size) async {
     final paint = Paint();
     if (params!.isNotEmpty) {
+      //okボタン押下で計測を開始（ボタン押下前からの計測開始をを阻止する）
       if (isCounting! && !detection) {
         detection = true;
         model.startTimer();
@@ -202,6 +206,12 @@ class Painter extends CustomPainter {
                   Offset(size.width, size.height / 2), paint);
               beyond = true;
               notificationSound(beyond);
+              //todo
+              // if (nekoze!) {
+              //   nekoze = false;
+              //   model.startBadPostureTimer();
+              //   print("猫背タイマースタート");
+              // }
               //noseのkeypointsが中央ライン以上にあるとき
             } else if (!beyond) {
               paint.color = Colors.greenAccent;
@@ -215,12 +225,14 @@ class Painter extends CustomPainter {
       }
       //顔認識できない場合の処理
     } else if (detection || isAdjusting!) {
-      timer?.cancel();
+      notificationTimer?.cancel();
       detection = false;
       print("計測停止中");
       soundLoop = false;
-      await model.stopTimer();
+      model.stopTimer();
       print("Timer Stop");
+      model.stopBadPostureTimer();
+      print("Bad Posture Timer Stop");
       await audioPlayer?.stop();
     }
   }
@@ -228,26 +240,25 @@ class Painter extends CustomPainter {
   notificationSound(bool beyond) async {
     //中央ライン以下の時の処理
     if (beyond && !soundLoop!) {
+      //todo
+      // if (isCounting!) {
+      //   model.startBadPostureTimer();
+      //   print("猫背タイマースタート");
+      // }
+
       soundLoop = true;
       print("5秒後警告");
-      timer = Timer(Duration(seconds: 5), () async {
-        fiveSec = true;
-        await model.stopTimer();
+      notificationTimer = Timer(Duration(seconds: 5), () async {
         audioPlayer = await _cache.loop("sounds/notification.mp3");
         if (isCounting!) {
-          await model.counter();
+          model.counter();
         }
       });
       //中央ライン以上の時の処理
     } else if (!beyond && soundLoop!) {
       soundLoop = false;
-      print("AlertCancel");
-      if (fiveSec == true) {
-        fiveSec = false;
-        await model.startTimer();
-      }
-
-      timer?.cancel();
+      model.stopBadPostureTimer();
+      notificationTimer?.cancel();
       await audioPlayer?.stop();
     }
   }

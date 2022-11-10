@@ -17,7 +17,9 @@ class CameraModel extends ChangeNotifier {
   bool isDetecting = false;
   List recognition = [];
   Timer? timer;
-  int seconds = 0;
+  Timer? badPostureTimer;
+  int measuringSec = 0;
+  int measuringBadPostureSec = 0;
   int numberOfNotifications = 0;
   dynamic averageTime = 0;
   dynamic totalAverage;
@@ -34,6 +36,7 @@ class CameraModel extends ChangeNotifier {
       if (!isDetecting) {
         isDetecting = true;
         recognition = await poseEstimation(img);
+        //todo compute
         // recognition = await compute(poseEstimation, img);
         isDetecting = false;
         notifyListeners();
@@ -56,13 +59,24 @@ class CameraModel extends ChangeNotifier {
 
   startTimer() {
     timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-      seconds++;
-      print("${seconds}秒");
+      measuringSec++;
+      print("${measuringSec}秒");
     });
   }
 
   stopTimer() {
     timer?.cancel();
+  }
+
+  startBadPostureTimer() {
+    badPostureTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      measuringBadPostureSec++;
+      print("猫背検知中...${measuringBadPostureSec}秒");
+    });
+  }
+
+  stopBadPostureTimer() {
+    badPostureTimer?.cancel();
   }
 
   counter() {
@@ -72,11 +86,7 @@ class CameraModel extends ChangeNotifier {
 
   calculate() {
     if (numberOfNotifications > 0) {
-      averageTime = seconds / numberOfNotifications / 60;
-      //ここに"measuringTime(m:s)"(文字列の連結必要)
-      //measuringSec = seconds ~/ 60;
-      //measuringMin = seconds % 60;
-      //final www = measuringMin.toString(); + : + measuringSec.toString();
+      averageTime = measuringSec / numberOfNotifications / 60;
     } else {
       averageTime = "";
     }
@@ -86,11 +96,15 @@ class CameraModel extends ChangeNotifier {
   addData() async {
     final createdAt = Timestamp.now().toDate().toString().substring(0, 19);
     final userId = firebaseAuth.currentUser!.uid.toString();
+    final measuringMin = measuringSec / 60;
+    final measuringBadPostureMin = measuringBadPostureSec / 60;
 
     await FirebaseFirestore.instance.collection("measurements").add({
-      "createdAt": createdAt,
       "userId": userId,
-      "measuringSec": seconds.toString(),
+      "createdAt": createdAt,
+      "measuringSec": measuringSec.toString(),
+      "measuringMin": measuringMin.toStringAsFixed(1),
+      "measuringBadPostureMin": measuringBadPostureMin.toStringAsFixed(1),
       "numberOfNotifications": numberOfNotifications.toString(),
       "averageMin": averageTime != "" ? averageTime.toStringAsFixed(2) : "",
     });

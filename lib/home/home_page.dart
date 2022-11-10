@@ -164,36 +164,34 @@ class HomePage extends StatelessWidget {
                                     ),
                                   )
                                 : Text(
-                                    "No Data",
+                                    "Waiting...",
                                     style: TextStyle(fontSize: 20.0),
-                                  )
-                            // child: Text(
-                            //   Utils.dailyAverage != null ||
-                            //           Utils.dailyAverage != "＊"
-                            //       ? "平均約${Utils.dailyAverage}秒に1回猫背になっています"
-                            //       : "No Data",
-                            //   style: TextStyle(fontSize: 20.0),
-                            // ),
-                            ),
-                        Text("全体の平均データ",
-                            style: TextStyle(
-                              fontSize: 20.0,
-                            )),
+                                  )),
+                        Text(
+                          "全体の平均データ",
+                          style: TextStyle(
+                            fontSize: 20.0,
+                          ),
+                        ),
                         Container(
-                            height: 60,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black12)),
-                            child: Utils.totalAverage != null
-                                ? Text(
-                                    Utils.totalAverage != ""
-                                        ? "平均約${Utils.totalAverage}分に1回猫背になっています"
-                                        : "-----",
-                                    style: TextStyle(
-                                      fontSize: 20.0,
-                                    ),
-                                  )
-                                : SizedBox()),
+                          height: 60,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black12)),
+                          child: Utils.totalAverage != null
+                              ? Text(
+                                  Utils.totalAverage != ""
+                                      ? "平均約${Utils.totalAverage}分に1回猫背になっています"
+                                      : "-----",
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                  ),
+                                )
+                              : Text(
+                                  "Waiting...",
+                                  style: TextStyle(fontSize: 20.0),
+                                ),
+                        ),
                       ],
                     ),
                   ],

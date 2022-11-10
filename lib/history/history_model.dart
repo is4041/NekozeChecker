@@ -17,14 +17,16 @@ class HistoryModel extends ChangeNotifier {
 
     final List<Data> data = snapshot.docs.map((DocumentSnapshot document) {
       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-      final String seconds = data["measuringSec"];
-      final String numberOfNotifications = data["numberOfNotifications"];
-      final String average = data["averageMin"];
       final String userId = data["userId"];
       final String createdAt = data["createdAt"];
+      final String seconds = data["measuringSec"];
+      final String measuringMin = data["measuringMin"];
+      final String measuringBadPostureMin = data["measuringBadPostureMin"];
+      final String numberOfNotifications = data["numberOfNotifications"];
+      final String average = data["averageMin"];
       final String id = document.id;
-      return Data(
-          seconds, numberOfNotifications, average, userId, createdAt, id);
+      return Data(userId, createdAt, seconds, measuringMin,
+          measuringBadPostureMin, numberOfNotifications, average, id);
     }).toList();
     this.data = data;
     notifyListeners();
