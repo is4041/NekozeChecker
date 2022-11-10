@@ -65,7 +65,6 @@ class SignInPage extends StatelessWidget {
                             model.endLoading();
                           }),
                           const SizedBox(height: 20),
-                          //サインインしない
                           InkWell(
                             onTap: () async {
                               model.startLoading();
@@ -95,7 +94,7 @@ class SignInPage extends StatelessWidget {
                               width: 220,
                               decoration: BoxDecoration(
                                   border: Border.all(color: Colors.black)),
-                              child: const Center(child: Text("サインインせずに利用する")),
+                              child: const Center(child: Text("はじめる")),
                             ),
                           ),
                         ],
