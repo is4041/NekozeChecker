@@ -30,20 +30,23 @@ class _State extends State<BottomNavigation> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: pages[selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "ホーム",
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: "履歴"),
-          BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: "グラフ"),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "設定"),
-        ],
-        currentIndex: selectedIndex,
-        onTap: onTapItem,
-        selectedItemColor: Colors.green,
+      bottomNavigationBar: SizedBox(
+        // height: 100,
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: "ホーム",
+            ),
+            BottomNavigationBarItem(icon: Icon(Icons.history), label: "履歴"),
+            BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: "グラフ"),
+            BottomNavigationBarItem(icon: Icon(Icons.settings), label: "設定"),
+          ],
+          currentIndex: selectedIndex,
+          onTap: onTapItem,
+          selectedItemColor: Colors.green,
+        ),
       ),
     );
   }

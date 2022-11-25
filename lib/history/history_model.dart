@@ -6,29 +6,27 @@ import '../data.dart';
 import '../utils.dart';
 
 class HistoryModel extends ChangeNotifier {
+  bool isLoading = false;
+  bool showSwitch = false;
+  List<Map<String, String>> data5 = [];
   List<Data>? data = [];
+  String title = "";
   String userId = firebaseAuth.currentUser!.uid;
   dynamic totalAverage;
   dynamic dailyAverage;
 
-  void fetchData() async {
-    final QuerySnapshot snapshot =
-        await FirebaseFirestore.instance.collection('measurements').get();
+  Future fetchData() async {
+    isLoading = true;
+    final QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('measurements')
+        .where("userId", isEqualTo: userId.toString())
+        .orderBy("createdAt", descending: true)
+        .get();
 
-    final List<Data> data = snapshot.docs.map((DocumentSnapshot document) {
-      Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-      final String userId = data["userId"];
-      final String createdAt = data["createdAt"];
-      final String seconds = data["measuringSec"];
-      final String measuringMin = data["measuringMin"];
-      final String measuringBadPostureMin = data["measuringBadPostureMin"];
-      final String numberOfNotifications = data["numberOfNotifications"];
-      final String average = data["averageMin"];
-      final String id = document.id;
-      return Data(userId, createdAt, seconds, measuringMin,
-          measuringBadPostureMin, numberOfNotifications, average, id);
-    }).toList();
+    final data = snapshot.docs.map((doc) => Data(doc)).toList();
     this.data = data;
+
+    isLoading = false;
     notifyListeners();
   }
 
@@ -119,11 +117,34 @@ class HistoryModel extends ChangeNotifier {
     }
   }
 
+  Future updateTitle(Data data) async {
+    if (title.isNotEmpty) {
+      final doc = FirebaseFirestore.instance
+          .collection("measurements")
+          .doc(data.documentID);
+      await doc.update({
+        "title": title,
+      });
+      print("1");
+    } else {
+      final doc = FirebaseFirestore.instance
+          .collection("measurements")
+          .doc(data.documentID);
+      await doc.update({
+        "title": "",
+      });
+      print("2");
+    }
+  }
+
   Future delete(Data data) async {
-    print(data.id);
     return FirebaseFirestore.instance
         .collection("measurements")
-        .doc(data.id)
+        .doc(data.documentID)
         .delete();
+  }
+
+  test() {
+    print("test:${title}");
   }
 }
