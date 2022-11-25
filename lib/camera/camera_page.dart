@@ -14,8 +14,8 @@ bool? soundLoop;
 bool detection = false;
 bool? isCounting;
 bool? isAdjusting;
+bool? hiddenOkButton;
 Timer? notificationTimer;
-// bool? nekoze;
 
 class CameraPage extends StatelessWidget {
   @override
@@ -23,7 +23,7 @@ class CameraPage extends StatelessWidget {
     soundLoop = false;
     isAdjusting = true;
     isCounting = false;
-    // nekoze  = false;
+    hiddenOkButton = true;
     return ChangeNotifierProvider<CameraModel>(
         create: (_) => CameraModel()..getCamera(),
         builder: (context, snapshot) {
@@ -145,13 +145,22 @@ class CameraPage extends StatelessWidget {
                                       await audioPlayer?.stop();
                                       Navigator.of(context).pop();
                                     },
+                                    style: ElevatedButton.styleFrom(
+                                      primary: Colors.green,
+                                    ),
                                     child: Text("戻る")),
                                 ElevatedButton(
-                                    onPressed: () {
-                                      isAdjusting = false;
-                                      isCounting = true;
-                                      // nekoze = true;
-                                    },
+                                    onPressed: hiddenOkButton == false
+                                        ? () {
+                                            isAdjusting = false;
+                                            isCounting = true;
+                                          }
+                                        : () {},
+                                    style: ElevatedButton.styleFrom(
+                                      primary: hiddenOkButton == false
+                                          ? Colors.green
+                                          : Colors.green.withOpacity(0.3),
+                                    ),
                                     child: Text("OK")),
                               ],
                             )
@@ -206,14 +215,9 @@ class Painter extends CustomPainter {
                   Offset(size.width, size.height / 2), paint);
               beyond = true;
               notificationSound(beyond);
-              //todo
-              // if (nekoze!) {
-              //   nekoze = false;
-              //   model.startBadPostureTimer();
-              //   print("猫背タイマースタート");
-              // }
               //noseのkeypointsが中央ライン以上にあるとき
             } else if (!beyond) {
+              hiddenOkButton = false;
               paint.color = Colors.greenAccent;
               paint.strokeWidth = 3;
               canvas.drawLine(Offset(0, size.height / 2),
@@ -240,14 +244,14 @@ class Painter extends CustomPainter {
   notificationSound(bool beyond) async {
     //中央ライン以下の時の処理
     if (beyond && !soundLoop!) {
-      //todo
-      // if (isCounting!) {
-      //   model.startBadPostureTimer();
-      //   print("猫背タイマースタート");
-      // }
-
       soundLoop = true;
+      hiddenOkButton = true;
+      if (isCounting!) {
+        model.startBadPostureTimer();
+        print("猫背タイマースタート");
+      }
       print("5秒後警告");
+
       notificationTimer = Timer(Duration(seconds: 5), () async {
         audioPlayer = await _cache.loop("sounds/notification.mp3");
         if (isCounting!) {
@@ -257,6 +261,7 @@ class Painter extends CustomPainter {
       //中央ライン以上の時の処理
     } else if (!beyond && soundLoop!) {
       soundLoop = false;
+      hiddenOkButton = false;
       model.stopBadPostureTimer();
       notificationTimer?.cancel();
       await audioPlayer?.stop();

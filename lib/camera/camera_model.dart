@@ -85,8 +85,10 @@ class CameraModel extends ChangeNotifier {
   }
 
   calculate() {
+    //todo コード編集あり（確認まだ）
     if (numberOfNotifications > 0) {
-      averageTime = measuringSec / numberOfNotifications / 60;
+      averageTime =
+          (measuringSec / numberOfNotifications / 60).toStringAsFixed(2);
     } else {
       averageTime = "";
     }
@@ -96,17 +98,20 @@ class CameraModel extends ChangeNotifier {
   addData() async {
     final createdAt = Timestamp.now().toDate().toString().substring(0, 19);
     final userId = firebaseAuth.currentUser!.uid.toString();
-    final measuringMin = measuringSec / 60;
-    final measuringBadPostureMin = measuringBadPostureSec / 60;
+    final measuringMin = (measuringSec / 60).toStringAsFixed(1);
+    final measuringBadPostureMin =
+        (measuringBadPostureSec / 60).toStringAsFixed(1);
 
     await FirebaseFirestore.instance.collection("measurements").add({
-      "userId": userId,
+      "averageMin": averageTime,
       "createdAt": createdAt,
+      "measuringBadPostureMin": measuringBadPostureMin,
+      "measuringBadPostureSec": measuringBadPostureSec.toString(),
+      "measuringMin": measuringMin,
       "measuringSec": measuringSec.toString(),
-      "measuringMin": measuringMin.toStringAsFixed(1),
-      "measuringBadPostureMin": measuringBadPostureMin.toStringAsFixed(1),
       "numberOfNotifications": numberOfNotifications.toString(),
-      "averageMin": averageTime != "" ? averageTime.toStringAsFixed(2) : "",
+      "title": "",
+      "userId": userId,
     });
   }
 

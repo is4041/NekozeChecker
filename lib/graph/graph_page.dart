@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:posture_correction/graph/graph_model.dart';
 import 'package:provider/provider.dart';
 
@@ -26,59 +27,94 @@ class GraphPage extends StatelessWidget {
         create: (_) => GraphModel()..fetchGraphData(),
         builder: (context, snapshot) {
           return Consumer<GraphModel>(builder: (context, model, child) {
-            return Scaffold(
-                appBar: AppBar(
-                  title: Column(
-                    children: [
-                      // Text(
-                      //   "グラフ",
-                      //   style: TextStyle(fontSize: 13, color: Colors.green),
-                      // ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              model.getLastMonthData();
-                            },
-                            icon: Icon(Icons.arrow_back_ios_outlined),
-                            color: Colors.black,
-                          ),
-                          Center(
-                            child: Text(
-                              model.month!,
-                              style: TextStyle(
-                                fontSize: 25.0, color: Colors.green,
-                                // fontWeight: FontWeight.bold
-                              ),
-                            ),
-                          ),
-                          Transform.rotate(
-                            angle: 180 * pi / 180,
-                            child: IconButton(
+            return Stack(
+              children: [
+                Scaffold(
+                  appBar: AppBar(
+                    title: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            IconButton(
                               onPressed: () {
-                                model.getNextMonthData();
+                                model.getLastMonthData();
                               },
                               icon: Icon(Icons.arrow_back_ios_outlined),
                               color: Colors.black,
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  backgroundColor: Colors.white,
-                ),
-                body: Column(
-                  children: [
-                    Container(
-                      height: 10,
+                            Center(
+                              child: Text(
+                                model.year! + " / " + model.month!,
+                                style: TextStyle(
+                                  fontSize: 25.0, color: Colors.green,
+                                  // fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            ),
+                            Transform.rotate(
+                              angle: 180 * pi / 180,
+                              child: IconButton(
+                                onPressed: () {
+                                  model.getNextMonthData();
+                                },
+                                icon: Icon(Icons.arrow_back_ios_outlined),
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    Stack(
-                      children: [
-                        Stack(
-                          children: [
-                            Container(
+                    backgroundColor: Colors.white,
+                  ),
+                  body: Column(
+                    children: [
+                      Container(
+                        height: 10,
+                      ),
+                      Stack(
+                        children: [
+                          Stack(
+                            children: [
+                              //グラフのy軸部分のみ
+                              Container(
+                                height: screenSize.height * 0.5,
+                                width: model.extendWidth &&
+                                        model.num * 50 > screenSize.width
+                                    ? model.num * 50
+                                    : screenSize.width,
+                                // color: Colors.green[200],
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 25.0),
+                                  child: Container(
+                                    margin: model.extendWidth
+                                        ? null
+                                        : EdgeInsets.only(right: 45),
+                                    child: LineChart(
+                                      yAxisData(model),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                height: 20,
+                                width: 45,
+                                child: Center(
+                                  child: Text(
+                                    "(分)",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          //グラフ全体
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Container(
                               height: screenSize.height * 0.5,
                               width: model.extendWidth &&
                                       model.num * 50 > screenSize.width
@@ -87,158 +123,287 @@ class GraphPage extends StatelessWidget {
                               // color: Colors.grey[300],
                               child: Padding(
                                 padding: const EdgeInsets.only(top: 25.0),
-                                child: Container(
-                                  margin: model.extendWidth
-                                      ? null
-                                      : EdgeInsets.only(right: 45),
-                                  child: LineChart(
-                                    yAxisData(model),
-                                  ),
+                                child: LineChart(
+                                  mainData(model),
                                 ),
                               ),
                             ),
-                            Container(
-                              height: 20,
-                              width: 45,
-                              child: Center(
-                                  child: Text(
-                                "(分)",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold),
-                              )),
+                          ),
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: SizedBox(
+                              height: 40,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  model.changes2();
+                                },
+                                child: Transform.rotate(
+                                    angle: model.switchWidthIcon
+                                        ? 0
+                                        : 180 * pi / 180,
+                                    child: Icon(Icons.arrow_back_ios_outlined)),
+                                style: ElevatedButton.styleFrom(
+                                    shape: CircleBorder(),
+                                    primary: Colors.green),
+                              ),
                             ),
-                            // ),
+                          ),
+
+                          // if (model.num < 2)
+                          // Center(
+                          //   child: Container(
+                          //     height: screenSize.height * 0.5,
+                          //     child: Center(
+                          //       child: Text(
+                          //         "NO DATA",
+                          //         style:
+                          //             TextStyle(fontSize: 40, color: Colors.grey),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                      //日付　計測時間　姿勢(良)　姿勢(不)
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 15,
+                        ),
+                        height: 18,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          border: Border(
+                            // top: BorderSide(color: Colors.grey),
+                            bottom: BorderSide(color: Colors.grey),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 50,
+                              child: Center(
+                                child: Text(
+                                  "計測日",
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  "計測時間",
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      "姿勢",
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                    Text(
+                                      "(良)",
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.green),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      "姿勢",
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                    Text(
+                                      "(不)",
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.red),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Stack(
-                            children: [
-                              Container(
-                                height: screenSize.height * 0.5,
-                                width: model.extendWidth &&
-                                        model.num * 50 > screenSize.width
-                                    ? model.num * 50
-                                    : screenSize.width,
-                                // color: Colors.grey[300],
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 25.0),
-                                  child: LineChart(
-                                    mainData(model),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: SizedBox(
-                            height: 40,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                model.changes2();
-                              },
-                              child: Transform.rotate(
-                                  angle: model.switchWidthIcon
-                                      ? 0
-                                      : 180 * pi / 180,
-                                  child: Icon(Icons.arrow_back_ios_outlined)),
-                              style: ElevatedButton.styleFrom(
-                                  shape: CircleBorder(), primary: Colors.green),
-                            ),
-                          ),
-                        ),
-                        if (model.num < 2)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 200.0),
-                            child: Center(
-                              child: Container(
-                                height: 60,
-                                width: 250,
-                                child: Center(
-                                  child: Text(
-                                    "NO DATA",
-                                    style: TextStyle(
-                                        fontSize: 40, color: Colors.grey),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                    Container(
-                      height: 15,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        border: Border(
-                          top: BorderSide(color: Colors.grey),
-                          bottom: BorderSide(color: Colors.grey),
-                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: model.data1.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(color: Colors.black12),
-                              ),
-                            ),
-                            child: ListTile(
-                              title: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                      //履歴
+                      Expanded(
+                        child: Scrollbar(
+                          child: ListView.builder(
+                            itemCount: model.data.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(color: Colors.black12),
+                                  ),
+                                ),
+                                child: ListTile(
+                                  // tileColor: index.isOdd
+                                  //     ? Colors.transparent
+                                  //     : Colors.grey.withOpacity(0.1),
+                                  title: Row(
                                     children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "${index + 1}.",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text(
-                                            model.data1[index]["createdAt"]
-                                                .toString(),
-                                            style: TextStyle(
-                                                fontSize: 15.0,
-                                                color: Colors.grey),
-                                          ),
-                                        ],
+                                      Container(
+                                        width: 50,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  "${index + 1}",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Text(
+                                                  "回目",
+                                                  style:
+                                                      TextStyle(fontSize: 12),
+                                                ),
+                                              ],
+                                            ),
+                                            Text(
+                                              model.data[index]["createdAt"]
+                                                      .toString()
+                                                      .substring(5, 7) +
+                                                  "/" +
+                                                  model.data[index]["createdAt"]
+                                                      .toString()
+                                                      .substring(8, 10),
+                                              style: TextStyle(
+                                                  fontSize: 15.0,
+                                                  color: Colors.grey),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      Text(
-                                        "${model.data1[index]["measuringMin"]}分",
-                                        style: TextStyle(
-                                            color: Colors.green,
-                                            fontWeight: FontWeight.bold),
+                                      Expanded(
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                  "${model.data[index]["measuringMin"]}",
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    // fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "分",
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      color: Colors.black),
+                                                ),
+                                              ],
+                                            ),
+                                            // SizedBox(
+                                            //   height: 13,
+                                            // ),
+                                          ],
+                                        ),
                                       ),
-                                      Text(
-                                        "${model.data1[index]["measuringBadPostureMin"]}分",
-                                        style: TextStyle(
-                                            color: Colors.red,
-                                            fontWeight: FontWeight.bold),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                  "${model.data[index]["goodPostureMin"]}",
+                                                  style: TextStyle(
+                                                    color: Colors.green,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "分",
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      color: Colors.green),
+                                                ),
+                                              ],
+                                            ),
+                                            // Text(
+                                            //   "66%",
+                                            //   style: TextStyle(
+                                            //       fontSize: 11,
+                                            //       color: Colors.green),
+                                            // )
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                  "${model.data[index]["measuringBadPostureMin"]}",
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "分",
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      color: Colors.red),
+                                                ),
+                                              ],
+                                            ),
+                                            // Text(
+                                            //   "34%",
+                                            //   style: TextStyle(
+                                            //       fontSize: 11,
+                                            //       color: Colors.red),
+                                            // )
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
-                                ],
-                              ),
-                              // subtitle:
-                              //     Text(model.data[index]["createdAt"].toString()),
-                            ),
-                          );
-                        },
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       ),
+                    ],
+                  ),
+                ),
+                if (model.isLoading)
+                  Container(
+                    // color: Colors.grey.withOpacity(0.7),
+                    child: const Center(
+                      child: CircularProgressIndicator(),
                     ),
-                  ],
-                ));
+                  ),
+              ],
+            );
           });
         });
   }
@@ -437,10 +602,17 @@ class GraphPage extends StatelessWidget {
   LineChartData mainData(model) {
     return LineChartData(
       lineTouchData: LineTouchData(
-        touchTooltipData: LineTouchTooltipData(
-          tooltipBgColor: Colors.transparent,
-        ),
-        handleBuiltInTouches: true,
+        // touchTooltipData: LineTouchTooltipData(
+        //   getTooltipItems: (touchedSpots) {
+        //     return touchedSpots.map((touchedSpot) {
+        //       return LineTooltipItem(touchedSpot.y.toString(),
+        //           TextStyle(color: Colors.green, fontSize: 15));
+        //     }).toList();
+        //   },
+        //   tooltipBgColor: Colors.transparent,
+        // ),
+        //タップで数値を表示する
+        handleBuiltInTouches: false,
       ),
       gridData: FlGridData(
         show: true,
@@ -548,6 +720,7 @@ class GraphPage extends StatelessWidget {
       borderData: FlBorderData(
         show: true,
         border: Border(
+          left: BorderSide(color: Colors.black, width: 0.5),
           bottom: BorderSide(color: Colors.black, width: 0.5),
         ),
       ),
@@ -563,9 +736,9 @@ class GraphPage extends StatelessWidget {
           show: model.show,
           spots: model.spots1,
           isCurved: true,
+          preventCurveOverShooting: true,
           color: Colors.green[300],
           barWidth: 2,
-          isStrokeCapRound: true,
           dotData: FlDotData(show: model.num > 2 ? model.dotSwitch : true
               // show: true
               ),
@@ -587,9 +760,9 @@ class GraphPage extends StatelessWidget {
           show: model.show,
           spots: model.spots2,
           isCurved: true,
+          preventCurveOverShooting: true,
           color: Colors.deepOrange,
           barWidth: 2,
-          isStrokeCapRound: true,
           dotData: FlDotData(show: model.num > 2 ? model.dotSwitch : true
               // show: true
               ),
