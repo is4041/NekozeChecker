@@ -453,7 +453,7 @@ class HistoryPage extends StatelessWidget {
                                     );
                                   });
                             },
-                            //履歴
+                            //履歴リスト
                             title: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -557,7 +557,7 @@ class HistoryPage extends StatelessWidget {
                                                           .measuringSec
                                                           .toString()) >
                                                       2
-                                                  ? "${(((double.parse(data[index].measuringMin.toString()) - double.parse(data[index].measuringBadPostureMin.toString())) / (double.parse(data[index].measuringMin.toString()))) * 100).toStringAsFixed(0)}％"
+                                                  ? "${(((double.parse(data[index].measuringMin.toString()) - double.parse(data[index].measuringBadPostureMin.toString())) / (double.parse(data[index].measuringMin.toString()))) * 100).toStringAsFixed(1)}％"
                                                   : "---％",
                                               style: TextStyle(
                                                   color: Colors.green,
@@ -600,7 +600,7 @@ class HistoryPage extends StatelessWidget {
                                                           .measuringSec
                                                           .toString()) >
                                                       2
-                                                  ? "${((double.parse(data[index].measuringBadPostureMin.toString()) / double.parse(data[index].measuringMin.toString())) * 100).toStringAsFixed(0)}％"
+                                                  ? "${((double.parse(data[index].measuringBadPostureMin.toString()) / double.parse(data[index].measuringMin.toString())) * 100).toStringAsFixed(1)}％"
                                                   : "---％",
                                               style: TextStyle(
                                                   color: Colors.red,
