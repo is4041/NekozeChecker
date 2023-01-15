@@ -7,4 +7,7 @@ class Utils {
   static int averageOfTodayLength = 0;
   static int averageOfThisMonthLength = 0;
   static int averageOfAllLength = 0;
+  static String? providerId;
+  static String userId = "読み込み中...";
+  static int timeToNotification = 15;
 }

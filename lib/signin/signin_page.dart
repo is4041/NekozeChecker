@@ -24,6 +24,7 @@ class SignInPage extends StatelessWidget {
               StreamBuilder<User?>(
                   stream: FirebaseAuth.instance.authStateChanges(),
                   builder: (context, snapshot) {
+                    //読み込み中に表示する要素
                     // if (snapshot.connectionState == ConnectionState.waiting) {
                     //   return const Center(
                     //     child: CircularProgressIndicator(),

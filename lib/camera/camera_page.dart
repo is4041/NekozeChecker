@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
 
 import 'camera_model.dart';
@@ -250,9 +251,10 @@ class Painter extends CustomPainter {
         model.startBadPostureTimer();
         print("猫背タイマースタート");
       }
-      print("5秒後警告");
+      print("${Utils.timeToNotification}秒後警告");
 
-      notificationTimer = Timer(Duration(seconds: 5), () async {
+      notificationTimer =
+          Timer(Duration(seconds: Utils.timeToNotification), () async {
         audioPlayer = await _cache.loop("sounds/notification.mp3");
         if (isCounting!) {
           model.counter();

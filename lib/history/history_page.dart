@@ -150,13 +150,6 @@ class HistoryPage extends StatelessWidget {
                                                         ),
                                                       ),
                                                       child: TextField(
-                                                        // onTap: () {
-                                                        // model.title =
-                                                        //     data[index]
-                                                        //         .title!
-                                                        //         .toString();
-                                                        // model.test();
-                                                        // },
                                                         onChanged: (text) {
                                                           model.title = text;
                                                         },
@@ -174,20 +167,6 @@ class HistoryPage extends StatelessWidget {
                                                                   top: 5),
                                                           prefixIcon:
                                                               Icon(Icons.edit),
-                                                          // suffixIcon:
-                                                          //     IconButton(
-                                                          //   onPressed:
-                                                          //       () async {
-                                                          //     await model
-                                                          //         .updateTitle(
-                                                          //             data[
-                                                          //                 index]);
-                                                          //     await model
-                                                          //         .fetchData();
-                                                          //   },
-                                                          //   icon: Icon(
-                                                          //       Icons.save_alt),
-                                                          // ),
                                                           border:
                                                               InputBorder.none,
                                                         ),
@@ -387,10 +366,13 @@ class HistoryPage extends StatelessWidget {
                                                                   ),
                                                                   onPressed:
                                                                       () async {
-                                                                    // await model.delete(
-                                                                    //     data[index]);
-                                                                    // await model.calculateTotalAverage();
-                                                                    // await model.upDateTotalAverage();
+                                                                    await model
+                                                                        .delete(
+                                                                            data[index]);
+                                                                    await model
+                                                                        .calculateTotalAverage();
+                                                                    await model
+                                                                        .upDateTotalAverage();
                                                                     await model
                                                                         .fetchData();
                                                                     Navigator.of(
