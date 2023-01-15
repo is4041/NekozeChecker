@@ -36,8 +36,11 @@ class SignInModel extends ChangeNotifier {
       "userId": uid,
       "dailyAverage": "",
       "totalAverage": "",
+      //todo 三項演算子で
       "createdAt": Timestamp.now(),
       "lastMeasuredOn": "",
+      //todo 三項演算子で
+      "timeToNotification": 15,
     });
   }
 
@@ -51,6 +54,7 @@ class SignInModel extends ChangeNotifier {
         "totalAverage": "",
         "createdAt": Timestamp.now(),
         "lastMeasuredOn": "",
+        "timeToNotification": 15,
       });
     } catch (e) {
       throw ("error");

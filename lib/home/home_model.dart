@@ -30,6 +30,34 @@ class HomeModel extends ChangeNotifier {
     }
   }
 
+  getTimeToNotification() async {
+    final document = await firestore.collection("users").doc(userId).get();
+    Utils.timeToNotification = document["timeToNotification"];
+    print(Utils.timeToNotification);
+  }
+
+  getProviderId() {
+    //todo 後で解除
+    // if (Utils.providerId!.isNotEmpty) {
+    //   return;
+    // }
+    if (FirebaseAuth.instance.currentUser!.providerData[0].providerId ==
+        'google.com') {
+      print("googleUser");
+      Utils.providerId = "google.com";
+    } else {
+      print("notGoogleUser");
+      Utils.providerId = "notGoogleUser";
+    }
+  }
+
+  getUserId() async {
+    final document =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    Utils.userId = document["userId"];
+    print(document["userId"]);
+  }
+
   getAverage() async {
     //今日の平均リスト
     List averageOfToday = [];
