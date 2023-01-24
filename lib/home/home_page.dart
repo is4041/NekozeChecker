@@ -400,17 +400,16 @@ class HomePage extends StatelessWidget {
         case 0:
           return PieChartSectionData(
             color: Color(0xff00c904),
-            // color: Colors.green,
-            value: double.parse(Utils.percentOfAllGoodPostureMin),
+            value: Utils.percentOfAllGoodPostureMin,
             radius: radius,
             showTitle: false,
           );
         case 1:
           return PieChartSectionData(
-            color: Utils.percentOfAllGoodPostureMin == "0"
+            color: Utils.percentOfAllGoodPostureMin == 0
                 ? Color(0xffd0d0d0)
                 : Color(0xffff1a1a),
-            value: 100 - double.parse(Utils.percentOfAllGoodPostureMin),
+            value: 100 - Utils.percentOfAllGoodPostureMin,
             showTitle: false,
             radius: radius,
           );
@@ -427,18 +426,17 @@ class HomePage extends StatelessWidget {
       switch (i) {
         case 0:
           return PieChartSectionData(
-            // color: Color(0xff00c904),
-            color: Color(0xff4caf50),
-            value: double.parse(Utils.percentOfTodayGoodPostureMin),
+            color: Color(0xff00c904),
+            value: Utils.percentOfTodayGoodPostureMin,
             radius: radius,
             showTitle: false,
           );
         case 1:
           return PieChartSectionData(
-            color: Utils.percentOfTodayGoodPostureMin == "0"
+            color: Utils.percentOfTodayGoodPostureMin == 0
                 ? Color(0xffd0d0d0)
                 : Color(0xffff1a1a),
-            value: 100 - double.parse(Utils.percentOfTodayGoodPostureMin),
+            value: 100 - Utils.percentOfTodayGoodPostureMin,
             showTitle: false,
             radius: radius,
           );
@@ -456,17 +454,16 @@ class HomePage extends StatelessWidget {
         case 0:
           return PieChartSectionData(
             color: Color(0xff00c904),
-            // color: Color(0xff4caf50),
-            value: double.parse(Utils.percentOfThisMonthGoodPostureMin),
+            value: Utils.percentOfThisMonthGoodPostureMin,
             radius: radius,
             showTitle: false,
           );
         case 1:
           return PieChartSectionData(
-            color: Utils.percentOfThisMonthGoodPostureMin == "0"
+            color: Utils.percentOfThisMonthGoodPostureMin == 0
                 ? Color(0xffd0d0d0)
                 : Color(0xffff1a1a),
-            value: 100 - double.parse(Utils.percentOfThisMonthGoodPostureMin),
+            value: 100 - Utils.percentOfThisMonthGoodPostureMin,
             showTitle: false,
             radius: radius,
           );

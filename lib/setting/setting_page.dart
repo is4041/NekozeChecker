@@ -51,8 +51,7 @@ class SettingPage extends StatelessWidget {
                           color: Colors.white),
                       height: 45,
                       width: double.infinity,
-                      //todo
-                      child: Utils.providerId != "google.com"
+                      child: Utils.isAnonymous == "isAnonymous"
                           ? InkWell(
                               highlightColor: Colors.grey[400],
                               onTap: () async {
@@ -61,11 +60,11 @@ class SettingPage extends StatelessWidget {
                                   await showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
-                                        return AlertDialog(
+                                        return CupertinoAlertDialog(
                                           title: Text("アカウント提携が完了しました"),
                                           actions: [
                                             TextButton(
-                                              child: const Text("ok"),
+                                              child: const Text("OK"),
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                               },
@@ -74,42 +73,70 @@ class SettingPage extends StatelessWidget {
                                         );
                                       });
                                 } catch (e) {
-                                  await showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: Text(e.toString()),
-                                          actions: [
-                                            TextButton(
-                                              child: const Text("ok"),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            )
-                                          ],
-                                        );
-                                      });
+                                  if (e.toString() ==
+                                      "[firebase_auth/credential-already-in-use] This credential is already associated with a different user account.") {
+                                    await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CupertinoAlertDialog(
+                                            //todo 文章を考える
+                                            title: Text("エラー"),
+                                            content: Text(
+                                                "このアカウントはすでに別のユーザーアカウントに関連付けられています。"),
+                                            actions: [
+                                              TextButton(
+                                                child: const Text("OK"),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              )
+                                            ],
+                                          );
+                                        });
+                                  } else if (e.toString() !=
+                                      "Null check operator used on a null value") {
+                                    await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CupertinoAlertDialog(
+                                            title: Text(
+                                                "アカウントの連携に失敗しました。通信環境の良いところで再度試してください。"),
+                                            actions: [
+                                              TextButton(
+                                                child: const Text("OK"),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              )
+                                            ],
+                                          );
+                                        });
+                                  }
                                 }
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 10.0),
                                 child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      "Googleアカウント提携",
-                                      style: TextStyle(fontSize: 17),
-                                    )),
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    "Googleアカウント提携",
+                                    style: TextStyle(fontSize: 17),
+                                  ),
+                                ),
                               ),
                             )
                           : Padding(
                               padding: const EdgeInsets.only(left: 10.0),
                               child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    "Googleアカウント提携済",
-                                    style: TextStyle(
-                                        fontSize: 17, color: Colors.grey),
-                                  )),
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  Utils.isAnonymous == "isNotAnonymous"
+                                      ? "Googleアカウント提携済"
+                                      : "Googleアカウント提携",
+                                  style: TextStyle(
+                                      fontSize: 17, color: Colors.grey),
+                                ),
+                              ),
                             ),
                     ),
                     SizedBox(
@@ -140,9 +167,32 @@ class SettingPage extends StatelessWidget {
                                             child: const Text("保存️",
                                                 style: TextStyle(fontSize: 20)),
                                             onPressed: () async {
-                                              await model
-                                                  .upDateTimeToNotification();
-                                              await model.searchListIndex();
+                                              try {
+                                                await model
+                                                    .upDateTimeToNotification();
+                                                await model.searchListIndex();
+                                              } catch (e) {
+                                                await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return CupertinoAlertDialog(
+                                                        title: Text(
+                                                            "保存に失敗しました。通信環境の良いところで再度試してください。"),
+                                                        actions: [
+                                                          TextButton(
+                                                            child: const Text(
+                                                                "OK"),
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          )
+                                                        ],
+                                                      );
+                                                    });
+                                              }
                                               Navigator.pop(context);
                                             }),
                                         CupertinoButton(
@@ -157,9 +207,6 @@ class SettingPage extends StatelessWidget {
                                             }),
                                       ],
                                     ),
-                                    // SizedBox(
-                                    //   height: 30,
-                                    // ),
                                     Divider(
                                       thickness: 1,
                                     ),
@@ -259,25 +306,48 @@ class SettingPage extends StatelessWidget {
                           color: Colors.white),
                       height: 45,
                       width: double.infinity,
-                      child: Utils.providerId == "google.com"
+                      child: Utils.isAnonymous == "isNotAnonymous"
                           ? InkWell(
                               highlightColor: Colors.grey[400],
                               onTap: () async {
                                 await showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return AlertDialog(
+                                      return CupertinoAlertDialog(
                                         title: Text("ログアウトしますか？"),
                                         actions: [
                                           TextButton(
-                                            child: Text("はい"),
+                                            child: Text("OK"),
                                             onPressed: () async {
-                                              await model.logout();
+                                              try {
+                                                await model.logout();
+                                              } catch (e) {
+                                                await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return CupertinoAlertDialog(
+                                                        title: Text(
+                                                            "ログアウトに失敗しました。通信環境の良いところで再度試してください。"),
+                                                        actions: [
+                                                          TextButton(
+                                                            child: const Text(
+                                                                "OK"),
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          )
+                                                        ],
+                                                      );
+                                                    });
+                                              }
                                               Navigator.of(context).pop();
                                             },
                                           ),
                                           TextButton(
-                                            child: Text("いいえ"),
+                                            child: Text("キャンセル"),
                                             onPressed: () async {
                                               Navigator.of(context).pop();
                                             },
@@ -324,17 +394,83 @@ class SettingPage extends StatelessWidget {
                           await showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text("データを削除しますか？"),
+                                return CupertinoAlertDialog(
+                                  title: Text("全データ削除（初期化）"),
+                                  content: Text("全てのデータが削除されます。"),
                                   actions: [
                                     TextButton(
-                                      child: Text("はい"),
+                                      child: Text(
+                                        "削除",
+                                        style: TextStyle(color: Colors.red),
+                                      ),
                                       onPressed: () async {
+                                        await showDialog(
+                                            barrierColor: Colors.transparent,
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return CupertinoAlertDialog(
+                                                title: Text("再確認"),
+                                                content: Text("本当に削除しますか？"),
+                                                actions: [
+                                                  TextButton(
+                                                    child: Text(
+                                                      "削除",
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    ),
+                                                    onPressed: () async {
+                                                      try {
+                                                        await model
+                                                            .deleteUser();
+                                                      } catch (e) {
+                                                        await showDialog(
+                                                            barrierColor: Colors
+                                                                .transparent,
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return CupertinoAlertDialog(
+                                                                title: Text(
+                                                                    "データの削除に失敗しました。"),
+                                                                content: Text(
+                                                                    "通信環境の良いところで再度試してください"),
+                                                                actions: [
+                                                                  TextButton(
+                                                                    child: Text(
+                                                                      "OK",
+                                                                    ),
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
+                                                                    },
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            });
+                                                      }
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: Text("キャンセル"),
+                                                    onPressed: () async {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  )
+                                                ],
+                                              );
+                                            });
+
                                         Navigator.of(context).pop();
                                       },
                                     ),
                                     TextButton(
-                                      child: Text("いいえ"),
+                                      child: Text("キャンセル"),
                                       onPressed: () async {
                                         Navigator.of(context).pop();
                                       },
@@ -345,7 +481,7 @@ class SettingPage extends StatelessWidget {
                         },
                         child: const Center(
                           child: Text(
-                            "全データ削除",
+                            "全データ削除（初期化）",
                             style: TextStyle(color: Colors.red),
                           ),
                         ),

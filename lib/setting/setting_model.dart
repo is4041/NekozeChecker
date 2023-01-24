@@ -36,28 +36,21 @@ class SettingModel extends ChangeNotifier {
   ];
 
   googleSignIn() async {
-    try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser!.authentication;
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser!.authentication;
 
-      // Create a new credential
-      final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+    // Create a new credential
+    final OAuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
 
-      final userInfo = await FirebaseAuth.instance.currentUser!
-          .linkWithCredential(credential);
-      print(userInfo.user!.uid);
-      print(userInfo.user!.email);
-    } catch (e) {
-      throw e.toString();
-      print(e);
-      // print(
-      //     "エラー flutter: [firebase_auth/credential-already-in-use] This credential is already associated with a different user account.");
-    }
+    final userInfo =
+        await FirebaseAuth.instance.currentUser!.linkWithCredential(credential);
+    print(userInfo.user!.uid);
+    print(userInfo.user!.email);
     notifyListeners();
   }
 
@@ -65,31 +58,53 @@ class SettingModel extends ChangeNotifier {
     secondsList.asMap().forEach((int i, int seconds) {
       if (seconds == Utils.timeToNotification) {
         secondsListIndex = i;
-        print('Index: $i' + ' 秒数: $seconds');
-        print(Utils.timeToNotification);
+        print('Index: $i' + ' 秒数: $seconds秒');
       }
     });
+    notifyListeners();
   }
 
   upDateTimeToNotification() async {
-    await FirebaseFirestore.instance.collection("users").doc(userId).update({
+    // throw Error;
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(Utils.userId)
+        .update({
       "timeToNotification": Utils.timeToNotification,
     });
-    print(Utils.timeToNotification);
     notifyListeners();
   }
 
   logout() async {
+    // throw Error;
     await FirebaseAuth.instance.signOut();
+    Utils.percentOfAllGoodPostureMin = 0;
+    Utils.percentOfTodayGoodPostureMin = 0;
+    Utils.percentOfThisMonthGoodPostureMin = 0;
+    Utils.averageOfTodayLength = 0;
+    Utils.averageOfThisMonthLength = 0;
+    Utils.averageOfAllLength = 0;
+    Utils.isAnonymous = "";
+    Utils.userId = "";
+    Utils.timeToNotification = 15;
   }
 
   deleteUser() async {
-    try {
-      await FirebaseFirestore.instance.collection("users").doc(userId).delete();
-      await FirebaseAuth.instance.currentUser!.delete();
-      print("done");
-    } catch (e) {
-      print(e);
-    }
+    throw Error;
+    //消去の順番はこのまま
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(Utils.userId)
+        .delete();
+    await FirebaseAuth.instance.currentUser!.delete();
+    Utils.percentOfAllGoodPostureMin = 0;
+    Utils.percentOfTodayGoodPostureMin = 0;
+    Utils.percentOfThisMonthGoodPostureMin = 0;
+    Utils.averageOfTodayLength = 0;
+    Utils.averageOfThisMonthLength = 0;
+    Utils.averageOfAllLength = 0;
+    Utils.isAnonymous = "";
+    Utils.userId = "";
+    Utils.timeToNotification = 15;
   }
 }

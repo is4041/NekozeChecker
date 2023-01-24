@@ -31,31 +31,25 @@ class HomeModel extends ChangeNotifier {
   }
 
   getTimeToNotification() async {
-    final document = await firestore.collection("users").doc(userId).get();
+    final document =
+        await firestore.collection("users").doc(Utils.userId).get();
     Utils.timeToNotification = document["timeToNotification"];
-    print(Utils.timeToNotification);
+    print("設定秒数 : ${Utils.timeToNotification}秒");
   }
 
   getProviderId() {
-    //todo 後で解除
-    // if (Utils.providerId!.isNotEmpty) {
-    //   return;
-    // }
-    if (FirebaseAuth.instance.currentUser!.providerData[0].providerId ==
-        'google.com') {
+    if (FirebaseAuth.instance.currentUser!.isAnonymous == false) {
       print("googleUser");
-      Utils.providerId = "google.com";
+      Utils.isAnonymous = "isNotAnonymous";
     } else {
-      print("notGoogleUser");
-      Utils.providerId = "notGoogleUser";
+      print("anonymousUser");
+      Utils.isAnonymous = "isAnonymous";
     }
   }
 
   getUserId() async {
-    final document =
-        await FirebaseFirestore.instance.collection('users').doc(userId).get();
-    Utils.userId = document["userId"];
-    print(document["userId"]);
+    Utils.userId = firebaseAuth.currentUser!.uid;
+    print("userId : ${Utils.userId}");
   }
 
   getAverage() async {
@@ -73,29 +67,26 @@ class HomeModel extends ChangeNotifier {
 
     final QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('measurements')
-        .where("userId", isEqualTo: userId.toString())
+        .where("userId", isEqualTo: Utils.userId.toString())
         .get();
     for (var doc in snapshot.docs) {
       //今日の計測時間(分)をリストに追加
       if (doc.get("createdAt").toString().substring(0, 10) ==
           getDate.toString().substring(0, 10)) {
-        averageOfToday.add(double.parse(doc.get("measuringMin")));
-        averageOfTodayBadPosture
-            .add(double.parse(doc.get("measuringBadPostureMin")));
+        averageOfToday.add(doc.get("measuringMin"));
+        averageOfTodayBadPosture.add(doc.get("measuringBadPostureMin"));
       }
 
       //今月の計測時間(分)をリストに追加
       if (doc.get("createdAt").toString().substring(0, 7) ==
           getDate.toString().substring(0, 7)) {
-        averageOfThisMonth.add(double.parse(doc.get("measuringMin")));
-        averageOfThisMonthBadPosture
-            .add(double.parse(doc.get("measuringBadPostureMin")));
+        averageOfThisMonth.add(doc.get("measuringMin"));
+        averageOfThisMonthBadPosture.add(doc.get("measuringBadPostureMin"));
       }
 
       //全体の計測時間(分)をリストに追加
-      averageOfAll.add(double.parse(doc.get("measuringMin")));
-      averageOfAllBadPosture
-          .add(double.parse(doc.get("measuringBadPostureMin")));
+      averageOfAll.add(doc.get("measuringMin"));
+      averageOfAllBadPosture.add(doc.get("measuringBadPostureMin"));
     }
 
     //今日の平均を割り出す計算
@@ -109,14 +100,13 @@ class HomeModel extends ChangeNotifier {
       final totalOfTodayGoodPostureMin =
           totalOfTodayMin - totalOfTodayBadPostureMin;
       // print(totalOfTodayGoodPostureMin);
-      final averageOfTodayGoodPostureMin =
+      final averageOfTodayGoodPostureMin = double.parse(
           ((totalOfTodayGoodPostureMin / totalOfTodayMin) * 100)
-              .toStringAsFixed(1);
-      // print(averageOfTodayGoodPostureMin);
+              .toStringAsFixed(1));
       Utils.percentOfTodayGoodPostureMin = averageOfTodayGoodPostureMin;
       Utils.averageOfTodayLength = averageOfToday.length;
     } else {
-      Utils.percentOfTodayGoodPostureMin = "0";
+      Utils.percentOfTodayGoodPostureMin = 0;
       Utils.averageOfTodayLength = 0;
     }
 
@@ -131,14 +121,14 @@ class HomeModel extends ChangeNotifier {
       final totalOfThisMonthGoodPostureMin =
           totalOfThisMonthMin - totalOfThisMonthBadPostureMin;
       // print(totalOfThisMonthGoodPostureMin);
-      final averageOfThisMonthGoodPostureMin =
+      final averageOfThisMonthGoodPostureMin = double.parse(
           ((totalOfThisMonthGoodPostureMin / totalOfThisMonthMin) * 100)
-              .toStringAsFixed(1);
-      // print(averageOfThisMonthGoodPostureMin);
+              .toStringAsFixed(1));
+
       Utils.percentOfThisMonthGoodPostureMin = averageOfThisMonthGoodPostureMin;
       Utils.averageOfThisMonthLength = averageOfThisMonth.length;
     } else {
-      Utils.percentOfThisMonthGoodPostureMin = "0";
+      Utils.percentOfTodayGoodPostureMin = 0;
       Utils.averageOfThisMonthLength = 0;
     }
 
@@ -152,13 +142,14 @@ class HomeModel extends ChangeNotifier {
       // print(totalOfAllBadPostureMin);
       final totalOfAllGoodPostureMin = totalOfAllMin - totalOfAllBadPostureMin;
       // print(totalOfAllGoodPostureMin);
-      final averageOfAllGoodPostureMin =
-          ((totalOfAllGoodPostureMin / totalOfAllMin) * 100).toStringAsFixed(1);
-      // print(averageOfAllGoodPostureMin);
+      final averageOfAllGoodPostureMin = double.parse(
+          ((totalOfAllGoodPostureMin / totalOfAllMin) * 100)
+              .toStringAsFixed(1));
+
       Utils.percentOfAllGoodPostureMin = averageOfAllGoodPostureMin;
       Utils.averageOfAllLength = averageOfAll.length;
     } else {
-      Utils.percentOfAllGoodPostureMin = "0";
+      Utils.percentOfTodayGoodPostureMin = 0;
       Utils.averageOfAllLength = 0;
     }
 
@@ -186,7 +177,7 @@ class HomeModel extends ChangeNotifier {
   upDateDailyAverage() async {
     await FirebaseFirestore.instance
         .collection("users")
-        .doc(userId)
+        .doc(Utils.userId)
         .update({"dailyAverage": ""});
   }
 }

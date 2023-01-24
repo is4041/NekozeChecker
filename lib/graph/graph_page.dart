@@ -120,7 +120,6 @@ class GraphPage extends StatelessWidget {
                                       model.num * 50 > screenSize.width
                                   ? model.num * 50
                                   : screenSize.width,
-                              // color: Colors.grey[300],
                               child: Padding(
                                 padding: const EdgeInsets.only(top: 25.0),
                                 child: LineChart(
@@ -135,7 +134,7 @@ class GraphPage extends StatelessWidget {
                               height: 40,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  model.changes2();
+                                  model.changes();
                                 },
                                 child: Transform.rotate(
                                     angle: model.switchWidthIcon
@@ -249,9 +248,6 @@ class GraphPage extends StatelessWidget {
                                   ),
                                 ),
                                 child: ListTile(
-                                  // tileColor: index.isOdd
-                                  //     ? Colors.transparent
-                                  //     : Colors.grey.withOpacity(0.1),
                                   title: Row(
                                     children: [
                                       Container(
@@ -277,11 +273,9 @@ class GraphPage extends StatelessWidget {
                                             ),
                                             Text(
                                               model.data[index]["createdAt"]
-                                                      .toString()
                                                       .substring(5, 7) +
                                                   "/" +
                                                   model.data[index]["createdAt"]
-                                                      .toString()
                                                       .substring(8, 10),
                                               style: TextStyle(
                                                   fontSize: 15.0,
@@ -301,7 +295,6 @@ class GraphPage extends StatelessWidget {
                                                   "${model.data[index]["measuringMin"]}",
                                                   style: TextStyle(
                                                     color: Colors.black,
-                                                    // fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
                                                 Text(
@@ -312,9 +305,6 @@ class GraphPage extends StatelessWidget {
                                                 ),
                                               ],
                                             ),
-                                            // SizedBox(
-                                            //   height: 13,
-                                            // ),
                                           ],
                                         ),
                                       ),
@@ -342,12 +332,6 @@ class GraphPage extends StatelessWidget {
                                                 ),
                                               ],
                                             ),
-                                            // Text(
-                                            //   "66%",
-                                            //   style: TextStyle(
-                                            //       fontSize: 11,
-                                            //       color: Colors.green),
-                                            // )
                                           ],
                                         ),
                                       ),
@@ -375,12 +359,6 @@ class GraphPage extends StatelessWidget {
                                                 ),
                                               ],
                                             ),
-                                            // Text(
-                                            //   "34%",
-                                            //   style: TextStyle(
-                                            //       fontSize: 11,
-                                            //       color: Colors.red),
-                                            // )
                                           ],
                                         ),
                                       ),
@@ -397,7 +375,6 @@ class GraphPage extends StatelessWidget {
                 ),
                 if (model.isLoading)
                   Container(
-                    // color: Colors.grey.withOpacity(0.7),
                     child: const Center(
                       child: CircularProgressIndicator(),
                     ),

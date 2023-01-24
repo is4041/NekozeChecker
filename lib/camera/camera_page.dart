@@ -69,11 +69,8 @@ class CameraPage extends StatelessWidget {
                         isCounting = false;
                         model.stopTimer();
                         model.stopBadPostureTimer();
-                        model.calculate();
                         if (model.measuringSec > 300) {
                           await model.addData();
-                          await model.calculateTotalAverage();
-                          await model.upDateTotalAverage();
                           await model.lastMeasuredOn();
                         } else {
                           await showDialog(
@@ -86,8 +83,6 @@ class CameraPage extends StatelessWidget {
                                       child: const Text("ok"),
                                       onPressed: () async {
                                         await model.addData();
-                                        await model.calculateTotalAverage();
-                                        await model.upDateTotalAverage();
                                         await model.lastMeasuredOn();
                                         Navigator.of(context).pop();
                                       },
