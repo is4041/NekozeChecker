@@ -8,7 +8,6 @@ import 'package:tflite/tflite.dart';
 import 'package:flutter/foundation.dart';
 
 final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-final userId = firebaseAuth.currentUser!.uid;
 final today = Timestamp.now().toDate().toString().substring(0, 10);
 
 class CameraModel extends ChangeNotifier {
@@ -18,9 +17,9 @@ class CameraModel extends ChangeNotifier {
   List recognition = [];
   Timer? timer;
   Timer? badPostureTimer;
-  int measuringSec = 0;
-  int measuringBadPostureSec = 0;
-  int numberOfNotifications = 0;
+  num measuringSec = 0;
+  num measuringBadPostureSec = 0;
+  double numberOfNotifications = 0;
   dynamic averageTime = 0;
   dynamic totalAverage;
   dynamic dailyAverage;
@@ -84,126 +83,30 @@ class CameraModel extends ChangeNotifier {
     print("通知回数:${numberOfNotifications}");
   }
 
-  calculate() {
-    //todo コード編集あり（確認まだ）
-    if (numberOfNotifications > 0) {
-      averageTime =
-          (measuringSec / numberOfNotifications / 60).toStringAsFixed(2);
-    } else {
-      averageTime = "";
-    }
-    print("平均:${averageTime}分に1回猫背になっています");
-  }
-
   addData() async {
     final createdAt = Timestamp.now().toDate().toString().substring(0, 19);
     final userId = firebaseAuth.currentUser!.uid.toString();
-    final measuringMin = (measuringSec / 60).toStringAsFixed(1);
+    final measuringMin = double.parse((measuringSec / 60).toStringAsFixed(1));
     final measuringBadPostureMin =
-        (measuringBadPostureSec / 60).toStringAsFixed(1);
+        double.parse((measuringBadPostureSec / 60).toStringAsFixed(1));
 
     await FirebaseFirestore.instance.collection("measurements").add({
-      "averageMin": averageTime,
       "createdAt": createdAt,
       "measuringBadPostureMin": measuringBadPostureMin,
-      "measuringBadPostureSec": measuringBadPostureSec.toString(),
+      "measuringBadPostureSec": measuringBadPostureSec,
       "measuringMin": measuringMin,
-      "measuringSec": measuringSec.toString(),
-      "numberOfNotifications": numberOfNotifications.toString(),
+      "measuringSec": measuringSec,
+      "numberOfNotifications": numberOfNotifications,
       "title": "",
       "userId": userId,
     });
   }
 
-  Future calculateTotalAverage() async {
-    List totalSecondsArray = [];
-    List totalNotificationsArray = [];
-    List dailyTotalSecondsArray = [];
-    List dailyTotalNotificationsArray = [];
-    final QuerySnapshot snapshot =
-        await FirebaseFirestore.instance.collection("measurements").get();
-    for (var doc in snapshot.docs) {
-      if (doc.get("userId") == userId.toString()) {
-        //当日の計測（秒数、警告回数）を配列に追加
-        if (doc.get("createdAt").toString().substring(0, 10) == today) {
-          dailyTotalSecondsArray.add(double.parse(doc.get("measuringSec")));
-          dailyTotalNotificationsArray
-              .add(double.parse(doc.get("numberOfNotifications")));
-        }
-        //全データの計測（秒数、警告回数）を配列に追加
-        totalSecondsArray.add(double.parse(doc.get("measuringSec")));
-        totalNotificationsArray
-            .add(double.parse(doc.get("numberOfNotifications")));
-      }
-    }
-    //当日の計測データ（秒数、警告回数）がisNotEmptyでなければそれぞれのデータの合計値を割り出す
-    if (dailyTotalSecondsArray.isNotEmpty &&
-        dailyTotalNotificationsArray.isNotEmpty) {
-      print("本日の計測秒数リスト: $dailyTotalSecondsArray");
-      print("本日の警告回数リスト: $dailyTotalNotificationsArray");
-      final totalOfDailySeconds =
-          dailyTotalSecondsArray.reduce((a, b) => a + b);
-      print("本日の計測秒数の総計: $totalOfDailySeconds");
-
-      final totalOfDailyNotifications =
-          dailyTotalNotificationsArray.reduce((a, b) => a + b);
-      print("本日の警告回数の総計: $totalOfDailyNotifications");
-      //当日の計測データの平均値を割り出す（計測時間÷警告回数＝何秒に一度警告されたか）
-      if (totalOfDailyNotifications > 0) {
-        dailyAverage = totalOfDailySeconds / totalOfDailyNotifications / 60;
-        print("本日の平均:${dailyAverage.round()}分(四捨五入)");
-        //警告回数が0なら計算不可のため＊を代入
-      } else {
-        dailyAverage = "";
-      }
-      //データなしでは計算不可のため＊を代入
-    } else {
-      dailyAverage = "";
-    }
-    //上記の全データver
-    if (totalSecondsArray.isNotEmpty && totalNotificationsArray.isNotEmpty) {
-      print("全ての計測秒数リスト: $totalSecondsArray");
-      print("全ての警告回数リスト: $totalNotificationsArray");
-      final totalOfSeconds = totalSecondsArray.reduce((a, b) => a + b);
-      print("全ての計測秒数の総計: $totalOfSeconds");
-
-      final totalOfNotifications =
-          totalNotificationsArray.reduce((a, b) => a + b);
-      print("全ての警告回数の総計: $totalOfNotifications");
-      if (totalOfNotifications > 0) {
-        totalAverage = totalOfSeconds / totalOfNotifications / 60;
-        print("全体の平均:${totalAverage.round()}分(四捨五入)");
-      } else {
-        totalAverage = "";
-      }
-    } else {
-      totalAverage = "";
-    }
-  }
-
-  upDateTotalAverage() async {
-    await FirebaseFirestore.instance.collection("users").doc(userId).update({
-      "dailyAverage":
-          dailyAverage.toString() != "" ? dailyAverage.round().toString() : "",
-      "totalAverage":
-          totalAverage.toString() != "" ? totalAverage.round().toString() : ""
-    });
-
-    if (dailyAverage.toString() != "") {
-      Utils.dailyAverage = dailyAverage.round().toString();
-    } else {
-      Utils.dailyAverage = dailyAverage;
-    }
-
-    if (totalAverage.toString() != "") {
-      Utils.totalAverage = totalAverage.round().toString();
-    } else {
-      Utils.totalAverage = totalAverage;
-    }
-  }
-
   lastMeasuredOn() async {
-    await FirebaseFirestore.instance.collection("users").doc(userId).update({
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(Utils.userId)
+        .update({
       "lastMeasuredOn": Timestamp.now().toDate().toString().substring(0, 10),
     });
   }

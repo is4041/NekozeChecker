@@ -342,20 +342,12 @@ class HistoryPage extends StatelessWidget {
                                                           context: context,
                                                           builder: (BuildContext
                                                               context) {
-                                                            return AlertDialog(
-                                                              title: Text(
-                                                                  "合計平均値が変化しますがデータを削除しますか？"),
+                                                            return CupertinoAlertDialog(
+                                                              title:
+                                                                  Text("データ削除"),
+                                                              content: Text(
+                                                                  "合計平均値が変化しますがデータを\n削除しますか？"),
                                                               actions: [
-                                                                TextButton(
-                                                                  child: Text(
-                                                                      "キャンセル"),
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop();
-                                                                  },
-                                                                ),
                                                                 TextButton(
                                                                   child:
                                                                       const Text(
@@ -369,10 +361,6 @@ class HistoryPage extends StatelessWidget {
                                                                     await model
                                                                         .delete(
                                                                             data[index]);
-                                                                    await model
-                                                                        .calculateTotalAverage();
-                                                                    await model
-                                                                        .upDateTotalAverage();
                                                                     await model
                                                                         .fetchData();
                                                                     Navigator.of(
@@ -393,6 +381,16 @@ class HistoryPage extends StatelessWidget {
                                                                             context)
                                                                         .showSnackBar(
                                                                             snackBar);
+                                                                  },
+                                                                ),
+                                                                TextButton(
+                                                                  child: Text(
+                                                                      "キャンセル"),
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
                                                                   },
                                                                 ),
                                                               ],
@@ -613,210 +611,6 @@ class HistoryPage extends StatelessWidget {
                     ),
                 ],
               );
-              // final List<Widget> widgets = data!
-              //     .map(
-              //       (data) => Visibility(
-              //         visible: data.userId == model.userId,
-              //         child: Slidable(
-              //           endActionPane: ActionPane(
-              //             motion: DrawerMotion(),
-              //             children: [
-              //               SlidableAction(
-              //                 onPressed: (_) async {
-              //                   await showDialog(
-              //                     context: context,
-              //                     builder: (BuildContext context) {
-              //                       return AlertDialog(
-              //                         title: Text("合計平均値が変化しますがデータを削除しますか？"),
-              //                         actions: [
-              //                           TextButton(
-              //                             child: const Text(
-              //                               "はい",
-              //                               style: TextStyle(color: Colors.red),
-              //                             ),
-              //                             onPressed: () async {
-              //                               // await model.delete(data);
-              //                               // await model.calculateTotalAverage();
-              //                               // await model.upDateTotalAverage();
-              //                               // model.fetchData();
-              //                               Navigator.of(context).pop();
-              //                               // final snackBar = SnackBar(
-              //                               //     backgroundColor: Colors.red,
-              //                               //     content: Text("削除しました"));
-              //                               // ScaffoldMessenger.of(context)
-              //                               //     .showSnackBar(snackBar);
-              //                             },
-              //                           ),
-              //                           TextButton(
-              //                             child: Text("いいえ"),
-              //                             onPressed: () {
-              //                               Navigator.of(context).pop();
-              //                             },
-              //                           )
-              //                         ],
-              //                       );
-              //                     },
-              //                   );
-              //                 },
-              //                 backgroundColor: Colors.red,
-              //                 icon: Icons.delete,
-              //                 label: "削除",
-              //               )
-              //             ],
-              //           ),
-              //           child: ListTile(
-              //             onTap: () {
-              //               showModalBottomSheet(
-              //                   backgroundColor: Colors.transparent,
-              //                   isScrollControlled: true,
-              //                   context: context,
-              //                   builder: (BuildContext context) {
-              //                     return Container(
-              //                       height: screenSize.height * 0.8,
-              //                       decoration: BoxDecoration(
-              //                         color: Colors.white,
-              //                         borderRadius: BorderRadius.only(
-              //                           topLeft: Radius.circular(30),
-              //                           topRight: Radius.circular(30),
-              //                         ),
-              //                       ),
-              //                       // child: Text("いろいろ"),
-              //                     );
-              //                   });
-              //             },
-              //             title: Container(
-              //               decoration: BoxDecoration(
-              //                 border: Border(
-              //                   bottom: BorderSide(color: Colors.black12),
-              //                 ),
-              //               ),
-              //               child: Column(
-              //                 crossAxisAlignment: CrossAxisAlignment.start,
-              //                 children: [
-              //                   Row(
-              //                     children: [
-              //                       Text(
-              //                         data.createdAt.substring(0, 4) +
-              //                             "/ " +
-              //                             data.createdAt.substring(5, 7) +
-              //                             "/ " +
-              //                             data.createdAt.substring(8, 10),
-              //                         style: TextStyle(
-              //                             fontWeight: FontWeight.bold),
-              //                       ),
-              //                       SizedBox(
-              //                         width: 30,
-              //                       ),
-              //                       Text(
-              //                         "memo",
-              //                         style: TextStyle(color: Colors.grey),
-              //                       )
-              //                     ],
-              //                   ),
-              //                   SizedBox(
-              //                     height: 10,
-              //                   ),
-              //                   Row(
-              //                     mainAxisAlignment: MainAxisAlignment.start,
-              //                     children: [
-              //                       Column(
-              //                         children: [
-              //                           Text("計測時間"),
-              //                           Text(
-              //                             int.parse(data.seconds) ~/ 60 > 0
-              //                                 ? "${int.parse(data.seconds) ~/ 60}分${int.parse(data.seconds) % 60}秒"
-              //                                 : "${int.parse(data.seconds) % 60}秒",
-              //                           ),
-              //                           SizedBox(
-              //                             height: 17.5,
-              //                           )
-              //                         ],
-              //                       ),
-              //                       SizedBox(
-              //                         width: 20,
-              //                       ),
-              //                       Column(
-              //                         children: [
-              //                           Row(
-              //                             children: [
-              //                               Text("姿勢"),
-              //                               Text(
-              //                                 "(良)",
-              //                                 style: TextStyle(
-              //                                     color: Colors.green),
-              //                               ),
-              //                             ],
-              //                           ),
-              //                           Text(
-              //                             "${double.parse(data.measuringMin) - double.parse(data.measuringBadPostureMin)}分",
-              //                             style: TextStyle(
-              //                                 color: Colors.green,
-              //                                 fontWeight: FontWeight.bold),
-              //                           ),
-              //                           Text(
-              //                             "${(((double.parse(data.measuringMin) - double.parse(data.measuringBadPostureMin)) / (double.parse(data.measuringMin))) * 100).toStringAsFixed(0)}％",
-              //                             style: TextStyle(
-              //                                 color: Colors.green,
-              //                                 fontSize: 12),
-              //                           ),
-              //                         ],
-              //                       ),
-              //                       SizedBox(
-              //                         width: 20,
-              //                       ),
-              //                       Column(
-              //                         children: [
-              //                           Row(
-              //                             children: [
-              //                               Text("姿勢"),
-              //                               Text(
-              //                                 "(不)",
-              //                                 style:
-              //                                     TextStyle(color: Colors.red),
-              //                               ),
-              //                             ],
-              //                           ),
-              //                           Text(
-              //                             "${data.measuringBadPostureMin}分",
-              //                             style: TextStyle(
-              //                                 color: Colors.red,
-              //                                 fontWeight: FontWeight.bold),
-              //                           ),
-              //                           Text(
-              //                             "${((double.parse(data.measuringBadPostureMin) / double.parse(data.measuringMin)) * 100).toStringAsFixed(0)}％",
-              //                             style: TextStyle(
-              //                                 color: Colors.red, fontSize: 12),
-              //                           ),
-              //                         ],
-              //                       ),
-              //                     ],
-              //                   ),
-              //                   // Text("通知回数：${data.numberOfNotifications}回"),
-              //                 ],
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //     )
-              //     .toList();
-
-              // return Stack(
-              //   children: [
-              //     Scrollbar(
-              //       child: ListView(
-              //         children: widgets,
-              //       ),
-              //     ),
-              //     if (model.isLoading)
-              //       Container(
-              //         // color: Colors.grey.withOpacity(0.7),
-              //         child: const Center(
-              //           child: CircularProgressIndicator(),
-              //         ),
-              //       ),
-              //   ],
-              // );
             }),
           );
         });

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:posture_correction/utils.dart';
 
 import '../camera/camera_model.dart';
 import '../data.dart';
@@ -15,7 +16,7 @@ class GraphModel extends ChangeNotifier {
   String userId = firebaseAuth.currentUser!.uid;
   bool isLoading = false;
 
-  List<Map<String, String>> data = [];
+  List<Map<String, dynamic>> data = [];
 
   final now = DateTime.now();
   String? year;
@@ -32,7 +33,7 @@ class GraphModel extends ChangeNotifier {
   bool show = false;
   bool dotSwitch = false;
 
-  void fetchGraphData() async {
+  Future fetchGraphData() async {
     isLoading = true;
     spots1 = [];
     spots2 = [];
@@ -53,11 +54,16 @@ class GraphModel extends ChangeNotifier {
     for (var doc in snapshot.docs) {
       if (doc.get("createdAt").toString().substring(0, 7) == getMonth) {
         final createdAt = await doc.get("createdAt").substring(0, 10);
-        final measuringMin = await doc.get("measuringMin");
-        final measuringBadPostureMin = await doc.get("measuringBadPostureMin");
-        final flSpot1 = FlSpot(num, double.parse(measuringMin));
-        final flSpot2 = FlSpot(num, double.parse(measuringBadPostureMin));
-        final goodPostureMin = (flSpot1.y - flSpot2.y).toStringAsFixed(1);
+        final measuringMin =
+            double.parse(doc.get("measuringMin").toStringAsFixed(1));
+        final measuringBadPostureMin =
+            double.parse(doc.get("measuringBadPostureMin").toStringAsFixed(1));
+        //todo measuringMin,measuringBadPostureMinが整数でエラー発生
+        final flSpot1 = FlSpot(num, measuringMin);
+        final flSpot2 = FlSpot(num, measuringBadPostureMin);
+
+        final goodPostureMin =
+            double.parse((flSpot1.y - flSpot2.y).toStringAsFixed(1));
         num++;
         spots1.add(flSpot1);
         spots2.add(flSpot2);
@@ -68,6 +74,10 @@ class GraphModel extends ChangeNotifier {
           "goodPostureMin": goodPostureMin,
           "measuringBadPostureMin": measuringBadPostureMin,
         });
+
+        print("良 ${measuringMin} : ${measuringMin.runtimeType}");
+        print(
+            "不 ${measuringBadPostureMin} : ${measuringBadPostureMin.runtimeType}");
       }
     }
 
@@ -91,18 +101,7 @@ class GraphModel extends ChangeNotifier {
     fetchGraphData();
   }
 
-  // changes() {
-  //   if (extendHeight == false) {
-  //     extendHeight = true;
-  //     switchHeightIcon = false;
-  //   } else {
-  //     extendHeight = false;
-  //     switchHeightIcon = true;
-  //   }
-  //   notifyListeners();
-  // }
-
-  changes2() {
+  changes() {
     if (extendWidth == false) {
       extendWidth = true;
       switchWidthIcon = true;
