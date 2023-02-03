@@ -7,7 +7,8 @@ class Data {
     measuringBadPostureSec = doc["measuringBadPostureSec"];
     measuringMin = doc["measuringMin"];
     measuringSec = doc["measuringSec"];
-    numberOfNotifications = doc["numberOfNotifications"];
+    notificationCounter = doc["notificationCounter"];
+    timeToNotification = doc["timeToNotification"];
     title = doc["title"];
     userId = doc["userId"];
     documentID = doc.id;
@@ -17,7 +18,8 @@ class Data {
   num? measuringBadPostureSec;
   num? measuringMin;
   num? measuringSec;
-  num? numberOfNotifications;
+  int? notificationCounter;
+  int? timeToNotification;
   String? title;
   String? userId;
   String? documentID;

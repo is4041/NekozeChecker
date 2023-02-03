@@ -100,10 +100,10 @@ class HomeModel extends ChangeNotifier {
       final totalOfTodayGoodPostureMin =
           totalOfTodayMin - totalOfTodayBadPostureMin;
       // print(totalOfTodayGoodPostureMin);
-      final averageOfTodayGoodPostureMin = double.parse(
+      Utils.percentOfTodayGoodPostureMin = double.parse(
           ((totalOfTodayGoodPostureMin / totalOfTodayMin) * 100)
               .toStringAsFixed(1));
-      Utils.percentOfTodayGoodPostureMin = averageOfTodayGoodPostureMin;
+
       Utils.averageOfTodayLength = averageOfToday.length;
     } else {
       Utils.percentOfTodayGoodPostureMin = 0;

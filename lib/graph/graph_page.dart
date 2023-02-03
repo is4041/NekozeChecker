@@ -55,11 +55,15 @@ class GraphPage extends StatelessWidget {
                             Transform.rotate(
                               angle: 180 * pi / 180,
                               child: IconButton(
-                                onPressed: () {
-                                  model.getNextMonthData();
-                                },
+                                onPressed: monthCounter < 0
+                                    ? () {
+                                        model.getNextMonthData();
+                                      }
+                                    : () {},
                                 icon: Icon(Icons.arrow_back_ios_outlined),
-                                color: Colors.black,
+                                color: monthCounter < 0
+                                    ? Colors.black
+                                    : Colors.grey,
                               ),
                             ),
                           ],
@@ -102,7 +106,7 @@ class GraphPage extends StatelessWidget {
                                 width: 45,
                                 child: Center(
                                   child: Text(
-                                    "(分)",
+                                    "(時間)",
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold),
@@ -129,9 +133,66 @@ class GraphPage extends StatelessWidget {
                             ),
                           ),
                           Align(
+                            alignment: Alignment.topCenter,
+                            child: Container(
+                              height: 30,
+                              width: 250,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        height: 20,
+                                        width: 20,
+                                        decoration: BoxDecoration(
+                                          color: Colors.green.shade50,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        model.rateOfGoodPosture != 0
+                                            ? "：${model.rateOfGoodPosture}％"
+                                            : "：0％",
+                                        style: TextStyle(
+                                            fontSize: 20, color: Colors.green),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        height: 20,
+                                        width: 20,
+                                        decoration: BoxDecoration(
+                                          color: Colors.red.shade50,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        100 - model.rateOfGoodPosture != 100
+                                            ? "：${(100 - model.rateOfGoodPosture).toStringAsFixed(1)}％"
+                                            : "：0％",
+                                        style: TextStyle(
+                                            fontSize: 20, color: Colors.red),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Align(
                             alignment: Alignment.topRight,
                             child: SizedBox(
-                              height: 40,
+                              height: 30,
                               child: ElevatedButton(
                                 onPressed: () {
                                   model.changes();
@@ -163,6 +224,15 @@ class GraphPage extends StatelessWidget {
                           // ),
                         ],
                       ),
+                      Container(
+                        alignment: Alignment.topRight,
+                        height: 20,
+                        child: Text(
+                          "(回)",
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                      ),
                       //日付　計測時間　姿勢(良)　姿勢(不)
                       Container(
                         padding: EdgeInsets.symmetric(
@@ -178,8 +248,8 @@ class GraphPage extends StatelessWidget {
                         ),
                         child: Row(
                           children: [
-                            Container(
-                              width: 50,
+                            Expanded(
+                              flex: 1,
                               child: Center(
                                 child: Text(
                                   "計測日",
@@ -188,6 +258,7 @@ class GraphPage extends StatelessWidget {
                               ),
                             ),
                             Expanded(
+                              flex: 2,
                               child: Container(
                                 alignment: Alignment.centerRight,
                                 child: Text(
@@ -197,50 +268,81 @@ class GraphPage extends StatelessWidget {
                               ),
                             ),
                             Expanded(
-                              child: Container(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      "姿勢",
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                    Text(
-                                      "(良)",
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.green),
-                                    ),
-                                  ],
-                                ),
+                              flex: 2,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    "姿勢",
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                  Text(
+                                    "(良)",
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.green),
+                                  ),
+                                ],
                               ),
                             ),
                             Expanded(
-                              child: Container(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      "姿勢",
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                    Text(
-                                      "(不)",
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.red),
-                                    ),
-                                  ],
-                                ),
+                              flex: 2,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    "姿勢",
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                  Text(
+                                    "(不)",
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.red),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
+
                       //履歴
                       Expanded(
                         child: Scrollbar(
                           child: ListView.builder(
                             itemCount: model.data.length,
                             itemBuilder: (context, index) {
+                              //計測時間を時・分・秒に変換
+                              num hour =
+                                  model.data[index]["measuringSec"] ~/ 60 ~/ 60;
+                              num minute =
+                                  model.data[index]["measuringSec"] ~/ 60 % 60;
+                              num second =
+                                  model.data[index]["measuringSec"] % 60;
+                              //姿勢（良）を時・分・秒に変換
+                              num goodHour = model.data[index]
+                                      ["measuringGoodPostureSec"] ~/
+                                  60 ~/
+                                  60;
+                              num goodMinute = model.data[index]
+                                      ["measuringGoodPostureSec"] ~/
+                                  60 %
+                                  60;
+                              num goodSecond = model.data[index]
+                                      ["measuringGoodPostureSec"] %
+                                  60;
+                              //姿勢（不）を時・分・秒に変換
+                              num badHour = model.data[index]
+                                      ["measuringBadPostureSec"] ~/
+                                  60 ~/
+                                  60;
+                              num badMinute = model.data[index]
+                                      ["measuringBadPostureSec"] ~/
+                                  60 %
+                                  60;
+                              num badSecond = model.data[index]
+                                      ["measuringBadPostureSec"] %
+                                  60;
+
                               return Container(
                                 decoration: BoxDecoration(
                                   border: Border(
@@ -250,13 +352,13 @@ class GraphPage extends StatelessWidget {
                                 child: ListTile(
                                   title: Row(
                                     children: [
-                                      Container(
-                                        width: 50,
+                                      Expanded(
+                                        flex: 1,
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
                                           children: [
                                             Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
                                                 Text(
                                                   "${index + 1}",
@@ -285,23 +387,56 @@ class GraphPage extends StatelessWidget {
                                         ),
                                       ),
                                       Expanded(
+                                        flex: 2,
                                         child: Column(
                                           children: [
                                             Row(
+                                              // crossAxisAlignment:
+                                              //     CrossAxisAlignment.end,
                                               mainAxisAlignment:
                                                   MainAxisAlignment.end,
                                               children: [
                                                 Text(
-                                                  "${model.data[index]["measuringMin"]}",
+                                                  hour > 0 ? "$hour" : "",
                                                   style: TextStyle(
-                                                    color: Colors.black,
+                                                    fontSize: 15,
+                                                    // fontWeight:
+                                                    //     FontWeight.w500
                                                   ),
                                                 ),
                                                 Text(
-                                                  "分",
+                                                  hour > 0 ? "時間" : "",
                                                   style: TextStyle(
-                                                      fontSize: 13,
-                                                      color: Colors.black),
+                                                    fontSize: 11,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  minute > 0 ? "$minute" : "",
+                                                  style: TextStyle(
+                                                    fontSize: 15,
+                                                    // fontWeight:
+                                                    //     FontWeight.w500
+                                                  ),
+                                                ),
+                                                Text(
+                                                  minute > 0 ? "分" : "",
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "$second",
+                                                  style: TextStyle(
+                                                    fontSize: 15,
+                                                    // fontWeight:
+                                                    //     FontWeight.w500
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "秒",
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -309,25 +444,53 @@ class GraphPage extends StatelessWidget {
                                         ),
                                       ),
                                       Expanded(
+                                        flex: 2,
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
                                           children: [
                                             Row(
+                                              // crossAxisAlignment:
+                                              //     CrossAxisAlignment.end,
                                               mainAxisAlignment:
                                                   MainAxisAlignment.end,
                                               children: [
                                                 Text(
-                                                  "${model.data[index]["goodPostureMin"]}",
+                                                  goodHour > 0
+                                                      ? "$goodHour"
+                                                      : "",
                                                   style: TextStyle(
-                                                    color: Colors.green,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                                      fontSize: 15,
+                                                      color: Colors.green),
                                                 ),
                                                 Text(
-                                                  "分",
+                                                  goodHour > 0 ? "時間" : "",
                                                   style: TextStyle(
-                                                      fontSize: 13,
+                                                      fontSize: 11,
+                                                      color: Colors.green),
+                                                ),
+                                                Text(
+                                                  goodMinute > 0
+                                                      ? "$goodMinute"
+                                                      : "",
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors.green),
+                                                ),
+                                                Text(
+                                                  goodMinute > 0 ? "分" : "",
+                                                  style: TextStyle(
+                                                      fontSize: 11,
+                                                      color: Colors.green),
+                                                ),
+                                                Text(
+                                                  "$goodSecond",
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors.green),
+                                                ),
+                                                Text(
+                                                  "秒",
+                                                  style: TextStyle(
+                                                      fontSize: 11,
                                                       color: Colors.green),
                                                 ),
                                               ],
@@ -336,25 +499,51 @@ class GraphPage extends StatelessWidget {
                                         ),
                                       ),
                                       Expanded(
+                                        flex: 2,
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
                                           children: [
                                             Row(
+                                              // crossAxisAlignment:
+                                              //     CrossAxisAlignment.end,
                                               mainAxisAlignment:
                                                   MainAxisAlignment.end,
                                               children: [
                                                 Text(
-                                                  "${model.data[index]["measuringBadPostureMin"]}",
+                                                  badHour > 0 ? "$badHour" : "",
                                                   style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
+                                                      fontSize: 15,
+                                                      color: Colors.red),
                                                 ),
                                                 Text(
-                                                  "分",
+                                                  badHour > 0 ? "時間" : "",
                                                   style: TextStyle(
-                                                      fontSize: 13,
+                                                      fontSize: 11,
+                                                      color: Colors.red),
+                                                ),
+                                                Text(
+                                                  badMinute > 0
+                                                      ? "$badMinute"
+                                                      : "",
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors.red),
+                                                ),
+                                                Text(
+                                                  badMinute > 0 ? "分" : "",
+                                                  style: TextStyle(
+                                                      fontSize: 11,
+                                                      color: Colors.red),
+                                                ),
+                                                Text(
+                                                  "$badSecond",
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      color: Colors.red),
+                                                ),
+                                                Text(
+                                                  "秒",
+                                                  style: TextStyle(
+                                                      fontSize: 11,
                                                       color: Colors.red),
                                                 ),
                                               ],
@@ -454,77 +643,65 @@ class GraphPage extends StatelessWidget {
     );
     String text;
     switch (value.toInt()) {
-      case 30:
-        text = '30';
-        break;
+      // case 30:
+      //   text = '0.5';
+      //   break;
       case 60:
-        text = '60';
+        text = '1';
         break;
-      case 90:
-        text = '90';
-        break;
+      // case 90:
+      //   text = '1.5';
+      //   break;
       case 120:
-        text = '120';
+        text = '2';
         break;
-      case 150:
-        text = '150';
-        break;
+      // case 150:
+      //   text = '2.5';
+      //   break;
       case 180:
-        text = '180';
-        break;
-      case 210:
-        text = '210';
+        text = '3';
         break;
       case 240:
-        text = '240';
-        break;
-      case 270:
-        text = '270';
+        text = '4';
         break;
       case 300:
-        text = '300';
-        break;
-      case 330:
-        text = '330';
+        text = '5';
         break;
       case 360:
-        text = '360';
+        text = '6';
         break;
       case 420:
-        text = '420';
+        text = '7';
         break;
       case 480:
-        text = '480';
+        text = '8';
         break;
       case 540:
-        text = '540';
+        text = '9';
         break;
       case 600:
-        text = '600';
-        break;
-      case 660:
-        text = '660';
+        text = '10';
         break;
       case 720:
-        text = '720';
+        text = '12';
         break;
       case 840:
-        text = '840';
+        text = '14';
         break;
       case 960:
-        text = '960';
+        text = '16';
         break;
       case 1080:
-        text = '1080';
+        text = '18';
         break;
       case 1200:
-        text = '1200';
+        text = '20';
         break;
       case 1320:
-        text = '1320';
+        text = '22';
         break;
       case 1440:
-        text = '1440';
+        text = '24';
         break;
       default:
         return Container();
@@ -558,7 +735,11 @@ class GraphPage extends StatelessWidget {
           sideTitles: SideTitles(
             showTitles: true,
             //y軸のインターバル
-            interval: model.max <= 720 ? (model.max <= 360 ? 30 : 60) : 120,
+            interval: model.max <= 180
+                ? 30
+                : model.max <= 360
+                    ? 60
+                    : 120,
             getTitlesWidget:
                 model.num > 1 ? leftTitleWidgets : hiddenTitleWidgets,
             reservedSize: 45,
@@ -569,9 +750,13 @@ class GraphPage extends StatelessWidget {
       borderData: FlBorderData(
         show: false,
       ),
-      maxY: model.max <= 720
-          ? (model.max <= 360 ? model.max + 30 : model.max + 60)
-          : 1440,
+      maxY: model.max <= 180
+          ? 180
+          : model.max <= 360
+              ? 360
+              : model.max <= 720
+                  ? 720
+                  : 1440,
     );
   }
 
@@ -579,15 +764,15 @@ class GraphPage extends StatelessWidget {
   LineChartData mainData(model) {
     return LineChartData(
       lineTouchData: LineTouchData(
-        // touchTooltipData: LineTouchTooltipData(
-        //   getTooltipItems: (touchedSpots) {
-        //     return touchedSpots.map((touchedSpot) {
-        //       return LineTooltipItem(touchedSpot.y.toString(),
-        //           TextStyle(color: Colors.green, fontSize: 15));
-        //     }).toList();
-        //   },
-        //   tooltipBgColor: Colors.transparent,
-        // ),
+        touchTooltipData: LineTouchTooltipData(
+          getTooltipItems: (touchedSpots) {
+            return touchedSpots.map((touchedSpot) {
+              return LineTooltipItem(touchedSpot.y.toString(),
+                  TextStyle(color: Colors.green, fontSize: 15));
+            }).toList();
+          },
+          tooltipBgColor: Colors.transparent,
+        ),
         //タップで数値を表示する
         handleBuiltInTouches: false,
       ),
@@ -597,29 +782,23 @@ class GraphPage extends StatelessWidget {
         drawVerticalLine: true,
         horizontalInterval: 1,
         verticalInterval: 1,
-        getDrawingHorizontalLine: model.max <= 720
-            ? (model.max <= 360
-                //最大数値360分以下でインターバル　30分
+        getDrawingHorizontalLine: model.max <= 180
+            //2時間以内
+            ? (value) {
+                if (value == 30 ||
+                    value == 60 ||
+                    value == 90 ||
+                    value == 120 ||
+                    value == 150 ||
+                    value == 180) {
+                  return FlLine(color: Colors.grey, strokeWidth: 0.5);
+                } else {
+                  return FlLine(color: Colors.transparent);
+                }
+              }
+            //6時間以内
+            : model.max <= 360
                 ? (value) {
-                    if (value == 30 ||
-                        value == 60 ||
-                        value == 90 ||
-                        value == 120 ||
-                        value == 150 ||
-                        value == 180 ||
-                        value == 210 ||
-                        value == 240 ||
-                        value == 270 ||
-                        value == 300 ||
-                        value == 330 ||
-                        value == 360) {
-                      return FlLine(color: Colors.grey, strokeWidth: 0.5);
-                    } else {
-                      return FlLine(color: Colors.transparent);
-                    }
-                  }
-                //最大数値361分以上720分以下でインターバル　1時間
-                : (value) {
                     if (value == 60 ||
                         value == 120 ||
                         value == 180 ||
@@ -636,26 +815,26 @@ class GraphPage extends StatelessWidget {
                     } else {
                       return FlLine(color: Colors.transparent);
                     }
-                  })
-            //最大数値721分以上でインターバル　2時間
-            : (value) {
-                if (value == 120 ||
-                    value == 240 ||
-                    value == 360 ||
-                    value == 480 ||
-                    value == 600 ||
-                    value == 720 ||
-                    value == 840 ||
-                    value == 960 ||
-                    value == 1080 ||
-                    value == 1200 ||
-                    value == 1320 ||
-                    value == 1440) {
-                  return FlLine(color: Colors.grey, strokeWidth: 0.5);
-                } else {
-                  return FlLine(color: Colors.transparent);
-                }
-              },
+                  }
+                //12時間以上
+                : (value) {
+                    if (value == 120 ||
+                        value == 240 ||
+                        value == 360 ||
+                        value == 480 ||
+                        value == 600 ||
+                        value == 720 ||
+                        value == 840 ||
+                        value == 960 ||
+                        value == 1080 ||
+                        value == 1200 ||
+                        value == 1320 ||
+                        value == 1440) {
+                      return FlLine(color: Colors.grey, strokeWidth: 0.5);
+                    } else {
+                      return FlLine(color: Colors.transparent);
+                    }
+                  },
         getDrawingVerticalLine: (value) {
           return FlLine(
             color: Colors.transparent,
@@ -687,7 +866,11 @@ class GraphPage extends StatelessWidget {
           sideTitles: SideTitles(
             showTitles: true,
             //y軸のインターバル
-            interval: model.max <= 720 ? (model.max <= 360 ? 30 : 60) : 120,
+            interval: model.max <= 180
+                ? 30
+                : model.max <= 360
+                    ? 60
+                    : 120,
             getTitlesWidget: hiddenTitleWidgets,
             reservedSize: 45,
           ),
@@ -704,9 +887,13 @@ class GraphPage extends StatelessWidget {
       minX: 1,
       maxX: model.num - 1,
       minY: 0,
-      maxY: model.max <= 720
-          ? (model.max <= 360 ? model.max + 30 : model.max + 60)
-          : 1440,
+      maxY: model.max <= 180
+          ? 180
+          : model.max <= 360
+              ? 360
+              : model.max <= 720
+                  ? 720
+                  : 1440,
       lineBarsData: [
         // 計測時間（緑）
         LineChartBarData(
@@ -727,8 +914,6 @@ class GraphPage extends StatelessWidget {
                   .toList(),
               begin: Alignment.centerLeft,
               end: Alignment.centerLeft,
-              // begin: Alignment.centerRight,
-              // end: Alignment.centerRight,
             ),
           ),
         ),
@@ -755,6 +940,13 @@ class GraphPage extends StatelessWidget {
           ),
         ),
       ],
+      // betweenBarsData: [
+      //   BetweenBarsData(
+      //     fromIndex: 0,
+      //     toIndex: 1,
+      //     color: Colors.green.withOpacity(0.2),
+      //   )
+      // ],
     );
   }
 }

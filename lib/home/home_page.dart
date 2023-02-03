@@ -64,17 +64,17 @@ class HomePage extends StatelessWidget {
                             //   ),
                             // ),
                             Container(
-                              color: Colors.grey.withOpacity(0.5),
                               height: screenSize.height * 0.12,
-                              child: Center(
-                                  child: Padding(
-                                padding: const EdgeInsets.only(top: 50.0),
-                                child: Text(
-                                  "ホーム",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 20),
-                                ),
-                              )),
+                              // color: Colors.grey.withOpacity(0.5),
+                              // child: Center(
+                              //     child: Padding(
+                              //   padding: const EdgeInsets.only(top: 50.0),
+                              //   child: Text(
+                              //     "ホーム",
+                              //     style: TextStyle(
+                              //         color: Colors.white, fontSize: 20),
+                              //   ),
+                              // )),
                             ),
                             //全体平均の円グラフ
                             Stack(
@@ -292,6 +292,7 @@ class HomePage extends StatelessWidget {
                               await showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
+                                    //todo　〜〜〜 内容要変更　〜〜〜
                                     return AlertDialog(
                                       title: Text("計測結果"),
                                       content: Container(
@@ -315,6 +316,7 @@ class HomePage extends StatelessWidget {
                                             child: Text("Close"))
                                       ],
                                     );
+                                    //todo　〜〜〜 内容要変更　〜〜〜
                                   });
                             }
                           },

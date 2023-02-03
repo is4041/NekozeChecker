@@ -19,7 +19,7 @@ class CameraModel extends ChangeNotifier {
   Timer? badPostureTimer;
   num measuringSec = 0;
   num measuringBadPostureSec = 0;
-  double numberOfNotifications = 0;
+  int notificationCounter = 0;
   dynamic averageTime = 0;
   dynamic totalAverage;
   dynamic dailyAverage;
@@ -79,8 +79,8 @@ class CameraModel extends ChangeNotifier {
   }
 
   counter() {
-    numberOfNotifications++;
-    print("通知回数:${numberOfNotifications}");
+    notificationCounter++;
+    print("通知回数:${notificationCounter}");
   }
 
   addData() async {
@@ -96,7 +96,8 @@ class CameraModel extends ChangeNotifier {
       "measuringBadPostureSec": measuringBadPostureSec,
       "measuringMin": measuringMin,
       "measuringSec": measuringSec,
-      "numberOfNotifications": numberOfNotifications,
+      "notificationCounter": notificationCounter,
+      "timeToNotification": Utils.timeToNotification,
       "title": "",
       "userId": userId,
     });

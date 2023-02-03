@@ -15,6 +15,7 @@ int monthCounter = 0;
 class GraphModel extends ChangeNotifier {
   String userId = firebaseAuth.currentUser!.uid;
   bool isLoading = false;
+  double rateOfGoodPosture = 0;
 
   List<Map<String, dynamic>> data = [];
 
@@ -34,6 +35,7 @@ class GraphModel extends ChangeNotifier {
   bool dotSwitch = false;
 
   Future fetchGraphData() async {
+    rateOfGoodPosture = 0;
     isLoading = true;
     spots1 = [];
     spots2 = [];
@@ -45,6 +47,9 @@ class GraphModel extends ChangeNotifier {
     year = getMonth.substring(0, 4);
     month = getMonth.substring(5, 7);
 
+    List arrayOfMonthMeasuringMin = [];
+    List arrayOfMonthMeasuringBadMin = [];
+
     final QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('measurements')
         .where("userId", isEqualTo: userId.toString())
@@ -53,32 +58,50 @@ class GraphModel extends ChangeNotifier {
 
     for (var doc in snapshot.docs) {
       if (doc.get("createdAt").toString().substring(0, 7) == getMonth) {
+        arrayOfMonthMeasuringMin.add(doc.get("measuringMin"));
+        arrayOfMonthMeasuringBadMin.add(doc.get("measuringBadPostureMin"));
+
+        if (arrayOfMonthMeasuringMin.isNotEmpty) {
+          final totalOfMonthMeasuringMin =
+              arrayOfMonthMeasuringMin.reduce((a, b) => a + b);
+          final totalOfMonthBadPostureMin =
+              arrayOfMonthMeasuringBadMin.reduce((a, b) => a + b);
+          final totalOfMonthGoodPostureMin =
+              totalOfMonthMeasuringMin - totalOfMonthBadPostureMin;
+          rateOfGoodPosture = double.parse(
+              ((totalOfMonthGoodPostureMin / totalOfMonthMeasuringMin) * 100)
+                  .toStringAsFixed(1));
+        }
+
         final createdAt = await doc.get("createdAt").substring(0, 10);
+        final measuringSec = doc.get("measuringSec");
+        final measuringBadPostureSec = doc.get("measuringBadPostureSec");
+        final measuringGoodPostureSec = measuringSec - measuringBadPostureSec;
+
         final measuringMin =
             double.parse(doc.get("measuringMin").toStringAsFixed(1));
         final measuringBadPostureMin =
             double.parse(doc.get("measuringBadPostureMin").toStringAsFixed(1));
-        //todo measuringMin,measuringBadPostureMinが整数でエラー発生
+        // measuringMin,measuringBadPostureMinが整数でエラー発生（toStringAsFixed必須）
         final flSpot1 = FlSpot(num, measuringMin);
         final flSpot2 = FlSpot(num, measuringBadPostureMin);
 
-        final goodPostureMin =
-            double.parse((flSpot1.y - flSpot2.y).toStringAsFixed(1));
         num++;
         spots1.add(flSpot1);
         spots2.add(flSpot2);
         show = true;
+
         data.add({
           "createdAt": createdAt,
-          "measuringMin": measuringMin,
-          "goodPostureMin": goodPostureMin,
-          "measuringBadPostureMin": measuringBadPostureMin,
+          "measuringSec": measuringSec,
+          "measuringGoodPostureSec": measuringGoodPostureSec,
+          "measuringBadPostureSec": measuringBadPostureSec,
         });
-
-        print("良 ${measuringMin} : ${measuringMin.runtimeType}");
-        print(
-            "不 ${measuringBadPostureMin} : ${measuringBadPostureMin.runtimeType}");
       }
+    }
+
+    for (var doc in snapshot.docs) {
+      if (doc.get("createdAt").toString().substring(0, 7) == getMonth) {}
     }
 
     for (int i = 0; i < spots1.length; i++) {

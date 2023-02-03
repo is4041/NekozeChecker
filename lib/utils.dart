@@ -1,6 +1,4 @@
 class Utils {
-  static int? dailyAverage;
-  static int? totalAverage;
   static double percentOfAllGoodPostureMin = 0;
   static double percentOfTodayGoodPostureMin = 0;
   static double percentOfThisMonthGoodPostureMin = 0;
