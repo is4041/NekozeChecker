@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
@@ -31,24 +32,63 @@ class CameraPage extends StatelessWidget {
           return Scaffold(
             body: Consumer<CameraModel>(builder: (context, model, child) {
               if (model.controller == null) {
+                // showDialog(
+                //     context: context,
+                //     builder: (BuildContext context) {
+                //       return CupertinoAlertDialog(
+                //         title: Text("端末のカメラの設定をオンにしてください。"),
+                //         actions: [
+                //           TextButton(
+                //             child: const Text("OK"),
+                //             onPressed: () {
+                //               Navigator.of(context).pop();
+                //             },
+                //           )
+                //         ],
+                //       );
+                //     });
                 return Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        "Camera is not available",
-                        style: TextStyle(fontSize: 35),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      FloatingActionButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Icon(Icons.arrow_back_ios),
-                      ),
-                    ],
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          "カメラが使用出来ません。",
+                          style: TextStyle(fontSize: 25),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        const Text(
+                          "端末の設定からこのアプリ（Posture correction）の\nカメラの設定をオンにしてください。",
+                          // style: TextStyle(fontSize: 25),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                          height: 50,
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            style: ElevatedButton.styleFrom(
+                                primary: Colors.green,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                )),
+                            child: Text(
+                              "戻る",
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                              // style: TextStyle(fontSize: 40),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               }
@@ -102,7 +142,7 @@ class CameraPage extends StatelessWidget {
                         Navigator.of(context).pop([
                           model.averageTime.toStringAsFixed(2),
                           model.measuringSec.toString(),
-                          model.numberOfNotifications.toString()
+                          model.notificationCounter.toString()
                         ]);
                       },
                       child: const Icon(Icons.stop),
