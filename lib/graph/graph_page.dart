@@ -12,6 +12,7 @@ import '../data.dart';
 class GraphPage extends StatelessWidget {
   List<Color> gradientColors = [
     Color(0xff9aee9b),
+    // Color(0xFF2BD600),
     Color(0xff4caf50),
   ];
 
@@ -31,46 +32,43 @@ class GraphPage extends StatelessWidget {
               children: [
                 Scaffold(
                   appBar: AppBar(
-                    title: Column(
+                    elevation: 0,
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                model.getLastMonthData();
-                              },
-                              icon: Icon(Icons.arrow_back_ios_outlined),
-                              color: Colors.black,
+                        IconButton(
+                          onPressed: () {
+                            model.getLastMonthData();
+                          },
+                          icon: Icon(Icons.arrow_back_ios_outlined),
+                          color: Colors.black,
+                        ),
+                        Center(
+                          child: Text(
+                            model.year! + " / " + model.month!,
+                            style: TextStyle(
+                              fontSize: 25.0,
+                              color: Colors.greenAccent.shade700,
+                              // fontWeight: FontWeight.bold
                             ),
-                            Center(
-                              child: Text(
-                                model.year! + " / " + model.month!,
-                                style: TextStyle(
-                                  fontSize: 25.0, color: Colors.green,
-                                  // fontWeight: FontWeight.bold
-                                ),
-                              ),
-                            ),
-                            Transform.rotate(
-                              angle: 180 * pi / 180,
-                              child: IconButton(
-                                onPressed: monthCounter < 0
-                                    ? () {
-                                        model.getNextMonthData();
-                                      }
-                                    : () {},
-                                icon: Icon(Icons.arrow_back_ios_outlined),
-                                color: monthCounter < 0
-                                    ? Colors.black
-                                    : Colors.grey,
-                              ),
-                            ),
-                          ],
+                          ),
+                        ),
+                        Transform.rotate(
+                          angle: 180 * pi / 180,
+                          child: IconButton(
+                            onPressed: monthCounter < 0
+                                ? () {
+                                    model.getNextMonthData();
+                                  }
+                                : () {},
+                            icon: Icon(Icons.arrow_back_ios_outlined),
+                            color:
+                                monthCounter < 0 ? Colors.black : Colors.grey,
+                          ),
                         ),
                       ],
                     ),
-                    backgroundColor: Colors.white,
+                    backgroundColor: Colors.grey[50],
                   ),
                   body: Column(
                     children: [
@@ -150,7 +148,7 @@ class GraphPage extends StatelessWidget {
                                           color: Colors.green.shade50,
                                           shape: BoxShape.circle,
                                           border: Border.all(
-                                            color: Colors.green,
+                                            color: Colors.greenAccent.shade700,
                                           ),
                                         ),
                                       ),
@@ -159,7 +157,8 @@ class GraphPage extends StatelessWidget {
                                             ? "：${model.rateOfGoodPosture}％"
                                             : "：0％",
                                         style: TextStyle(
-                                            fontSize: 20, color: Colors.green),
+                                            fontSize: 20,
+                                            color: Colors.greenAccent.shade700),
                                       ),
                                     ],
                                   ),
@@ -279,7 +278,8 @@ class GraphPage extends StatelessWidget {
                                   Text(
                                     "(良)",
                                     style: TextStyle(
-                                        fontSize: 12, color: Colors.green),
+                                        fontSize: 12,
+                                        color: Colors.greenAccent.shade700),
                                   ),
                                 ],
                               ),
@@ -294,7 +294,7 @@ class GraphPage extends StatelessWidget {
                                     style: TextStyle(fontSize: 12),
                                   ),
                                   Text(
-                                    "(不)",
+                                    "(不良)",
                                     style: TextStyle(
                                         fontSize: 12, color: Colors.red),
                                   ),
@@ -330,7 +330,7 @@ class GraphPage extends StatelessWidget {
                               num goodSecond = model.data[index]
                                       ["measuringGoodPostureSec"] %
                                   60;
-                              //姿勢（不）を時・分・秒に変換
+                              //姿勢（不良）を時・分・秒に変換
                               num badHour = model.data[index]
                                       ["measuringBadPostureSec"] ~/
                                   60 ~/
@@ -388,165 +388,154 @@ class GraphPage extends StatelessWidget {
                                       ),
                                       Expanded(
                                         flex: 2,
-                                        child: Column(
+                                        child: Wrap(
+                                          crossAxisAlignment:
+                                              WrapCrossAlignment.end,
+                                          alignment: WrapAlignment.end,
                                           children: [
-                                            Row(
-                                              // crossAxisAlignment:
-                                              //     CrossAxisAlignment.end,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                Text(
-                                                  hour > 0 ? "$hour" : "",
-                                                  style: TextStyle(
-                                                    fontSize: 15,
-                                                    // fontWeight:
-                                                    //     FontWeight.w500
-                                                  ),
-                                                ),
-                                                Text(
-                                                  hour > 0 ? "時間" : "",
-                                                  style: TextStyle(
-                                                    fontSize: 11,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  minute > 0 ? "$minute" : "",
-                                                  style: TextStyle(
-                                                    fontSize: 15,
-                                                    // fontWeight:
-                                                    //     FontWeight.w500
-                                                  ),
-                                                ),
-                                                Text(
-                                                  minute > 0 ? "分" : "",
-                                                  style: TextStyle(
-                                                    fontSize: 11,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "$second",
-                                                  style: TextStyle(
-                                                    fontSize: 15,
-                                                    // fontWeight:
-                                                    //     FontWeight.w500
-                                                  ),
-                                                ),
-                                                Text(
-                                                  "秒",
-                                                  style: TextStyle(
-                                                    fontSize: 11,
-                                                  ),
-                                                ),
-                                              ],
+                                            Text(
+                                              hour > 0 ? "$hour" : "",
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                            Text(
+                                              hour > 0 ? "時間" : "",
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            Text(
+                                              minute > 0 ? "$minute" : "",
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                            Text(
+                                              minute > 0 ? "分" : "",
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            Text(
+                                              second > 0 ? "$second" : "",
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500),
+                                            ),
+                                            Text(
+                                              second > 0 ? "秒" : "",
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                              ),
                                             ),
                                           ],
                                         ),
                                       ),
                                       Expanded(
                                         flex: 2,
-                                        child: Column(
+                                        child: Wrap(
+                                          crossAxisAlignment:
+                                              WrapCrossAlignment.end,
+                                          alignment: WrapAlignment.end,
                                           children: [
-                                            Row(
-                                              // crossAxisAlignment:
-                                              //     CrossAxisAlignment.end,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                Text(
-                                                  goodHour > 0
-                                                      ? "$goodHour"
-                                                      : "",
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.green),
-                                                ),
-                                                Text(
-                                                  goodHour > 0 ? "時間" : "",
-                                                  style: TextStyle(
-                                                      fontSize: 11,
-                                                      color: Colors.green),
-                                                ),
-                                                Text(
-                                                  goodMinute > 0
-                                                      ? "$goodMinute"
-                                                      : "",
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.green),
-                                                ),
-                                                Text(
-                                                  goodMinute > 0 ? "分" : "",
-                                                  style: TextStyle(
-                                                      fontSize: 11,
-                                                      color: Colors.green),
-                                                ),
-                                                Text(
-                                                  "$goodSecond",
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.green),
-                                                ),
-                                                Text(
-                                                  "秒",
-                                                  style: TextStyle(
-                                                      fontSize: 11,
-                                                      color: Colors.green),
-                                                ),
-                                              ],
+                                            Text(
+                                              goodHour > 0 ? "$goodHour" : "",
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors
+                                                      .greenAccent.shade700),
+                                            ),
+                                            Text(
+                                              goodHour > 0 ? "時間" : "",
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors
+                                                      .greenAccent.shade700),
+                                            ),
+                                            Text(
+                                              goodMinute > 0
+                                                  ? "$goodMinute"
+                                                  : "",
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors
+                                                      .greenAccent.shade700),
+                                            ),
+                                            Text(
+                                              goodMinute > 0 ? "分" : "",
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors
+                                                      .greenAccent.shade700),
+                                            ),
+                                            Text(
+                                              goodSecond > 0
+                                                  ? "$goodSecond"
+                                                  : "",
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors
+                                                      .greenAccent.shade700),
+                                            ),
+                                            Text(
+                                              goodSecond > 0 ? "秒" : "",
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors
+                                                      .greenAccent.shade700),
                                             ),
                                           ],
                                         ),
                                       ),
                                       Expanded(
                                         flex: 2,
-                                        child: Column(
+                                        child: Wrap(
+                                          crossAxisAlignment:
+                                              WrapCrossAlignment.end,
+                                          alignment: WrapAlignment.end,
                                           children: [
-                                            Row(
-                                              // crossAxisAlignment:
-                                              //     CrossAxisAlignment.end,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                Text(
-                                                  badHour > 0 ? "$badHour" : "",
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.red),
-                                                ),
-                                                Text(
-                                                  badHour > 0 ? "時間" : "",
-                                                  style: TextStyle(
-                                                      fontSize: 11,
-                                                      color: Colors.red),
-                                                ),
-                                                Text(
-                                                  badMinute > 0
-                                                      ? "$badMinute"
-                                                      : "",
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.red),
-                                                ),
-                                                Text(
-                                                  badMinute > 0 ? "分" : "",
-                                                  style: TextStyle(
-                                                      fontSize: 11,
-                                                      color: Colors.red),
-                                                ),
-                                                Text(
-                                                  "$badSecond",
-                                                  style: TextStyle(
-                                                      fontSize: 15,
-                                                      color: Colors.red),
-                                                ),
-                                                Text(
-                                                  "秒",
-                                                  style: TextStyle(
-                                                      fontSize: 11,
-                                                      color: Colors.red),
-                                                ),
-                                              ],
+                                            Text(
+                                              badHour > 0 ? "$badHour" : "",
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.red),
+                                            ),
+                                            Text(
+                                              badHour > 0 ? "時間" : "",
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.red),
+                                            ),
+                                            Text(
+                                              badMinute > 0 ? "$badMinute" : "",
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.red),
+                                            ),
+                                            Text(
+                                              badMinute > 0 ? "分" : "",
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.red),
+                                            ),
+                                            Text(
+                                              badSecond > 0 ? "$badSecond" : "",
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.red),
+                                            ),
+                                            Text(
+                                              badSecond > 0 ? "秒" : "",
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.red),
                                             ),
                                           ],
                                         ),
@@ -764,15 +753,18 @@ class GraphPage extends StatelessWidget {
   LineChartData mainData(model) {
     return LineChartData(
       lineTouchData: LineTouchData(
-        touchTooltipData: LineTouchTooltipData(
-          getTooltipItems: (touchedSpots) {
-            return touchedSpots.map((touchedSpot) {
-              return LineTooltipItem(touchedSpot.y.toString(),
-                  TextStyle(color: Colors.green, fontSize: 15));
-            }).toList();
-          },
-          tooltipBgColor: Colors.transparent,
-        ),
+        // touchTooltipData: LineTouchTooltipData(
+        //   tooltipBgColor: Colors.transparent,
+        //   getTooltipItems: (touchedSpots) {
+        //     return touchedSpots.map((touchedSpot) {
+        //       return LineTooltipItem(touchedSpot.y.toString(),
+        //           TextStyle(color: Colors.green, fontSize: 15),
+        //           children: [
+        //             TextSpan(text: "?"),
+        //           ]);
+        //     }).toList();
+        //   },
+        // ),
         //タップで数値を表示する
         handleBuiltInTouches: false,
       ),
@@ -901,7 +893,7 @@ class GraphPage extends StatelessWidget {
           spots: model.spots1,
           isCurved: true,
           preventCurveOverShooting: true,
-          color: Colors.green[300],
+          color: Colors.greenAccent.shade700,
           barWidth: 2,
           dotData: FlDotData(show: model.num > 2 ? model.dotSwitch : true
               // show: true
