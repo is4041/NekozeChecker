@@ -153,24 +153,6 @@ class HomeModel extends ChangeNotifier {
       Utils.averageOfAllLength = 0;
     }
 
-    // final today = Timestamp.now().toDate().toString().substring(0, 10);
-    //
-    // DocumentSnapshot snapshot = await firestore.doc("users/$userId").get();
-    // final data = snapshot.data() as Map<String, dynamic>;
-    //
-    // if (today == data["lastMeasuredOn"]) {
-    //   Utils.dailyAverage = data["dailyAverage"];
-    // } else {
-    //   await upDateDailyAverage();
-    //   Utils.dailyAverage = "";
-    // }
-    //
-    // if (Utils.totalAverage == null) {
-    //   DocumentSnapshot snapshot = await firestore.doc("users/$userId").get();
-    //   final data = snapshot.data() as Map<String, dynamic>;
-    //
-    //   Utils.totalAverage = data["totalAverage"];
-    // }
     notifyListeners();
   }
 

@@ -401,7 +401,7 @@ class HomePage extends StatelessWidget {
       switch (i) {
         case 0:
           return PieChartSectionData(
-            color: Color(0xff00c904),
+            color: Color(0xff00cb00),
             value: Utils.percentOfAllGoodPostureMin,
             radius: radius,
             showTitle: false,

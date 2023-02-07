@@ -20,11 +20,15 @@ class SettingPage extends StatelessWidget {
           return Scaffold(
             backgroundColor: Colors.grey[100],
             appBar: AppBar(
+              elevation: 0,
+              // shadowColor: Colors.green,
+              backgroundColor: Colors.grey[100],
               title: Text(
-                "設定",
-                style: TextStyle(color: Colors.green),
+                "設  定",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.greenAccent.shade700),
               ),
-              backgroundColor: Colors.white,
             ),
             body: Consumer<SettingModel>(builder: (context, model, child) {
               return SingleChildScrollView(
