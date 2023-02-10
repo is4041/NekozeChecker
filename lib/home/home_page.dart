@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:posture_correction/camera/camera_page.dart';
+import 'package:posture_correction/help/help_page.dart';
 import 'package:posture_correction/home/home_model.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
@@ -44,37 +45,42 @@ class HomePage extends StatelessWidget {
                             ),
                           ),
                         ),
+                        // Align(
+                        //   alignment: Alignment.bottomLeft,
+                        //   child: ElevatedButton(
+                        //     onPressed: () {
+                        //       Navigator.push(
+                        //           context,
+                        //           MaterialPageRoute(
+                        //               builder: (context) => HelpPage()));
+                        //     },
+                        //     child: Text(
+                        //       "?",
+                        //       style:
+                        //           TextStyle(fontSize: 25, color: Colors.white),
+                        //     ),
+                        //     style: ElevatedButton.styleFrom(
+                        //         shape: CircleBorder(), primary: Colors.green),
+                        //   ),
+                        // ),
+                        // Align(
+                        //   alignment: Alignment(1, 0),
+                        //   child: ElevatedButton(
+                        //     onPressed: () {
+                        //       Navigator.push(
+                        //           context,
+                        //           MaterialPageRoute(
+                        //               builder: (context) => HomePage()));
+                        //     },
+                        //     child: Text("?"),
+                        //     style: ElevatedButton.styleFrom(
+                        //         shape: CircleBorder(), primary: Colors.green),
+                        //   ),
+                        // ),
                         Column(
                           children: [
-                            // Container(
-                            //   // color: Colors.grey.withOpacity(0.5),
-                            //   height: 100,
-                            //   width: double.infinity,
-                            //   child: Padding(
-                            //     padding: const EdgeInsets.only(top: 50.0),
-                            //     child: Center(
-                            //       child: Text(
-                            //         "ホーム",
-                            //         style: TextStyle(
-                            //             color: Colors.white,
-                            //             fontSize: 20,
-                            //             fontWeight: FontWeight.bold),
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
                             Container(
-                              height: screenSize.height * 0.12,
-                              // color: Colors.grey.withOpacity(0.5),
-                              // child: Center(
-                              //     child: Padding(
-                              //   padding: const EdgeInsets.only(top: 50.0),
-                              //   child: Text(
-                              //     "ホーム",
-                              //     style: TextStyle(
-                              //         color: Colors.white, fontSize: 20),
-                              //   ),
-                              // )),
+                              height: screenSize.height * 0.1,
                             ),
                             //全体平均の円グラフ
                             Stack(
@@ -107,7 +113,7 @@ class HomePage extends StatelessWidget {
                                   height: 225,
                                   child: Center(
                                     child: Text(
-                                      "${Utils.percentOfAllGoodPostureMin}%",
+                                      "${Utils.percentOfAllGoodPostureSec}%",
                                       style: TextStyle(
                                         fontSize: 30,
                                         fontWeight: FontWeight.bold,
@@ -178,7 +184,7 @@ class HomePage extends StatelessWidget {
                                           width: 120,
                                           child: Center(
                                             child: Text(
-                                              "${Utils.percentOfTodayGoodPostureMin}%",
+                                              "${Utils.percentOfTodayGoodPostureSec}%",
                                               style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold,
@@ -241,7 +247,7 @@ class HomePage extends StatelessWidget {
                                           width: 120,
                                           child: Center(
                                             child: Text(
-                                              "${Utils.percentOfThisMonthGoodPostureMin}%",
+                                              "${Utils.percentOfThisMonthGoodPostureSec}%",
                                               style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold,
@@ -296,15 +302,37 @@ class HomePage extends StatelessWidget {
                                     return AlertDialog(
                                       title: Text("計測結果"),
                                       content: Container(
-                                        width: 100,
                                         height: 300,
                                         child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
                                           children: [
-                                            Text(value[0] != ""
-                                                ? "平均約${value[0]}分に1回猫背になっています"
-                                                : "猫背にはなっていません"),
-                                            Text("計測時間：${value[1]}秒"),
-                                            Text("通知回数：${value[2]}回"),
+                                            Text("計測時間：${value[0]}秒"),
+                                            Row(
+                                              // mainAxisAlignment:
+                                              //     MainAxisAlignment.center,
+                                              children: [
+                                                Text("計測時間：姿勢"),
+                                                Text(
+                                                  "(良)：${value[1]}秒",
+                                                  style: TextStyle(
+                                                      color: Colors.green),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text("計測時間：姿勢"),
+                                                Text(
+                                                  "(不良)：${value[2]}秒",
+                                                  style: TextStyle(
+                                                      color: Colors.red),
+                                                ),
+                                              ],
+                                            ),
+                                            Text("猫背通知回数：${value[3]}回"),
                                           ],
                                         ),
                                       ),
@@ -333,6 +361,20 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                       ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HelpPage()));
+                      },
+                      child: Text(
+                        "?",
+                        style: TextStyle(fontSize: 25, color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                          shape: CircleBorder(), primary: Colors.green),
                     ),
                     // Column(
                     //   crossAxisAlignment: CrossAxisAlignment.start,
@@ -402,16 +444,16 @@ class HomePage extends StatelessWidget {
         case 0:
           return PieChartSectionData(
             color: Color(0xff00cb00),
-            value: Utils.percentOfAllGoodPostureMin,
+            value: Utils.percentOfAllGoodPostureSec,
             radius: radius,
             showTitle: false,
           );
         case 1:
           return PieChartSectionData(
-            color: Utils.percentOfAllGoodPostureMin == 0
+            color: Utils.percentOfAllGoodPostureSec == 0
                 ? Color(0xffd0d0d0)
                 : Color(0xffff1a1a),
-            value: 100 - Utils.percentOfAllGoodPostureMin,
+            value: 100 - Utils.percentOfAllGoodPostureSec,
             showTitle: false,
             radius: radius,
           );
@@ -429,16 +471,17 @@ class HomePage extends StatelessWidget {
         case 0:
           return PieChartSectionData(
             color: Color(0xff00c904),
-            value: Utils.percentOfTodayGoodPostureMin,
+            value: Utils.percentOfTodayGoodPostureSec,
             radius: radius,
             showTitle: false,
           );
         case 1:
           return PieChartSectionData(
-            color: Utils.percentOfTodayGoodPostureMin == 0
-                ? Color(0xffd0d0d0)
-                : Color(0xffff1a1a),
-            value: 100 - Utils.percentOfTodayGoodPostureMin,
+            color: Utils.percentOfTodayGoodPostureSec != 0 &&
+                    Utils.averageOfTodayLength > 0
+                ? Color(0xffff1a1a)
+                : Color(0xffd0d0d0),
+            value: 100 - Utils.percentOfTodayGoodPostureSec,
             showTitle: false,
             radius: radius,
           );
@@ -456,16 +499,16 @@ class HomePage extends StatelessWidget {
         case 0:
           return PieChartSectionData(
             color: Color(0xff00c904),
-            value: Utils.percentOfThisMonthGoodPostureMin,
+            value: Utils.percentOfThisMonthGoodPostureSec,
             radius: radius,
             showTitle: false,
           );
         case 1:
           return PieChartSectionData(
-            color: Utils.percentOfThisMonthGoodPostureMin == 0
+            color: Utils.percentOfThisMonthGoodPostureSec == 0
                 ? Color(0xffd0d0d0)
                 : Color(0xffff1a1a),
-            value: 100 - Utils.percentOfThisMonthGoodPostureMin,
+            value: 100 - Utils.percentOfThisMonthGoodPostureSec,
             showTitle: false,
             radius: radius,
           );

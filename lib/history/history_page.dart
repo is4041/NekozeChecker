@@ -40,26 +40,29 @@ class HistoryPage extends StatelessWidget {
                           //日付
                           String createdAt = data[index].createdAt!;
                           //姿勢（良）を時・分・秒に変換
-                          num hour = data[index].measuringSec! ~/ 60 ~/ 60;
-                          num minute = data[index].measuringSec! ~/ 60 % 60;
-                          num second = data[index].measuringSec! % 60;
+                          num measuringHourValue =
+                              data[index].measuringSec! ~/ 60 ~/ 60;
+                          num measuringMinuteValue =
+                              data[index].measuringSec! ~/ 60 % 60;
+                          num measuringSecondValue =
+                              data[index].measuringSec! % 60;
                           //姿勢（不良）を時・分・秒に変換
-                          num badHour =
+                          num badHourValue =
                               data[index].measuringBadPostureSec! ~/ 60 ~/ 60;
-                          num badMinute =
+                          num badMinuteValue =
                               data[index].measuringBadPostureSec! ~/ 60 % 60;
-                          num badSecond =
+                          num badSecondValue =
                               data[index].measuringBadPostureSec! % 60;
                           //姿勢（良）を時・分・秒に変換
-                          num goodHour = (data[index].measuringSec! -
+                          num goodHourValue = (data[index].measuringSec! -
                                   data[index].measuringBadPostureSec!) ~/
                               60 ~/
                               60;
-                          num goodMinute = (data[index].measuringSec! -
+                          num goodMinuteValue = (data[index].measuringSec! -
                                   data[index].measuringBadPostureSec!) ~/
                               60 %
                               60;
-                          num goodSecond = (data[index].measuringSec! -
+                          num goodSecondValue = (data[index].measuringSec! -
                                   data[index].measuringBadPostureSec!) %
                               60;
                           //カウント回数
@@ -68,12 +71,15 @@ class HistoryPage extends StatelessWidget {
                           //設定したカウンターの秒数
                           int timeToNotification =
                               data[index].timeToNotification!;
-                          //姿勢（良）の割合の算出に使用
-                          num second2 = data[index].measuringSec!;
-                          num goodSecond2 = (data[index].measuringSec! -
-                              data[index].measuringBadPostureSec!);
+
+                          num measuringSec = data[index].measuringSec!;
+                          num measuringGoodPostureSec =
+                              (data[index].measuringSec! -
+                                  data[index].measuringBadPostureSec!);
+                          num measuringBadPostureSec =
+                              data[index].measuringBadPostureSec!;
                           num rateOfGoodPosture = double.parse(
-                              ((goodSecond2 / second2) * 100)
+                              ((measuringGoodPostureSec / measuringSec) * 100)
                                   .toStringAsFixed(1));
                           return Container(
                             decoration: BoxDecoration(
@@ -81,9 +87,6 @@ class HistoryPage extends StatelessWidget {
                                     bottom: BorderSide(
                                         width: 1, color: Colors.grey))),
                             child: ListTile(
-                              // tileColor: index.isOdd
-                              //     ? Colors.transparent
-                              //     : Colors.grey.withOpacity(0.1),
                               onTap: () {
                                 TextEditingController titleController =
                                     TextEditingController();
@@ -325,22 +328,25 @@ class HistoryPage extends StatelessWidget {
                                                                 Row(
                                                                   children: [
                                                                     Text(
-                                                                      hour > 0
-                                                                          ? "$hour時間"
+                                                                      measuringHourValue >
+                                                                              0
+                                                                          ? "$measuringHourValue時間"
                                                                           : "　",
                                                                       style:
                                                                           style,
                                                                     ),
                                                                     Text(
-                                                                      minute > 0
-                                                                          ? "$minute分"
+                                                                      measuringMinuteValue >
+                                                                              0
+                                                                          ? "$measuringMinuteValue分"
                                                                           : "",
                                                                       style:
                                                                           style,
                                                                     ),
                                                                     Text(
-                                                                      second > 0
-                                                                          ? "$second秒"
+                                                                      measuringSecondValue >
+                                                                              0
+                                                                          ? "$measuringSecondValue秒"
                                                                           : "",
                                                                       style:
                                                                           style,
@@ -368,26 +374,26 @@ class HistoryPage extends StatelessWidget {
                                                                 Row(
                                                                   children: [
                                                                     Text(
-                                                                      goodHour >
+                                                                      goodHourValue >
                                                                               0
-                                                                          ? "$goodHour時間"
+                                                                          ? "$goodHourValue時間"
                                                                           : "　",
                                                                       style:
                                                                           styleGreen,
                                                                     ),
                                                                     Text(
-                                                                      goodMinute >
+                                                                      goodMinuteValue >
                                                                               0
-                                                                          ? "$goodMinute分"
+                                                                          ? "$goodMinuteValue分"
                                                                           : "",
                                                                       style:
                                                                           styleGreen,
                                                                     ),
                                                                     Text(
-                                                                      goodSecond >
-                                                                              0
-                                                                          ? "$goodSecond秒"
-                                                                          : "",
+                                                                      goodSecondValue == 0 &&
+                                                                              measuringSec >= 60
+                                                                          ? ""
+                                                                          : "$goodSecondValue秒",
                                                                       style:
                                                                           styleGreen,
                                                                     ),
@@ -414,26 +420,26 @@ class HistoryPage extends StatelessWidget {
                                                                 Row(
                                                                   children: [
                                                                     Text(
-                                                                      badHour >
+                                                                      badHourValue >
                                                                               0
-                                                                          ? "$badHour時間"
+                                                                          ? "$badHourValue時間"
                                                                           : "　",
                                                                       style:
                                                                           styleRed,
                                                                     ),
                                                                     Text(
-                                                                      badMinute >
+                                                                      badMinuteValue >
                                                                               0
-                                                                          ? "$badMinute分"
+                                                                          ? "$badMinuteValue分"
                                                                           : "",
                                                                       style:
                                                                           styleRed,
                                                                     ),
                                                                     Text(
-                                                                      badSecond >
-                                                                              0
-                                                                          ? "$badSecond秒"
-                                                                          : "",
+                                                                      badSecondValue == 0 &&
+                                                                              measuringBadPostureSec >= 60
+                                                                          ? ""
+                                                                          : "$badSecondValue秒",
                                                                       style:
                                                                           styleRed,
                                                                     ),
@@ -614,15 +620,8 @@ class HistoryPage extends StatelessWidget {
                                               Wrap(
                                                 children: [
                                                   Text(
-                                                    hour > 0 ? "$hour時間" : "",
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w600),
-                                                  ),
-                                                  Text(
-                                                    minute > 0
-                                                        ? "$minute分"
+                                                    measuringHourValue > 0
+                                                        ? "$measuringHourValue時間"
                                                         : "",
                                                     style: TextStyle(
                                                         fontSize: 14,
@@ -630,8 +629,17 @@ class HistoryPage extends StatelessWidget {
                                                             FontWeight.w600),
                                                   ),
                                                   Text(
-                                                    second > 0
-                                                        ? "$second秒"
+                                                    measuringMinuteValue > 0
+                                                        ? "$measuringMinuteValue分"
+                                                        : "",
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
+                                                  Text(
+                                                    measuringSecondValue > 0
+                                                        ? "$measuringSecondValue秒"
                                                         : "",
                                                     style: TextStyle(
                                                         fontSize: 14,
@@ -675,8 +683,8 @@ class HistoryPage extends StatelessWidget {
                                               Wrap(
                                                 children: [
                                                   Text(
-                                                    goodHour > 0
-                                                        ? "$goodHour時間"
+                                                    goodHourValue > 0
+                                                        ? "$goodHourValue時間"
                                                         : "",
                                                     style: TextStyle(
                                                         fontSize: 14,
@@ -687,8 +695,8 @@ class HistoryPage extends StatelessWidget {
                                                             FontWeight.w600),
                                                   ),
                                                   Text(
-                                                    goodMinute > 0
-                                                        ? "$goodMinute分"
+                                                    goodMinuteValue > 0
+                                                        ? "$goodMinuteValue分"
                                                         : "",
                                                     style: TextStyle(
                                                         fontSize: 14,
@@ -699,9 +707,10 @@ class HistoryPage extends StatelessWidget {
                                                             FontWeight.w600),
                                                   ),
                                                   Text(
-                                                    goodSecond > 0
-                                                        ? "$goodSecond秒"
-                                                        : "",
+                                                    goodSecondValue == 0 &&
+                                                            measuringSec >= 60
+                                                        ? ""
+                                                        : "$goodSecondValue秒",
                                                     style: TextStyle(
                                                         fontSize: 14,
                                                         color: Colors
@@ -809,9 +818,7 @@ class HistoryPage extends StatelessWidget {
                                               ],
                                             ),
                                             Text(
-                                              second2 > 2
-                                                  ? "$rateOfGoodPosture％"
-                                                  : "---％",
+                                              "$rateOfGoodPosture％",
                                               style: TextStyle(
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold,

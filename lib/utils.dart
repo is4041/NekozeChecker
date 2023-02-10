@@ -1,7 +1,7 @@
 class Utils {
-  static double percentOfAllGoodPostureMin = 0;
-  static double percentOfTodayGoodPostureMin = 0;
-  static double percentOfThisMonthGoodPostureMin = 0;
+  static double percentOfAllGoodPostureSec = 0;
+  static double percentOfTodayGoodPostureSec = 0;
+  static double percentOfThisMonthGoodPostureSec = 0;
   static int averageOfTodayLength = 0;
   static int averageOfThisMonthLength = 0;
   static int averageOfAllLength = 0;

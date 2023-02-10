@@ -73,83 +73,71 @@ class HomeModel extends ChangeNotifier {
       //今日の計測時間(分)をリストに追加
       if (doc.get("createdAt").toString().substring(0, 10) ==
           getDate.toString().substring(0, 10)) {
-        averageOfToday.add(doc.get("measuringMin"));
-        averageOfTodayBadPosture.add(doc.get("measuringBadPostureMin"));
+        averageOfToday.add(doc.get("measuringSec"));
+        averageOfTodayBadPosture.add(doc.get("measuringBadPostureSec"));
       }
 
       //今月の計測時間(分)をリストに追加
       if (doc.get("createdAt").toString().substring(0, 7) ==
           getDate.toString().substring(0, 7)) {
-        averageOfThisMonth.add(doc.get("measuringMin"));
-        averageOfThisMonthBadPosture.add(doc.get("measuringBadPostureMin"));
+        averageOfThisMonth.add(doc.get("measuringSec"));
+        averageOfThisMonthBadPosture.add(doc.get("measuringBadPostureSec"));
       }
 
       //全体の計測時間(分)をリストに追加
-      averageOfAll.add(doc.get("measuringMin"));
-      averageOfAllBadPosture.add(doc.get("measuringBadPostureMin"));
+      averageOfAll.add(doc.get("measuringSec"));
+      averageOfAllBadPosture.add(doc.get("measuringBadPostureSec"));
     }
 
     //今日の平均を割り出す計算
     if (averageOfToday.isNotEmpty) {
-      // print(averageOfToday);
-      final totalOfTodayMin = averageOfToday.reduce((a, b) => a + b);
-      // print(totalOfTodayMin);
-      final totalOfTodayBadPostureMin =
+      final totalOfTodaySec = averageOfToday.reduce((a, b) => a + b);
+      final totalOfTodayBadPostureSec =
           averageOfTodayBadPosture.reduce((a, b) => a + b);
-      // print(totalOfTodayBadPostureMin);
-      final totalOfTodayGoodPostureMin =
-          totalOfTodayMin - totalOfTodayBadPostureMin;
-      // print(totalOfTodayGoodPostureMin);
-      Utils.percentOfTodayGoodPostureMin = double.parse(
-          ((totalOfTodayGoodPostureMin / totalOfTodayMin) * 100)
+      final totalOfTodayGoodPostureSec =
+          totalOfTodaySec - totalOfTodayBadPostureSec;
+      Utils.percentOfTodayGoodPostureSec = double.parse(
+          ((totalOfTodayGoodPostureSec / totalOfTodaySec) * 100)
               .toStringAsFixed(1));
 
       Utils.averageOfTodayLength = averageOfToday.length;
     } else {
-      Utils.percentOfTodayGoodPostureMin = 0;
+      Utils.percentOfTodayGoodPostureSec = 0;
       Utils.averageOfTodayLength = 0;
     }
 
     //今月の平均を割り出す計算
     if (averageOfThisMonth.isNotEmpty) {
-      // print(averageOfThisMonth);
-      final totalOfThisMonthMin = averageOfThisMonth.reduce((a, b) => a + b);
-      // print(totalOfThisMonthMin);
-      final totalOfThisMonthBadPostureMin =
+      final totalOfThisMonthSec = averageOfThisMonth.reduce((a, b) => a + b);
+      final totalOfThisMonthBadPostureSec =
           averageOfThisMonthBadPosture.reduce((a, b) => a + b);
-      // print(totalOfThisMonthBadPostureMin);
-      final totalOfThisMonthGoodPostureMin =
-          totalOfThisMonthMin - totalOfThisMonthBadPostureMin;
-      // print(totalOfThisMonthGoodPostureMin);
-      final averageOfThisMonthGoodPostureMin = double.parse(
-          ((totalOfThisMonthGoodPostureMin / totalOfThisMonthMin) * 100)
+      final totalOfThisMonthGoodPostureSec =
+          totalOfThisMonthSec - totalOfThisMonthBadPostureSec;
+      final averageOfThisMonthGoodPostureSec = double.parse(
+          ((totalOfThisMonthGoodPostureSec / totalOfThisMonthSec) * 100)
               .toStringAsFixed(1));
 
-      Utils.percentOfThisMonthGoodPostureMin = averageOfThisMonthGoodPostureMin;
+      Utils.percentOfThisMonthGoodPostureSec = averageOfThisMonthGoodPostureSec;
       Utils.averageOfThisMonthLength = averageOfThisMonth.length;
     } else {
-      Utils.percentOfTodayGoodPostureMin = 0;
+      Utils.percentOfThisMonthGoodPostureSec = 0;
       Utils.averageOfThisMonthLength = 0;
     }
 
     //全体平均を割り出す計算
     if (averageOfAll.isNotEmpty) {
-      // print(averageOfAll);
-      final totalOfAllMin = averageOfAll.reduce((a, b) => a + b);
-      // print(totalOfAllMin);
-      final totalOfAllBadPostureMin =
+      final totalOfAllSec = averageOfAll.reduce((a, b) => a + b);
+      final totalOfAllBadPostureSec =
           averageOfAllBadPosture.reduce((a, b) => a + b);
-      // print(totalOfAllBadPostureMin);
-      final totalOfAllGoodPostureMin = totalOfAllMin - totalOfAllBadPostureMin;
-      // print(totalOfAllGoodPostureMin);
-      final averageOfAllGoodPostureMin = double.parse(
-          ((totalOfAllGoodPostureMin / totalOfAllMin) * 100)
+      final totalOfAllGoodPostureSec = totalOfAllSec - totalOfAllBadPostureSec;
+      final averageOfAllGoodPostureSec = double.parse(
+          ((totalOfAllGoodPostureSec / totalOfAllSec) * 100)
               .toStringAsFixed(1));
 
-      Utils.percentOfAllGoodPostureMin = averageOfAllGoodPostureMin;
+      Utils.percentOfAllGoodPostureSec = averageOfAllGoodPostureSec;
       Utils.averageOfAllLength = averageOfAll.length;
     } else {
-      Utils.percentOfTodayGoodPostureMin = 0;
+      Utils.percentOfAllGoodPostureSec = 0;
       Utils.averageOfAllLength = 0;
     }
 

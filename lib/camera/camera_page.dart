@@ -32,21 +32,6 @@ class CameraPage extends StatelessWidget {
           return Scaffold(
             body: Consumer<CameraModel>(builder: (context, model, child) {
               if (model.controller == null) {
-                // showDialog(
-                //     context: context,
-                //     builder: (BuildContext context) {
-                //       return CupertinoAlertDialog(
-                //         title: Text("端末のカメラの設定をオンにしてください。"),
-                //         actions: [
-                //           TextButton(
-                //             child: const Text("OK"),
-                //             onPressed: () {
-                //               Navigator.of(context).pop();
-                //             },
-                //           )
-                //         ],
-                //       );
-                //     });
                 return Center(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
@@ -103,48 +88,57 @@ class CameraPage extends StatelessWidget {
                   Align(
                     alignment: const Alignment(0, 0.9),
                     child: FloatingActionButton(
-                      onPressed: () async {
-                        notificationTimer?.cancel();
-                        await audioPlayer?.stop();
-                        isCounting = false;
-                        model.stopTimer();
-                        model.stopBadPostureTimer();
-                        if (model.measuringSec > 300) {
-                          await model.addData();
-                          await model.lastMeasuredOn();
-                        } else {
-                          await showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text("使用時間が5分未満ですがデータを保存しますか？"),
-                                  actions: [
-                                    TextButton(
-                                      child: const Text("ok"),
-                                      onPressed: () async {
-                                        await model.addData();
-                                        await model.lastMeasuredOn();
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    TextButton(
-                                      child: Text("cancel"),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    )
-                                  ],
-                                );
-                              });
-                        }
-                        await audioPlayer?.stop();
+                      onPressed: model.measuringSec > 0
+                          ? () async {
+                              notificationTimer?.cancel();
+                              await audioPlayer?.stop();
+                              isCounting = false;
+                              model.stopTimer();
+                              model.stopBadPostureTimer();
+                              if (model.measuringSec > 300) {
+                                await model.addData();
+                                await model.lastMeasuredOn();
+                              } else {
+                                await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return CupertinoAlertDialog(
+                                        title:
+                                            Text("計測時間が5分未満ですが\nデータを保存しますか？"),
+                                        actions: [
+                                          TextButton(
+                                            child: Text(
+                                              "保存しない",
+                                              style:
+                                                  TextStyle(color: Colors.red),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: const Text("保存"),
+                                            onPressed: () async {
+                                              await model.addData();
+                                              await model.lastMeasuredOn();
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              }
+                              await audioPlayer?.stop();
 
-                        Navigator.of(context).pop([
-                          model.averageTime.toStringAsFixed(2),
-                          model.measuringSec.toString(),
-                          model.notificationCounter.toString()
-                        ]);
-                      },
+                              Navigator.of(context).pop([
+                                model.measuringSec,
+                                model.measuringSec -
+                                    model.measuringBadPostureSec,
+                                model.measuringBadPostureSec,
+                                model.notificationCounter.toString(),
+                              ]);
+                            }
+                          : () {},
                       child: const Icon(Icons.stop),
                       backgroundColor: Colors.red,
                     ),
@@ -170,34 +164,56 @@ class CameraPage extends StatelessWidget {
                                   TextStyle(fontSize: 20, color: Colors.white),
                             ),
                             const SizedBox(
-                              height: 150,
+                              height: 250,
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                ElevatedButton(
-                                    onPressed: () async {
-                                      notificationTimer?.cancel();
-                                      await audioPlayer?.stop();
-                                      Navigator.of(context).pop();
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      primary: Colors.green,
-                                    ),
-                                    child: Text("戻る")),
-                                ElevatedButton(
-                                    onPressed: hiddenOkButton == false
-                                        ? () {
-                                            isAdjusting = false;
-                                            isCounting = true;
-                                          }
-                                        : () {},
-                                    style: ElevatedButton.styleFrom(
-                                      primary: hiddenOkButton == false
-                                          ? Colors.green
-                                          : Colors.green.withOpacity(0.3),
-                                    ),
-                                    child: Text("OK")),
+                                SizedBox(
+                                  height: 60,
+                                  width: 100,
+                                  child: ElevatedButton(
+                                      onPressed: () async {
+                                        notificationTimer?.cancel();
+                                        await audioPlayer?.stop();
+                                        Navigator.of(context).pop();
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                        ),
+                                        primary: Colors.green,
+                                      ),
+                                      child: Text(
+                                        "戻る",
+                                        style: TextStyle(fontSize: 20),
+                                      )),
+                                ),
+                                SizedBox(
+                                  height: 60,
+                                  width: 100,
+                                  child: ElevatedButton(
+                                      onPressed: hiddenOkButton == false
+                                          ? () {
+                                              isAdjusting = false;
+                                              isCounting = true;
+                                            }
+                                          : () {},
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                        ),
+                                        primary: hiddenOkButton == false
+                                            ? Colors.green
+                                            : Colors.green.withOpacity(0.3),
+                                      ),
+                                      child: Text(
+                                        "OK",
+                                        style: TextStyle(fontSize: 20),
+                                      )),
+                                ),
                               ],
                             )
                           ],
