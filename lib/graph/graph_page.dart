@@ -10,16 +10,16 @@ import 'dart:math';
 import '../data.dart';
 
 class GraphPage extends StatelessWidget {
-  List<Color> gradientColors = [
-    Color(0xff9aee9b),
-    // Color(0xFF2BD600),
-    Color(0xff4caf50),
-  ];
-
-  List<Color> gradientColors2 = [
-    Color(0xfff3adad),
-    Color(0xffff3838),
-  ];
+  // List<Color> gradientColors = [
+  //   Color(0xff9aee9b),
+  //   // Color(0xFF2BD600),
+  //   Color(0xff4caf50),
+  // ];
+  //
+  // List<Color> gradientColors2 = [
+  //   Color(0xfff3adad),
+  //   Color(0xffff3838),
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -311,35 +311,42 @@ class GraphPage extends StatelessWidget {
                           child: ListView.builder(
                             itemCount: model.data.length,
                             itemBuilder: (context, index) {
+                              //計測時間
+                              num measuringSec =
+                                  model.data[index]["measuringSec"];
+                              num measuringGoodPostureSec =
+                                  model.data[index]["measuringGoodPostureSec"];
+                              num measuringBadPostureSec =
+                                  model.data[index]["measuringBadPostureSec"];
                               //計測時間を時・分・秒に変換
-                              num hour =
+                              num hourValue =
                                   model.data[index]["measuringSec"] ~/ 60 ~/ 60;
-                              num minute =
+                              num minuteValue =
                                   model.data[index]["measuringSec"] ~/ 60 % 60;
-                              num second =
+                              num secondValue =
                                   model.data[index]["measuringSec"] % 60;
                               //姿勢（良）を時・分・秒に変換
-                              num goodHour = model.data[index]
+                              num goodHourValue = model.data[index]
                                       ["measuringGoodPostureSec"] ~/
                                   60 ~/
                                   60;
-                              num goodMinute = model.data[index]
+                              num goodMinuteValue = model.data[index]
                                       ["measuringGoodPostureSec"] ~/
                                   60 %
                                   60;
-                              num goodSecond = model.data[index]
+                              num goodSecondValue = model.data[index]
                                       ["measuringGoodPostureSec"] %
                                   60;
                               //姿勢（不良）を時・分・秒に変換
-                              num badHour = model.data[index]
+                              num badHourValue = model.data[index]
                                       ["measuringBadPostureSec"] ~/
                                   60 ~/
                                   60;
-                              num badMinute = model.data[index]
+                              num badMinuteValue = model.data[index]
                                       ["measuringBadPostureSec"] ~/
                                   60 %
                                   60;
-                              num badSecond = model.data[index]
+                              num badSecondValue = model.data[index]
                                       ["measuringBadPostureSec"] %
                                   60;
 
@@ -394,37 +401,41 @@ class GraphPage extends StatelessWidget {
                                           alignment: WrapAlignment.end,
                                           children: [
                                             Text(
-                                              hour > 0 ? "$hour" : "",
+                                              hourValue > 0 ? "$hourValue" : "",
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w500),
                                             ),
                                             Text(
-                                              hour > 0 ? "時間" : "",
+                                              hourValue > 0 ? "時間" : "",
                                               style: TextStyle(
                                                 fontSize: 12,
                                               ),
                                             ),
                                             Text(
-                                              minute > 0 ? "$minute" : "",
+                                              minuteValue > 0
+                                                  ? "$minuteValue"
+                                                  : "",
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w500),
                                             ),
                                             Text(
-                                              minute > 0 ? "分" : "",
+                                              minuteValue > 0 ? "分" : "",
                                               style: TextStyle(
                                                 fontSize: 12,
                                               ),
                                             ),
                                             Text(
-                                              second > 0 ? "$second" : "",
+                                              secondValue > 0
+                                                  ? "$secondValue"
+                                                  : "",
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w500),
                                             ),
                                             Text(
-                                              second > 0 ? "秒" : "",
+                                              secondValue > 0 ? "秒" : "",
                                               style: TextStyle(
                                                 fontSize: 12,
                                               ),
@@ -440,23 +451,8 @@ class GraphPage extends StatelessWidget {
                                           alignment: WrapAlignment.end,
                                           children: [
                                             Text(
-                                              goodHour > 0 ? "$goodHour" : "",
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors
-                                                      .greenAccent.shade700),
-                                            ),
-                                            Text(
-                                              goodHour > 0 ? "時間" : "",
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors
-                                                      .greenAccent.shade700),
-                                            ),
-                                            Text(
-                                              goodMinute > 0
-                                                  ? "$goodMinute"
+                                              goodHourValue > 0
+                                                  ? "$goodHourValue"
                                                   : "",
                                               style: TextStyle(
                                                   fontSize: 15,
@@ -465,15 +461,15 @@ class GraphPage extends StatelessWidget {
                                                       .greenAccent.shade700),
                                             ),
                                             Text(
-                                              goodMinute > 0 ? "分" : "",
+                                              goodHourValue > 0 ? "時間" : "",
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   color: Colors
                                                       .greenAccent.shade700),
                                             ),
                                             Text(
-                                              goodSecond > 0
-                                                  ? "$goodSecond"
+                                              goodMinuteValue > 0
+                                                  ? "$goodMinuteValue"
                                                   : "",
                                               style: TextStyle(
                                                   fontSize: 15,
@@ -482,7 +478,28 @@ class GraphPage extends StatelessWidget {
                                                       .greenAccent.shade700),
                                             ),
                                             Text(
-                                              goodSecond > 0 ? "秒" : "",
+                                              goodMinuteValue > 0 ? "分" : "",
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors
+                                                      .greenAccent.shade700),
+                                            ),
+                                            Text(
+                                              goodSecondValue == 0 &&
+                                                      measuringSec >= 60
+                                                  ? ""
+                                                  : "$goodSecondValue",
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors
+                                                      .greenAccent.shade700),
+                                            ),
+                                            Text(
+                                              goodSecondValue == 0 &&
+                                                      measuringSec >= 60
+                                                  ? ""
+                                                  : "秒",
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   color: Colors
@@ -499,40 +516,52 @@ class GraphPage extends StatelessWidget {
                                           alignment: WrapAlignment.end,
                                           children: [
                                             Text(
-                                              badHour > 0 ? "$badHour" : "",
+                                              badHourValue > 0
+                                                  ? "$badHourValue"
+                                                  : "",
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w500,
                                                   color: Colors.red),
                                             ),
                                             Text(
-                                              badHour > 0 ? "時間" : "",
+                                              badHourValue > 0 ? "時間" : "",
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   color: Colors.red),
                                             ),
                                             Text(
-                                              badMinute > 0 ? "$badMinute" : "",
+                                              badMinuteValue > 0
+                                                  ? "$badMinuteValue"
+                                                  : "",
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w500,
                                                   color: Colors.red),
                                             ),
                                             Text(
-                                              badMinute > 0 ? "分" : "",
+                                              badMinuteValue > 0 ? "分" : "",
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   color: Colors.red),
                                             ),
                                             Text(
-                                              badSecond > 0 ? "$badSecond" : "",
+                                              badSecondValue == 0 &&
+                                                      measuringBadPostureSec >=
+                                                          60
+                                                  ? ""
+                                                  : "$badSecondValue",
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   fontWeight: FontWeight.w500,
                                                   color: Colors.red),
                                             ),
                                             Text(
-                                              badSecond > 0 ? "秒" : "",
+                                              badSecondValue == 0 &&
+                                                      measuringBadPostureSec >=
+                                                          60
+                                                  ? ""
+                                                  : "秒",
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   color: Colors.red),
@@ -632,64 +661,56 @@ class GraphPage extends StatelessWidget {
     );
     String text;
     switch (value.toInt()) {
-      // case 30:
-      //   text = '0.5';
-      //   break;
-      case 60:
+      //処理の負荷軽減のためグラフの値は計測秒数の1/100で表示
+      case 36:
         text = '1';
         break;
-      // case 90:
-      //   text = '1.5';
-      //   break;
-      case 120:
+      case 72:
         text = '2';
         break;
-      // case 150:
-      //   text = '2.5';
-      //   break;
-      case 180:
+      case 108:
         text = '3';
         break;
-      case 240:
+      case 144:
         text = '4';
         break;
-      case 300:
+      case 180:
         text = '5';
         break;
-      case 360:
+      case 216:
         text = '6';
         break;
-      case 420:
+      case 252:
         text = '7';
         break;
-      case 480:
+      case 288:
         text = '8';
         break;
-      case 540:
+      case 324:
         text = '9';
         break;
-      case 600:
+      case 360:
         text = '10';
         break;
-      case 720:
+      case 432:
         text = '12';
         break;
-      case 840:
+      case 504:
         text = '14';
         break;
-      case 960:
+      case 576:
         text = '16';
         break;
-      case 1080:
+      case 648:
         text = '18';
         break;
-      case 1200:
+      case 720:
         text = '20';
         break;
-      case 1320:
+      case 792:
         text = '22';
         break;
-      case 1440:
+      case 864:
         text = '24';
         break;
       default:
@@ -724,11 +745,12 @@ class GraphPage extends StatelessWidget {
           sideTitles: SideTitles(
             showTitles: true,
             //y軸のインターバル
-            interval: model.max <= 180
-                ? 30
-                : model.max <= 360
-                    ? 60
-                    : 120,
+            //処理の負荷軽減のためグラフの値は計測秒数の1/100で表示
+            interval: model.max <= 108
+                ? 18
+                : model.max <= 216
+                    ? 36
+                    : 72,
             getTitlesWidget:
                 model.num > 1 ? leftTitleWidgets : hiddenTitleWidgets,
             reservedSize: 45,
@@ -739,13 +761,14 @@ class GraphPage extends StatelessWidget {
       borderData: FlBorderData(
         show: false,
       ),
-      maxY: model.max <= 180
-          ? 180
-          : model.max <= 360
-              ? 360
-              : model.max <= 720
-                  ? 720
-                  : 1440,
+      //処理の負荷軽減のためグラフの値は計測秒数の1/100で表示
+      maxY: model.max <= 108
+          ? 108
+          : model.max <= 216
+              ? 216
+              : model.max <= 432
+                  ? 432
+                  : 864,
     );
   }
 
@@ -774,35 +797,36 @@ class GraphPage extends StatelessWidget {
         drawVerticalLine: true,
         horizontalInterval: 1,
         verticalInterval: 1,
-        getDrawingHorizontalLine: model.max <= 180
-            //2時間以内
+        getDrawingHorizontalLine: model.max <= 108
+            //処理の負荷軽減のためグラフの値は計測秒数の1/100で表示
+            //3時間以内
             ? (value) {
-                if (value == 30 ||
-                    value == 60 ||
+                if (value == 18 ||
+                    value == 36 ||
+                    value == 54 ||
+                    value == 72 ||
                     value == 90 ||
-                    value == 120 ||
-                    value == 150 ||
-                    value == 180) {
+                    value == 108) {
                   return FlLine(color: Colors.grey, strokeWidth: 0.5);
                 } else {
                   return FlLine(color: Colors.transparent);
                 }
               }
             //6時間以内
-            : model.max <= 360
+            : model.max <= 216
                 ? (value) {
-                    if (value == 60 ||
-                        value == 120 ||
+                    if (value == 36 ||
+                        value == 72 ||
+                        value == 108 ||
+                        value == 144 ||
                         value == 180 ||
-                        value == 240 ||
-                        value == 300 ||
+                        value == 216 ||
+                        value == 252 ||
+                        value == 288 ||
+                        value == 324 ||
                         value == 360 ||
-                        value == 420 ||
-                        value == 480 ||
-                        value == 540 ||
-                        value == 600 ||
-                        value == 660 ||
-                        value == 720) {
+                        value == 396 ||
+                        value == 432) {
                       return FlLine(color: Colors.grey, strokeWidth: 0.5);
                     } else {
                       return FlLine(color: Colors.transparent);
@@ -810,18 +834,18 @@ class GraphPage extends StatelessWidget {
                   }
                 //12時間以上
                 : (value) {
-                    if (value == 120 ||
-                        value == 240 ||
+                    if (value == 72 ||
+                        value == 144 ||
+                        value == 216 ||
+                        value == 288 ||
                         value == 360 ||
-                        value == 480 ||
-                        value == 600 ||
+                        value == 432 ||
+                        value == 504 ||
+                        value == 576 ||
+                        value == 648 ||
                         value == 720 ||
-                        value == 840 ||
-                        value == 960 ||
-                        value == 1080 ||
-                        value == 1200 ||
-                        value == 1320 ||
-                        value == 1440) {
+                        value == 792 ||
+                        value == 864) {
                       return FlLine(color: Colors.grey, strokeWidth: 0.5);
                     } else {
                       return FlLine(color: Colors.transparent);
@@ -858,11 +882,12 @@ class GraphPage extends StatelessWidget {
           sideTitles: SideTitles(
             showTitles: true,
             //y軸のインターバル
-            interval: model.max <= 180
-                ? 30
-                : model.max <= 360
-                    ? 60
-                    : 120,
+            //処理の負荷軽減のためグラフの値は計測秒数の1/100で表示
+            interval: model.max <= 108
+                ? 18
+                : model.max <= 216
+                    ? 36
+                    : 72,
             getTitlesWidget: hiddenTitleWidgets,
             reservedSize: 45,
           ),
@@ -879,66 +904,60 @@ class GraphPage extends StatelessWidget {
       minX: 1,
       maxX: model.num - 1,
       minY: 0,
-      maxY: model.max <= 180
-          ? 180
-          : model.max <= 360
-              ? 360
-              : model.max <= 720
-                  ? 720
-                  : 1440,
+      //処理の負荷軽減のためグラフの値は計測秒数の1/100で表示
+      maxY: model.max <= 108
+          ? 108
+          : model.max <= 216
+              ? 216
+              : model.max <= 432
+                  ? 432
+                  : 864,
       lineBarsData: [
         // 計測時間（緑）
         LineChartBarData(
           show: model.show,
           spots: model.spots1,
           isCurved: true,
-          preventCurveOverShooting: true,
+          //todo
+          // preventCurveOverShooting: true,
           color: Colors.greenAccent.shade700,
-          barWidth: 2,
+          barWidth: 3,
           dotData: FlDotData(show: model.num > 2 ? model.dotSwitch : true
               // show: true
               ),
-          belowBarData: BarAreaData(
-            show: true,
-            gradient: LinearGradient(
-              colors: gradientColors
-                  .map((color) => color.withOpacity(0.2))
-                  .toList(),
-              begin: Alignment.centerLeft,
-              end: Alignment.centerLeft,
-            ),
-          ),
         ),
         // 猫背時間（赤）
         LineChartBarData(
           show: model.show,
           spots: model.spots2,
           isCurved: true,
-          preventCurveOverShooting: true,
+          //todo
+          // preventCurveOverShooting: true,
           color: Colors.deepOrange,
-          barWidth: 2,
+          barWidth: 3,
           dotData: FlDotData(show: model.num > 2 ? model.dotSwitch : true
               // show: true
               ),
-          belowBarData: BarAreaData(
-            show: true,
-            gradient: LinearGradient(
-              colors: gradientColors2
-                  .map((color) => color.withOpacity(0.2))
-                  .toList(),
-              begin: Alignment.centerLeft,
-              end: Alignment.centerLeft,
-            ),
-          ),
+          belowBarData:
+              BarAreaData(show: true, color: Colors.deepOrange.withOpacity(0.2)
+                  // gradient: LinearGradient(
+                  //   colors: gradientColors2
+                  //       .map((color) => color.withOpacity(0.2))
+                  //       .toList(),
+                  //   begin: Alignment.centerLeft,
+                  //   end: Alignment.centerLeft,
+                  // ),
+                  ),
         ),
       ],
-      // betweenBarsData: [
-      //   BetweenBarsData(
-      //     fromIndex: 0,
-      //     toIndex: 1,
-      //     color: Colors.green.withOpacity(0.2),
-      //   )
-      // ],
+      //todo error most~発生
+      betweenBarsData: [
+        BetweenBarsData(
+          fromIndex: 0,
+          toIndex: 1,
+          color: Colors.greenAccent.shade700.withOpacity(0.2),
+        )
+      ],
     );
   }
 }

@@ -47,8 +47,8 @@ class GraphModel extends ChangeNotifier {
     year = getMonth.substring(0, 4);
     month = getMonth.substring(5, 7);
 
-    List arrayOfMonthMeasuringMin = [];
-    List arrayOfMonthMeasuringBadMin = [];
+    List arrayOfMonthMeasuringSec = [];
+    List arrayOfMonthMeasuringBadSec = [];
 
     final QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('measurements')
@@ -58,33 +58,41 @@ class GraphModel extends ChangeNotifier {
 
     for (var doc in snapshot.docs) {
       if (doc.get("createdAt").toString().substring(0, 7) == getMonth) {
-        arrayOfMonthMeasuringMin.add(doc.get("measuringMin"));
-        arrayOfMonthMeasuringBadMin.add(doc.get("measuringBadPostureMin"));
+        arrayOfMonthMeasuringSec.add(doc.get("measuringSec"));
+        arrayOfMonthMeasuringBadSec.add(doc.get("measuringBadPostureSec"));
 
-        if (arrayOfMonthMeasuringMin.isNotEmpty) {
-          final totalOfMonthMeasuringMin =
-              arrayOfMonthMeasuringMin.reduce((a, b) => a + b);
-          final totalOfMonthBadPostureMin =
-              arrayOfMonthMeasuringBadMin.reduce((a, b) => a + b);
-          final totalOfMonthGoodPostureMin =
-              totalOfMonthMeasuringMin - totalOfMonthBadPostureMin;
+        if (arrayOfMonthMeasuringSec.isNotEmpty) {
+          final totalOfMonthMeasuringSec =
+              arrayOfMonthMeasuringSec.reduce((a, b) => a + b);
+          final totalOfMonthBadPostureSec =
+              arrayOfMonthMeasuringBadSec.reduce((a, b) => a + b);
+          final totalOfMonthGoodPostureSec =
+              totalOfMonthMeasuringSec - totalOfMonthBadPostureSec;
           rateOfGoodPosture = double.parse(
-              ((totalOfMonthGoodPostureMin / totalOfMonthMeasuringMin) * 100)
+              ((totalOfMonthGoodPostureSec / totalOfMonthMeasuringSec) * 100)
                   .toStringAsFixed(1));
         }
 
         final createdAt = await doc.get("createdAt").substring(0, 10);
-        final measuringSec = doc.get("measuringSec");
-        final measuringBadPostureSec = doc.get("measuringBadPostureSec");
+        final measuringSec = await doc.get("measuringSec");
+        final measuringBadPostureSec = await doc.get("measuringBadPostureSec");
         final measuringGoodPostureSec = measuringSec - measuringBadPostureSec;
 
-        final measuringMin =
-            double.parse(doc.get("measuringMin").toStringAsFixed(1));
-        final measuringBadPostureMin =
-            double.parse(doc.get("measuringBadPostureMin").toStringAsFixed(1));
-        // measuringMin,measuringBadPostureMinが整数でエラー発生（toStringAsFixed必須）
-        final flSpot1 = FlSpot(num, measuringMin);
-        final flSpot2 = FlSpot(num, measuringBadPostureMin);
+        // final measuringMin =
+        //     double.parse(doc.get("measuringMin").toStringAsFixed(1));
+        // final measuringBadPostureMin =
+        //     double.parse(doc.get("measuringBadPostureMin").toStringAsFixed(1));
+        // // measuringMin,measuringBadPostureMinが整数でエラー発生（toStringAsFixed必須）
+        // final flSpot1 = FlSpot(num, measuringMin);
+        // final flSpot2 = FlSpot(num, measuringBadPostureMin);
+
+        //処理が重くなるため計測秒数を ×1/100 で表示（グラフの値を1/100で表示）
+        //toString必須
+        final measuringSecValue = double.parse(measuringSec.toString()) / 100;
+        final measuringBadPostureSecValue =
+            double.parse(measuringBadPostureSec.toString()) / 100;
+        final flSpot1 = FlSpot(num, measuringSecValue);
+        final flSpot2 = FlSpot(num, measuringBadPostureSecValue);
 
         num++;
         spots1.add(flSpot1);
@@ -94,8 +102,8 @@ class GraphModel extends ChangeNotifier {
         data.add({
           "createdAt": createdAt,
           "measuringSec": measuringSec,
-          "measuringGoodPostureSec": measuringGoodPostureSec,
           "measuringBadPostureSec": measuringBadPostureSec,
+          "measuringGoodPostureSec": measuringGoodPostureSec,
         });
       }
     }

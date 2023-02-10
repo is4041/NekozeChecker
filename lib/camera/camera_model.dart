@@ -20,9 +20,6 @@ class CameraModel extends ChangeNotifier {
   num measuringSec = 0;
   num measuringBadPostureSec = 0;
   int notificationCounter = 0;
-  dynamic averageTime = 0;
-  dynamic totalAverage;
-  dynamic dailyAverage;
 
   Future getCamera() async {
     cam = await availableCameras();
@@ -92,9 +89,9 @@ class CameraModel extends ChangeNotifier {
 
     await FirebaseFirestore.instance.collection("measurements").add({
       "createdAt": createdAt,
-      "measuringBadPostureMin": measuringBadPostureMin,
+      // "measuringBadPostureMin": measuringBadPostureMin,
       "measuringBadPostureSec": measuringBadPostureSec,
-      "measuringMin": measuringMin,
+      // "measuringMin": measuringMin,
       "measuringSec": measuringSec,
       "notificationCounter": notificationCounter,
       "timeToNotification": Utils.timeToNotification,

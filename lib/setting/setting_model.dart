@@ -78,9 +78,9 @@ class SettingModel extends ChangeNotifier {
   logout() async {
     // throw Error;
     await FirebaseAuth.instance.signOut();
-    Utils.percentOfAllGoodPostureMin = 0;
-    Utils.percentOfTodayGoodPostureMin = 0;
-    Utils.percentOfThisMonthGoodPostureMin = 0;
+    Utils.percentOfAllGoodPostureSec = 0;
+    Utils.percentOfTodayGoodPostureSec = 0;
+    Utils.percentOfThisMonthGoodPostureSec = 0;
     Utils.averageOfTodayLength = 0;
     Utils.averageOfThisMonthLength = 0;
     Utils.averageOfAllLength = 0;
@@ -97,9 +97,9 @@ class SettingModel extends ChangeNotifier {
         .doc(Utils.userId)
         .delete();
     await FirebaseAuth.instance.currentUser!.delete();
-    Utils.percentOfAllGoodPostureMin = 0;
-    Utils.percentOfTodayGoodPostureMin = 0;
-    Utils.percentOfThisMonthGoodPostureMin = 0;
+    Utils.percentOfAllGoodPostureSec = 0;
+    Utils.percentOfTodayGoodPostureSec = 0;
+    Utils.percentOfThisMonthGoodPostureSec = 0;
     Utils.averageOfTodayLength = 0;
     Utils.averageOfThisMonthLength = 0;
     Utils.averageOfAllLength = 0;
