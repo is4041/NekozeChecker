@@ -918,7 +918,7 @@ class GraphPage extends StatelessWidget {
           show: model.show,
           spots: model.spots1,
           isCurved: true,
-          //todo
+          //todo 色が重複してしまう
           // preventCurveOverShooting: true,
           color: Colors.greenAccent.shade700,
           barWidth: 3,
@@ -931,7 +931,7 @@ class GraphPage extends StatelessWidget {
           show: model.show,
           spots: model.spots2,
           isCurved: true,
-          //todo
+          //todo 色が重複してしまう
           // preventCurveOverShooting: true,
           color: Colors.deepOrange,
           barWidth: 3,

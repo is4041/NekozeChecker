@@ -10,6 +10,11 @@ final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
 class SignInModel extends ChangeNotifier {
   bool isLoading = false;
+  int activePage = 0;
+
+  active() {
+    notifyListeners();
+  }
 
   startLoading() {
     isLoading = true;
@@ -34,24 +39,21 @@ class SignInModel extends ChangeNotifier {
     final uid = userCredential.user!.uid;
     FirebaseFirestore.instance.collection("users").doc(uid).set({
       "userId": uid,
-      "dailyAverage": "",
-      "totalAverage": "",
-      //todo 三項演算子で
+      //todo 三項演算子で初回ログインと再ログインを分ける
       "createdAt": Timestamp.now(),
       "lastMeasuredOn": "",
-      //todo 三項演算子で
+      //todo 三項演算子で初回ログインと再ログインを分ける
       "timeToNotification": 15,
     });
   }
 
   signInWithAnonymousUser() async {
+    throw Error;
     try {
       await firebaseAuth.signInAnonymously();
       final uid = firebaseAuth.currentUser!.uid;
       FirebaseFirestore.instance.collection("users").doc(uid).set({
         "userId": uid,
-        "dailyAverage": "",
-        "totalAverage": "",
         "createdAt": Timestamp.now(),
         "lastMeasuredOn": "",
         "timeToNotification": 15,
