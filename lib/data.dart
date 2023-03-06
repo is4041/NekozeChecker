@@ -3,9 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Data {
   Data(DocumentSnapshot doc) {
     createdAt = doc["createdAt"];
-    measuringBadPostureMin = doc["measuringBadPostureMin"];
+    // measuringBadPostureMin = doc["measuringBadPostureMin"];
     measuringBadPostureSec = doc["measuringBadPostureSec"];
-    measuringMin = doc["measuringMin"];
+    // measuringMin = doc["measuringMin"];
     measuringSec = doc["measuringSec"];
     notificationCounter = doc["notificationCounter"];
     timeToNotification = doc["timeToNotification"];

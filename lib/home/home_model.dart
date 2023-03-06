@@ -13,9 +13,6 @@ final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
 class HomeModel extends ChangeNotifier {
   final getDate = Timestamp.now().toDate();
-  int averageOfTodayLength = 0;
-  int averageOfThisMonthLength = 0;
-  int averageOfAllLength = 0;
 
   Future loadModel() async {
     Tflite.close();
@@ -100,10 +97,11 @@ class HomeModel extends ChangeNotifier {
           ((totalOfTodayGoodPostureSec / totalOfTodaySec) * 100)
               .toStringAsFixed(1));
 
-      Utils.averageOfTodayLength = averageOfToday.length;
+      Utils.numberOfMeasurementsToday = averageOfToday.length;
+      Utils.todayMeasuringTime = totalOfTodaySec;
     } else {
       Utils.percentOfTodayGoodPostureSec = 0;
-      Utils.averageOfTodayLength = 0;
+      Utils.numberOfMeasurementsToday = 0;
     }
 
     //今月の平均を割り出す計算
@@ -118,10 +116,11 @@ class HomeModel extends ChangeNotifier {
               .toStringAsFixed(1));
 
       Utils.percentOfThisMonthGoodPostureSec = averageOfThisMonthGoodPostureSec;
-      Utils.averageOfThisMonthLength = averageOfThisMonth.length;
+      Utils.numberOfMeasurementsThisMonth = averageOfThisMonth.length;
+      Utils.thisMonthMeasuringTime = totalOfThisMonthSec;
     } else {
       Utils.percentOfThisMonthGoodPostureSec = 0;
-      Utils.averageOfThisMonthLength = 0;
+      Utils.numberOfMeasurementsThisMonth = 0;
     }
 
     //全体平均を割り出す計算
@@ -135,10 +134,11 @@ class HomeModel extends ChangeNotifier {
               .toStringAsFixed(1));
 
       Utils.percentOfAllGoodPostureSec = averageOfAllGoodPostureSec;
-      Utils.averageOfAllLength = averageOfAll.length;
+      Utils.numberOfOverallMeasurements = averageOfAll.length;
+      Utils.overallMeasuringTime = totalOfAllSec;
     } else {
       Utils.percentOfAllGoodPostureSec = 0;
-      Utils.averageOfAllLength = 0;
+      Utils.numberOfOverallMeasurements = 0;
     }
 
     notifyListeners();

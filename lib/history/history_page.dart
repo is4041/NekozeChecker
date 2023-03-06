@@ -498,28 +498,49 @@ class HistoryPage extends StatelessWidget {
                                                                     ),
                                                                     onPressed:
                                                                         () async {
-                                                                      await model
-                                                                          .delete(
-                                                                              data[index]);
-                                                                      await model
-                                                                          .fetchData();
+                                                                      try {
+                                                                        await model
+                                                                            .delete(data[index]);
+                                                                        await model
+                                                                            .fetchData();
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                        final snackBar =
+                                                                            SnackBar(
+                                                                          backgroundColor:
+                                                                              Colors.red,
+                                                                          content:
+                                                                              Text("削除しました"),
+                                                                        );
+                                                                        ScaffoldMessenger.of(context)
+                                                                            .showSnackBar(snackBar);
+                                                                      } catch (e) {
+                                                                        await showDialog(
+                                                                            barrierColor: Colors
+                                                                                .transparent,
+                                                                            context:
+                                                                                context,
+                                                                            builder:
+                                                                                (BuildContext context) {
+                                                                              return CupertinoAlertDialog(
+                                                                                title: Text("データの削除に失敗しました。"),
+                                                                                content: Text("通信環境の良いところで再度試してください"),
+                                                                                actions: [
+                                                                                  TextButton(
+                                                                                    child: Text(
+                                                                                      "OK",
+                                                                                    ),
+                                                                                    onPressed: () {
+                                                                                      Navigator.of(context).pop();
+                                                                                    },
+                                                                                  ),
+                                                                                ],
+                                                                              );
+                                                                            });
+                                                                      }
                                                                       Navigator.of(
                                                                               context)
                                                                           .pop();
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop();
-                                                                      final snackBar =
-                                                                          SnackBar(
-                                                                        backgroundColor:
-                                                                            Colors.red,
-                                                                        content:
-                                                                            Text("削除しました"),
-                                                                      );
-                                                                      ScaffoldMessenger.of(
-                                                                              context)
-                                                                          .showSnackBar(
-                                                                              snackBar);
                                                                     },
                                                                   ),
                                                                   TextButton(

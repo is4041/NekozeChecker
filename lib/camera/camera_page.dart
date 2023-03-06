@@ -101,6 +101,7 @@ class CameraPage extends StatelessWidget {
                               } else {
                                 await showDialog(
                                     context: context,
+                                    barrierDismissible: false,
                                     builder: (BuildContext context) {
                                       return CupertinoAlertDialog(
                                         title:
@@ -131,10 +132,14 @@ class CameraPage extends StatelessWidget {
                               await audioPlayer?.stop();
 
                               Navigator.of(context).pop([
+                                //計測時間
                                 model.measuringSec,
+                                //姿勢(良)の時間
                                 model.measuringSec -
                                     model.measuringBadPostureSec,
+                                //姿勢(不良)の時間
                                 model.measuringBadPostureSec,
+                                //猫背通知回数
                                 model.notificationCounter.toString(),
                               ]);
                             }
@@ -251,11 +256,13 @@ class Painter extends CustomPainter {
       }
       for (var re in params!) {
         re["keypoints"].values.forEach((k) {
-          if (k["part"] == "nose" ||
-              k["part"] == "leftEye" ||
-              k["part"] == "rightEye" ||
-              k["part"] == "leftEar" ||
-              k["part"] == "rightEar") {
+          if (k["part"] == "nose"
+              // ||
+              // k["part"] == "leftEye" ||
+              // k["part"] == "rightEye" ||
+              // k["part"] == "leftEar" ||
+              // k["part"] == "rightEar"
+              ) {
             paint.color = Colors.white;
             canvas.drawCircle(
                 Offset(size.width * k["x"], size.height * k["y"]), 5, paint);
