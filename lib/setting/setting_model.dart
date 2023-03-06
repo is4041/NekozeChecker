@@ -76,14 +76,13 @@ class SettingModel extends ChangeNotifier {
   }
 
   logout() async {
-    // throw Error;
     await FirebaseAuth.instance.signOut();
     Utils.percentOfAllGoodPostureSec = 0;
     Utils.percentOfTodayGoodPostureSec = 0;
     Utils.percentOfThisMonthGoodPostureSec = 0;
-    Utils.averageOfTodayLength = 0;
-    Utils.averageOfThisMonthLength = 0;
-    Utils.averageOfAllLength = 0;
+    Utils.numberOfMeasurementsToday = 0;
+    Utils.numberOfMeasurementsThisMonth = 0;
+    Utils.numberOfOverallMeasurements = 0;
     Utils.isAnonymous = "";
     Utils.userId = "";
     Utils.timeToNotification = 15;
@@ -100,9 +99,9 @@ class SettingModel extends ChangeNotifier {
     Utils.percentOfAllGoodPostureSec = 0;
     Utils.percentOfTodayGoodPostureSec = 0;
     Utils.percentOfThisMonthGoodPostureSec = 0;
-    Utils.averageOfTodayLength = 0;
-    Utils.averageOfThisMonthLength = 0;
-    Utils.averageOfAllLength = 0;
+    Utils.numberOfMeasurementsToday = 0;
+    Utils.numberOfMeasurementsThisMonth = 0;
+    Utils.numberOfOverallMeasurements = 0;
     Utils.isAnonymous = "";
     Utils.userId = "";
     Utils.timeToNotification = 15;

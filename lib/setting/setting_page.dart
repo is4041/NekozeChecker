@@ -83,7 +83,6 @@ class SettingPage extends StatelessWidget {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return CupertinoAlertDialog(
-                                            //todo 文章を考える
                                             title: Text("エラー"),
                                             content: Text(
                                                 "このアカウントはすでに別のユーザーアカウントに関連付けられています。"),
