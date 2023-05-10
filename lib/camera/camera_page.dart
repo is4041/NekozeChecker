@@ -18,6 +18,7 @@ bool? isCounting;
 bool? isAdjusting;
 bool? hiddenOkButton;
 Timer? notificationTimer;
+bool darkScreenMode = false;
 
 class CameraPage extends StatelessWidget {
   @override
@@ -81,10 +82,21 @@ class CameraPage extends StatelessWidget {
                 children: [
                   CustomPaint(
                     foregroundPainter: Painter(model.recognition, model),
-                    child: CameraPreview(
-                      model.controller!,
+                    child: Stack(
+                      children: [
+                        CameraPreview(
+                          model.controller!,
+                        ),
+                        if (model.darkMode == true)
+                          Container(
+                            height: double.infinity,
+                            width: double.infinity,
+                            color: Colors.black,
+                          ),
+                      ],
                     ),
                   ),
+                  //停止ボタン
                   Align(
                     alignment: const Alignment(0, 0.9),
                     child: FloatingActionButton(
@@ -148,6 +160,7 @@ class CameraPage extends StatelessWidget {
                       backgroundColor: Colors.red,
                     ),
                   ),
+                  //計測前の調整画面
                   if (!isCounting! && isAdjusting!)
                     Container(
                       width: double.infinity,
@@ -158,18 +171,38 @@ class CameraPage extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              "位置・音量を\n調整してください",
+                              "姿勢を正し白点が緑線の枠内に収まるように端末の位置・音量を調整してください",
                               style:
-                                  TextStyle(fontSize: 30, color: Colors.white),
+                                  TextStyle(fontSize: 19, color: Colors.white),
                               textAlign: TextAlign.center,
                             ),
                             Text(
                               "（OKを押すと計測が始まります）",
                               style:
-                                  TextStyle(fontSize: 20, color: Colors.white),
+                                  TextStyle(fontSize: 15, color: Colors.white),
                             ),
                             const SizedBox(
-                              height: 250,
+                              height: 200,
+                            ),
+                            FittedBox(
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  _cache.play("sounds/notification.mp3");
+                                },
+                                label: Text("音量チェック"),
+                                icon: Icon(Icons.volume_up),
+                                // child: Text("　音量チェック　"),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  primary: Colors.red,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 50,
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -227,10 +260,36 @@ class CameraPage extends StatelessWidget {
                     ),
                   if (isCounting! && !detection)
                     Center(
-                        child: Text(
-                      "計測停止中",
-                      style: TextStyle(fontSize: 30, color: Colors.white),
-                    )),
+                      child: Text(
+                        "計測停止中",
+                        style: TextStyle(fontSize: 30, color: Colors.white),
+                      ),
+                    ),
+                  //ダークモードボタン
+                  Align(
+                    alignment: const Alignment(0, -0.8),
+                    child: FittedBox(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          model.getScreenMode();
+                        },
+                        style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            primary: model.darkMode == false
+                                ? Colors.black
+                                : Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            )),
+                        child: model.darkMode == false
+                            ? Text("ダークモード：OFF")
+                            : Text(
+                                "ダークモード：ON ",
+                                style: TextStyle(color: Colors.black),
+                              ),
+                      ),
+                    ),
+                  ),
                 ],
               );
             }),
@@ -272,6 +331,11 @@ class Painter extends CustomPainter {
               paint.strokeWidth = 3;
               canvas.drawLine(Offset(0, size.height / 2),
                   Offset(size.width, size.height / 2), paint);
+              //todo 動作が重くなれば下記のLineは消す
+              paint.color = Colors.greenAccent;
+              paint.strokeWidth = 3;
+              canvas.drawLine(Offset(0, (size.height / 2) - 30),
+                  Offset(size.width, (size.height / 2) - 30), paint);
               beyond = true;
               notificationSound(beyond);
               //noseのkeypointsが中央ライン以上にあるとき
@@ -281,6 +345,11 @@ class Painter extends CustomPainter {
               paint.strokeWidth = 3;
               canvas.drawLine(Offset(0, size.height / 2),
                   Offset(size.width, size.height / 2), paint);
+              //todo 動作が重くなれば下記のLineは消す
+              paint.color = Colors.greenAccent;
+              paint.strokeWidth = 3;
+              canvas.drawLine(Offset(0, (size.height / 2) - 30),
+                  Offset(size.width, (size.height / 2) - 30), paint);
               notificationSound(beyond);
             }
           }

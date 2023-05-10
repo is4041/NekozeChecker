@@ -20,6 +20,7 @@ class CameraModel extends ChangeNotifier {
   num measuringSec = 0;
   num measuringBadPostureSec = 0;
   int notificationCounter = 0;
+  bool darkMode = false;
 
   Future getCamera() async {
     cam = await availableCameras();
@@ -42,6 +43,7 @@ class CameraModel extends ChangeNotifier {
   }
 
   static Future<List> poseEstimation(CameraImage img) async {
+    //todo var result
     final results = await Tflite.runPoseNetOnFrame(
       bytesList: img.planes.map((plane) {
         return plane.bytes;
@@ -107,6 +109,15 @@ class CameraModel extends ChangeNotifier {
         .update({
       "lastMeasuredOn": Timestamp.now().toDate().toString().substring(0, 10),
     });
+  }
+
+  getScreenMode() async {
+    if (darkMode == false) {
+      darkMode = true;
+    } else {
+      darkMode = false;
+    }
+    notifyListeners();
   }
 
   @override

@@ -11,4 +11,5 @@ class Utils {
   static String? isAnonymous = "";
   static String userId = "読み込み中...";
   static int timeToNotification = 15;
+  static bool darkScreenMode = false;
 }

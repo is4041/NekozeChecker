@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ final GoogleSignIn googleSignIn = GoogleSignIn();
 class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
     return ChangeNotifierProvider<SignInModel>(
         create: (_) => SignInModel(),
         builder: (context, snapshot) {
@@ -22,10 +25,10 @@ class SignInPage extends StatelessWidget {
                   PageController(initialPage: 0);
 
               final List<Widget> pages = [
-                PageOne(model),
-                PageTwo(model),
-                PageThree(model),
-                PageFour(model),
+                PageOne(model, screenSize),
+                PageTwo(model, screenSize),
+                PageThree(model, screenSize),
+                PageFour(model, screenSize),
               ];
               return Stack(children: [
                 StreamBuilder<User?>(
@@ -49,7 +52,7 @@ class SignInPage extends StatelessWidget {
                           ),
                           //todo 初回登録後は非表示にする
                           Positioned(
-                            height: 150,
+                            height: screenSize.height * 0.15,
                             right: 0,
                             bottom: 0,
                             left: 0,
@@ -80,7 +83,7 @@ class SignInPage extends StatelessWidget {
                                   ],
                                 ),
                                 SizedBox(
-                                  height: 30,
+                                  height: 20,
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -136,75 +139,46 @@ class SignInPage extends StatelessWidget {
 }
 
 //1ページ目
+//ページの高さは合計でscreenSize.height * 0.85とする
 class PageOne extends StatelessWidget {
   final SignInModel model;
-  PageOne(this.model);
+  // ignore: prefer_typing_uninitialized_variables
+  var screenSize;
+  PageOne(this.model, this.screenSize);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: 100,
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: Container(
-                height: 200,
-                // width: 200,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.green),
-                ),
-                child: Image.asset("images/IMG_0107.jpg"),
-              ),
-            ),
-            Expanded(
-              child: Container(),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: Container(),
-            ),
-            Expanded(
-              child: Container(
-                height: 200,
-                // width: 200,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.red),
-                ),
-                child: Image.asset("images/IMG_0106.jpg"),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 30,
+        Container(
+          height: screenSize.height * 0.5,
+          width: double.infinity,
+          color: Colors.grey.withOpacity(0.3),
         ),
         Container(
-          color: Colors.green.shade100,
-          alignment: Alignment.center,
-          child: Text(
-            "Posture Correctionへようこそ",
-            style: TextStyle(
-                fontSize: 25, fontWeight: FontWeight.bold, color: Colors.green),
+          height: screenSize.height * 0.1,
+          width: double.infinity,
+          // color: Colors.green.shade100,
+          child: Center(
+            child: Text(
+              "Posture Correctionへようこそ",
+              style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green),
+            ),
           ),
         ),
-        SizedBox(
-          height: 30,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 50.0),
-          child: Column(
-            children: [
-              Text(
-                "Posture Correctionは顔の位置を検知し、猫背になっていると音で知らせてくれるアプリです。",
-                style: TextStyle(fontSize: 16),
-              ),
-            ],
+        Container(
+          // color: Colors.red,
+          height: screenSize.height * 0.25,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50.0),
+            // padding: const EdgeInsets.only(top: 20.0, right: 50, left: 50),
+            child: Text(
+              "Posture Correctionはカメラを使った動作解析で顔の位置を演算し、ゲームやデスクワーク中の顔の位置変化により猫背を判定し音で知らせてくれるアプリです。",
+              style: TextStyle(fontSize: 16),
+            ),
           ),
         ),
       ],
@@ -213,48 +187,114 @@ class PageOne extends StatelessWidget {
 }
 
 //2ページ目
+//ページの高さは合計でscreenSize.height * 0.85とする
 class PageTwo extends StatelessWidget {
   final SignInModel model;
-  PageTwo(this.model);
+  // ignore: prefer_typing_uninitialized_variables
+  var screenSize;
+  PageTwo(this.model, this.screenSize);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: 100,
-        ),
-        Center(
-          child: Container(
-            // height: 350,
-            // width: 200,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    right: BorderSide(color: Colors.white),
+                    bottom: BorderSide(color: Colors.white),
+                  ),
+                ),
+                height: screenSize.height * 0.25,
+                child: Image.asset(
+                  "images/IMG_0147.JPG",
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-            child:
-                Image.asset("images/davide-baraldi-Nzmyp6LsgNM-unsplash.jpg"),
-          ),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: Colors.white),
+                  ),
+                ),
+                height: screenSize.height * 0.25,
+                child: Image.asset(
+                  "images/IMG_0146.JPG",
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ],
         ),
-        SizedBox(
-          height: 30,
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    right: BorderSide(color: Colors.white),
+                  ),
+                ),
+                height: screenSize.height * 0.25,
+                child: Image.asset(
+                  "images/IMG_0164.JPG",
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                height: screenSize.height * 0.25,
+                child: Image.asset(
+                  "images/IMG_0171.JPG",
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ],
         ),
         Container(
-          color: Colors.green.shade100,
-          alignment: Alignment.center,
-          child: Text(
-            "スマートフォンを\n画面横にセットする",
-            style: TextStyle(
-                fontSize: 25, fontWeight: FontWeight.bold, color: Colors.green),
+          height: screenSize.height * 0.1,
+          width: double.infinity,
+          // color: Colors.green.shade100,
+          child: Center(
+            child: Text(
+              "スマートフォンをセットする",
+              style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green),
+            ),
           ),
         ),
-        SizedBox(
-          height: 30,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 50.0),
-          child: Text(
-            "スマートフォン用スタンドを使うのがおすすめですが（100均などで購入できます）立てかけられる物なら何を使っても大丈夫です。",
-            style: TextStyle(fontSize: 16),
+        Container(
+          // color: Colors.red,
+          height: screenSize.height * 0.25,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50.0),
+            // padding: const EdgeInsets.only(top: 20.0, right: 50, left: 50),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "セットをしたらstartボタンを押してカメラを起動しましょう。",
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "※スマートフォン用スタンド（100均などで購入できます）を使うのがおすすめですが立てかけられる物なら何を使っても大丈夫です。",
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -263,102 +303,93 @@ class PageTwo extends StatelessWidget {
 }
 
 //3ページ目
+//ページの高さは合計でscreenSize.height * 0.85とする
 class PageThree extends StatelessWidget {
   final SignInModel model;
-  PageThree(this.model);
+  // ignore: prefer_typing_uninitialized_variables
+  var screenSize;
+  PageThree(this.model, this.screenSize);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: 50,
-        ),
+        // SizedBox(
+        //   height: 50,
+        // ),
         Stack(
           children: [
             Center(
               child: Container(
-                height: 350,
-                width: 210,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  borderRadius: BorderRadius.circular(10),
+                height: screenSize.height * 0.5,
+                width: double.infinity,
+                // color: Colors.red,
+                child: Image.asset(
+                  "images/IMG_Unsplash.jpg",
+                  fit: BoxFit.cover,
                 ),
-                // color: Colors.red,
-              ),
-            ),
-            Center(
-              child: Container(
-                height: 350,
-                width: 200,
-                // color: Colors.red,
-                child:
-                    Image.asset("images/lesly-juarez-RukI4qZGlQs-unsplash.jpg"),
               ),
             ),
           ],
         ),
-        SizedBox(
-          height: 30,
-        ),
+        // SizedBox(
+        //   height: 30,
+        // ),
         Container(
-          alignment: Alignment.center,
-          color: Colors.green.shade100,
-          child: Text(
-            "位置を調整する",
-            style: TextStyle(
-                fontSize: 25, fontWeight: FontWeight.bold, color: Colors.green),
+          height: screenSize.height * 0.1,
+          width: double.infinity,
+          // color: Colors.green.shade100,
+          child: Center(
+            child: Text(
+              "白点の位置を調整する",
+              style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green),
+            ),
           ),
         ),
-
-        SizedBox(
-          height: 30,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 50.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "1. 姿勢を正す",
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 30,
-                    // color: Colors.green,
-                    child: Center(
-                      child: Text(
-                        "2. ",
-                        style: TextStyle(fontSize: 16),
-                      ),
+        Container(
+          // color: Colors.red,
+          height: screenSize.height * 0.25,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50.0),
+            // padding: const EdgeInsets.only(top: 20.0, right: 50, left: 50),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "姿勢を正し、鼻の位置に表示される白点が緑線の枠内に収まるように端末の位置を調整します。",
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  "白点が枠内から出ないように姿勢を保ち続けましょう。",
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Wrap(
+                  children: [
+                    Text(
+                      "白点が",
+                      style: TextStyle(fontSize: 12),
                     ),
-                  ),
-                  Flexible(
-                    child: Container(
-                      height: 90,
-                      // color: Colors.green,
-                      child: Text(
-                        "鼻の位置に表示される白点が緑のラインよりわずかに上にくるように端末の位置を調整する",
-                        style: TextStyle(fontSize: 16),
-                      ),
+                    Text(
+                      "下側の緑線",
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green),
                     ),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                "3. OKボタンを押してはじめましょう！",
-                style: TextStyle(fontSize: 16),
-              ),
-            ],
+                    Text(
+                      "を超えて一定時間経つと通知音が鳴ります。",
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
 
@@ -372,107 +403,189 @@ class PageThree extends StatelessWidget {
 }
 
 //4ページ目
+//ページの高さは合計でscreenSize.height * 0.85とする
 class PageFour extends StatelessWidget {
   final SignInModel model;
-  PageFour(this.model);
+  // ignore: prefer_typing_uninitialized_variables
+  var screenSize;
+  PageFour(this.model, this.screenSize);
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
+      // mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Stack(
           children: [
             Container(
-              height: 216,
-              width: 216,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
+              height: screenSize.height * 0.5,
+              width: double.infinity,
+              child: Opacity(
+                opacity: 0.8,
+                child: Image.asset(
+                  "images/nicole-wolf-CZ9AjMGKIFI-unsplash.jpg",
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-            SizedBox(
-              height: 80,
-            ),
-            //Googleでサインイン
-            SignInButton(
-                buttonType: ButtonType.google,
-                buttonSize: ButtonSize.large,
-                onPressed: () async {
-                  model.startLoading();
-                  try {
-                    await model.signInWithGoogle();
-                  } catch (e) {
-                    if (e.toString() !=
-                        "Null check operator used on a null value") {
-                      await showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text(e.toString()),
-                              actions: [
-                                TextButton(
-                                  child: const Text("ok"),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                )
-                              ],
-                            );
-                          });
-                    }
-                  }
-                  model.endLoading();
-                }),
-            const SizedBox(height: 30),
-            SizedBox(
-              // height: 256,
-              // width: 256,
-              height: 45,
-              width: 280,
-              child: ElevatedButton(
-                onPressed: () async {
-                  model.startLoading();
-                  try {
-                    await model.signInWithAnonymousUser();
-                  } catch (e) {
-                    await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return CupertinoAlertDialog(
-                            title: Text("エラー"),
-                            content:
-                                Text("ユーザーデータの作成に失敗しました。通信環境の良いところで再度試してください。"),
-                            actions: [
-                              TextButton(
-                                child: const Text("OK"),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              )
-                            ],
-                          );
-                        });
-                  }
-                  model.endLoading();
-                },
-                style: ElevatedButton.styleFrom(
-                    elevation: 5,
-                    primary: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    )),
-                child: Text(
-                  "はじめる",
-                  style: TextStyle(
-                    fontSize: 18,
+            BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+              child: Container(
+                height: screenSize.height * 0.5,
+                width: double.infinity,
+                color: Colors.black.withOpacity(0.1),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Posture",
+                        style: TextStyle(
+                            fontSize: 50,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                      Text(
+                        "Correction",
+                        style: TextStyle(
+                            fontSize: 50,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
+            // Container(
+            //   height: screenSize.height * 0.5,
+            //   width: double.infinity,
+            //   child: Center(
+            //     child: Column(
+            //       mainAxisSize: MainAxisSize.min,
+            //       children: [
+            //         Text(
+            //           "Posture",
+            //           style: TextStyle(
+            //               fontSize: 50,
+            //               fontWeight: FontWeight.bold,
+            //               color: Colors.green),
+            //         ),
+            //         Text(
+            //           "Correction",
+            //           style: TextStyle(
+            //               fontSize: 50,
+            //               fontWeight: FontWeight.bold,
+            //               color: Colors.green),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ],
         ),
-      ),
+        // SizedBox(
+        //   height: 100,
+        // ),
+        // Container(
+        //   height: 50,
+        //   child: Text(
+        //     "Posture Correction",
+        //     style: TextStyle(fontSize: 30),
+        //   ),
+        // ),
+        // Container(
+        //   height: 256,
+        //   width: 256,
+        //   decoration: BoxDecoration(
+        //     border: Border.all(width: 3, color: Colors.black),
+        //     borderRadius: BorderRadius.circular(20),
+        //   ),
+        //   child: Padding(
+        //     padding: const EdgeInsets.only(
+        //       top: 10,
+        //     ),
+        //     child: Image.asset("images/IMG_MainIcon.jpeg"),
+        //   ),
+        // ),
+        SizedBox(
+          height: screenSize.height * 0.1,
+        ),
+        SizedBox(
+          height: 45,
+          width: 280,
+          child: ElevatedButton(
+            onPressed: () async {
+              model.startLoading();
+              try {
+                await model.signInWithAnonymousUser();
+              } catch (e) {
+                await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CupertinoAlertDialog(
+                        title: Text("エラー"),
+                        content:
+                            Text("ユーザーデータの作成に失敗しました。通信環境の良いところで再度試してください。"),
+                        actions: [
+                          TextButton(
+                            child: const Text("OK"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          )
+                        ],
+                      );
+                    });
+              }
+              model.endLoading();
+            },
+            style: ElevatedButton.styleFrom(
+                elevation: 5,
+                primary: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
+                )),
+            child: Text(
+              "はじめる",
+              style: TextStyle(
+                fontSize: 18,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 30),
+        //Googleでサインイン
+        SignInButton(
+            buttonType: ButtonType.google,
+            buttonSize: ButtonSize.large,
+            onPressed: () async {
+              model.startLoading();
+              try {
+                await model.signInWithGoogle();
+              } catch (e) {
+                if (e.toString() !=
+                    "Null check operator used on a null value") {
+                  await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text(e.toString()),
+                          actions: [
+                            TextButton(
+                              child: const Text("ok"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
+                        );
+                      });
+                }
+              }
+              model.endLoading();
+            }),
+      ],
     );
   }
 }
