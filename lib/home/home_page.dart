@@ -112,8 +112,6 @@ class HomePage extends StatelessWidget {
                                                   child: Align(
                                                     alignment: Alignment.center,
                                                     child: Container(
-                                                      // color: Colors.grey
-                                                      //     .withOpacity(0.2),
                                                       height: 120,
                                                       child: AspectRatio(
                                                         aspectRatio: 1,
@@ -250,7 +248,7 @@ class HomePage extends StatelessWidget {
                                           CrossAxisAlignment.center,
                                       children: [
                                         SizedBox(
-                                          height: 15,
+                                          height: 10,
                                         ),
                                         Container(
                                           height: 25,
@@ -391,7 +389,7 @@ class HomePage extends StatelessWidget {
                                           CrossAxisAlignment.center,
                                       children: [
                                         SizedBox(
-                                          height: 15,
+                                          height: 10,
                                         ),
                                         Container(
                                           height: 25,
@@ -531,7 +529,7 @@ class HomePage extends StatelessWidget {
                                           CrossAxisAlignment.center,
                                       children: [
                                         SizedBox(
-                                          height: 15,
+                                          height: 10,
                                         ),
                                         Container(
                                           height: 25,

@@ -260,36 +260,36 @@ class SettingPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Text(
-                        "ユーザーID",
-                        style: TextStyle(fontSize: 13, color: Colors.grey),
-                      ),
-                    ),
-                    Container(
-                      height: 45,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          border: Border(
-                            top: BorderSide(color: Colors.grey, width: 0.5),
-                            bottom: BorderSide(color: Colors.grey, width: 0.5),
-                          ),
-                          color: Colors.white),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              Utils.userId,
-                              style:
-                                  TextStyle(fontSize: 17, color: Colors.grey),
-                            )),
-                      ),
-                    ),
+                    // SizedBox(
+                    //   height: 50,
+                    // ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(left: 10.0),
+                    //   child: Text(
+                    //     "ユーザーID",
+                    //     style: TextStyle(fontSize: 13, color: Colors.grey),
+                    //   ),
+                    // ),
+                    // Container(
+                    //   height: 45,
+                    //   width: double.infinity,
+                    //   decoration: BoxDecoration(
+                    //       border: Border(
+                    //         top: BorderSide(color: Colors.grey, width: 0.5),
+                    //         bottom: BorderSide(color: Colors.grey, width: 0.5),
+                    //       ),
+                    //       color: Colors.white),
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.only(left: 10.0),
+                    //     child: Align(
+                    //         alignment: Alignment.centerLeft,
+                    //         child: Text(
+                    //           Utils.userId,
+                    //           style:
+                    //               TextStyle(fontSize: 17, color: Colors.grey),
+                    //         )),
+                    //   ),
+                    // ),
                     SizedBox(
                       height: 50,
                     ),
