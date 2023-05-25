@@ -89,13 +89,13 @@ class SettingModel extends ChangeNotifier {
   }
 
   deleteUser() async {
-    throw Error;
-    //消去の順番はこのまま
+    // throw Error;
     await FirebaseFirestore.instance
         .collection("users")
         .doc(Utils.userId)
         .delete();
     await FirebaseAuth.instance.currentUser!.delete();
+    await FirebaseAuth.instance.signOut();
     Utils.percentOfAllGoodPostureSec = 0;
     Utils.percentOfTodayGoodPostureSec = 0;
     Utils.percentOfThisMonthGoodPostureSec = 0;

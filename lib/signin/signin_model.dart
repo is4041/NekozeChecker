@@ -40,18 +40,18 @@ class SignInModel extends ChangeNotifier {
     final uid = userCredential.user!.uid;
     final document =
         await FirebaseFirestore.instance.collection("users").doc(uid).get();
-    final userId = document["userId"];
-    //初回ログインのみ登録
-    //todo 初回ログインエラー
-    print("1");
-    if (uid != userId) {
-      print("2");
-      FirebaseFirestore.instance.collection("users").doc(uid).set({
+    final exists = document.exists;
+    //初回ログイン時だけ作動
+    if (exists == false) {
+      print("初回ログイン");
+      await FirebaseFirestore.instance.collection("users").doc(uid).set({
         "createdAt": Timestamp.now(),
         "lastMeasuredOn": "",
         "timeToNotification": 15,
         "userId": uid,
       });
+    } else {
+      print("ログイン履歴あり");
     }
   }
 

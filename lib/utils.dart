@@ -9,7 +9,8 @@ class Utils {
   static int thisMonthMeasuringTime = 0;
   static int todayMeasuringTime = 0;
   static String? isAnonymous = "";
-  static String userId = "読み込み中...";
+  static String userId = "";
   static int timeToNotification = 15;
   static bool darkScreenMode = false;
+  static bool showTutorial = true;
 }

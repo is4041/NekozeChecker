@@ -30,8 +30,15 @@ class HomeModel extends ChangeNotifier {
   getTimeToNotification() async {
     final document =
         await firestore.collection("users").doc(Utils.userId).get();
-    Utils.timeToNotification = document["timeToNotification"];
-    print("設定秒数 : ${Utils.timeToNotification}秒");
+    final exists = document.exists;
+    if (exists == true) {
+      print("ログイン履歴あり");
+      Utils.timeToNotification = document["timeToNotification"];
+      print("設定秒数 : ${Utils.timeToNotification}秒");
+    } else {
+      print("初回ログイン");
+      print("設定秒数 : ${Utils.timeToNotification}秒");
+    }
   }
 
   getProviderId() {
@@ -47,6 +54,8 @@ class HomeModel extends ChangeNotifier {
   getUserId() async {
     Utils.userId = firebaseAuth.currentUser!.uid;
     print("userId : ${Utils.userId}");
+    Utils.showTutorial = false;
+    print("showTutorial : ${Utils.showTutorial}");
   }
 
   getAverage() async {
