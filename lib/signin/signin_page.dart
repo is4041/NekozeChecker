@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:posture_correction/signin/signin_model.dart';
+import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:sign_button/sign_button.dart';
 
@@ -24,12 +25,16 @@ class SignInPage extends StatelessWidget {
               final PageController pageController =
                   PageController(initialPage: 0);
 
-              final List<Widget> pages = [
-                PageOne(model, screenSize),
-                PageTwo(model, screenSize),
-                PageThree(model, screenSize),
-                PageFour(model, screenSize),
-              ];
+              final List<Widget> pages = Utils.showTutorial == true
+                  ? [
+                      PageOne(model, screenSize),
+                      PageTwo(model, screenSize),
+                      PageThree(model, screenSize),
+                      PageFour(model, screenSize),
+                    ]
+                  : [
+                      PageFour(model, screenSize),
+                    ];
               return Stack(children: [
                 StreamBuilder<User?>(
                     stream: FirebaseAuth.instance.authStateChanges(),
@@ -50,75 +55,77 @@ class SignInPage extends StatelessWidget {
                               return pages[index % pages.length];
                             },
                           ),
-                          //todo 初回登録後は非表示にする
-                          Positioned(
-                            height: screenSize.height * 0.15,
-                            right: 0,
-                            bottom: 0,
-                            left: 0,
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: List<Widget>.generate(
-                                        pages.length,
-                                        (index) => Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10.0),
-                                          child: CircleAvatar(
-                                            radius: 5,
-                                            backgroundColor:
-                                                model.activePage == index
-                                                    ? Colors.green
-                                                    : Colors.grey.shade300,
+                          Visibility(
+                            visible: Utils.showTutorial == true,
+                            child: Positioned(
+                              height: screenSize.height * 0.15,
+                              right: 0,
+                              bottom: 0,
+                              left: 0,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: List<Widget>.generate(
+                                          pages.length,
+                                          (index) => Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10.0),
+                                            child: CircleAvatar(
+                                              radius: 5,
+                                              backgroundColor:
+                                                  model.activePage == index
+                                                      ? Colors.green
+                                                      : Colors.grey.shade300,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0),
-                                  child: Container(
-                                    height: 40,
-                                    width: double.infinity,
-                                    child: ElevatedButton(
-                                      onPressed: model.activePage < 3
-                                          ? () {
-                                              pageController.nextPage(
-                                                  duration: const Duration(
-                                                      milliseconds: 300),
-                                                  curve: Curves.ease);
-                                            }
-                                          : () {},
-                                      style: ElevatedButton.styleFrom(
-                                          primary: model.activePage < 3
-                                              ? Colors.green
-                                              : Colors.grey,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(50),
-                                          )),
-                                      child: Text(
-                                        "次へ",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
-                                        // style: TextStyle(fontSize: 40),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20.0),
+                                    child: Container(
+                                      height: 40,
+                                      width: double.infinity,
+                                      child: ElevatedButton(
+                                        onPressed: model.activePage < 3
+                                            ? () {
+                                                pageController.nextPage(
+                                                    duration: const Duration(
+                                                        milliseconds: 300),
+                                                    curve: Curves.ease);
+                                              }
+                                            : () {},
+                                        style: ElevatedButton.styleFrom(
+                                            primary: model.activePage < 3
+                                                ? Colors.green
+                                                : Colors.grey,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            )),
+                                        child: Text(
+                                          "次へ",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                          // style: TextStyle(fontSize: 40),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -153,7 +160,10 @@ class PageOne extends StatelessWidget {
         Container(
           height: screenSize.height * 0.5,
           width: double.infinity,
-          color: Colors.grey.withOpacity(0.3),
+          child: Image.asset(
+            "images/IMG_0195.JPG",
+            fit: BoxFit.cover,
+          ),
         ),
         Container(
           height: screenSize.height * 0.1,
@@ -314,9 +324,6 @@ class PageThree extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // SizedBox(
-        //   height: 50,
-        // ),
         Stack(
           children: [
             Center(
@@ -332,9 +339,6 @@ class PageThree extends StatelessWidget {
             ),
           ],
         ),
-        // SizedBox(
-        //   height: 30,
-        // ),
         Container(
           height: screenSize.height * 0.1,
           width: double.infinity,
@@ -392,11 +396,6 @@ class PageThree extends StatelessWidget {
             ),
           ),
         ),
-
-        // Text(
-        //   "3.",
-        //   style: TextStyle(fontSize: 20),
-        // ),
       ],
     );
   }
@@ -457,57 +456,8 @@ class PageFour extends StatelessWidget {
                 ),
               ),
             ),
-            // Container(
-            //   height: screenSize.height * 0.5,
-            //   width: double.infinity,
-            //   child: Center(
-            //     child: Column(
-            //       mainAxisSize: MainAxisSize.min,
-            //       children: [
-            //         Text(
-            //           "Posture",
-            //           style: TextStyle(
-            //               fontSize: 50,
-            //               fontWeight: FontWeight.bold,
-            //               color: Colors.green),
-            //         ),
-            //         Text(
-            //           "Correction",
-            //           style: TextStyle(
-            //               fontSize: 50,
-            //               fontWeight: FontWeight.bold,
-            //               color: Colors.green),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
           ],
         ),
-        // SizedBox(
-        //   height: 100,
-        // ),
-        // Container(
-        //   height: 50,
-        //   child: Text(
-        //     "Posture Correction",
-        //     style: TextStyle(fontSize: 30),
-        //   ),
-        // ),
-        // Container(
-        //   height: 256,
-        //   width: 256,
-        //   decoration: BoxDecoration(
-        //     border: Border.all(width: 3, color: Colors.black),
-        //     borderRadius: BorderRadius.circular(20),
-        //   ),
-        //   child: Padding(
-        //     padding: const EdgeInsets.only(
-        //       top: 10,
-        //     ),
-        //     child: Image.asset("images/IMG_MainIcon.jpeg"),
-        //   ),
-        // ),
         SizedBox(
           height: screenSize.height * 0.1,
         ),
