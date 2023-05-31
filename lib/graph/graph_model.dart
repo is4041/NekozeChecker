@@ -1,14 +1,8 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:posture_correction/utils.dart';
 
 import '../camera/camera_model.dart';
-import '../data.dart';
-import 'graph_page.dart';
-import 'dart:math';
 
 int monthCounter = 0;
 
@@ -34,7 +28,10 @@ class GraphModel extends ChangeNotifier {
   bool show = false;
   bool dotSwitch = false;
 
+  //当月の計測データをfirebaseから取得、配列化する
   Future fetchGraphData() async {
+    List arrayOfMonthMeasuringSec = [];
+    List arrayOfMonthMeasuringBadSec = [];
     rateOfGoodPosture = 0;
     isLoading = true;
     spots1 = [];
@@ -47,9 +44,6 @@ class GraphModel extends ChangeNotifier {
     year = getMonth.substring(0, 4);
     month = getMonth.substring(5, 7);
 
-    List arrayOfMonthMeasuringSec = [];
-    List arrayOfMonthMeasuringBadSec = [];
-
     final QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('measurements')
         .where("userId", isEqualTo: userId.toString())
@@ -61,6 +55,7 @@ class GraphModel extends ChangeNotifier {
         arrayOfMonthMeasuringSec.add(doc.get("measuringSec"));
         arrayOfMonthMeasuringBadSec.add(doc.get("measuringBadPostureSec"));
 
+        //姿勢良好の時間と姿勢不良の時間の割合を算出する
         if (arrayOfMonthMeasuringSec.isNotEmpty) {
           final totalOfMonthMeasuringSec =
               arrayOfMonthMeasuringSec.reduce((a, b) => a + b);
@@ -78,16 +73,7 @@ class GraphModel extends ChangeNotifier {
         final measuringBadPostureSec = await doc.get("measuringBadPostureSec");
         final measuringGoodPostureSec = measuringSec - measuringBadPostureSec;
 
-        // final measuringMin =
-        //     double.parse(doc.get("measuringMin").toStringAsFixed(1));
-        // final measuringBadPostureMin =
-        //     double.parse(doc.get("measuringBadPostureMin").toStringAsFixed(1));
-        // // measuringMin,measuringBadPostureMinが整数でエラー発生（toStringAsFixed必須）
-        // final flSpot1 = FlSpot(num, measuringMin);
-        // final flSpot2 = FlSpot(num, measuringBadPostureMin);
-
         //処理が重くなるため計測秒数を ×1/100 で表示（グラフの値を1/100で表示）
-        //toString必須
         final measuringSecValue = double.parse(measuringSec.toString()) / 100;
         final measuringBadPostureSecValue =
             double.parse(measuringBadPostureSec.toString()) / 100;
@@ -108,10 +94,7 @@ class GraphModel extends ChangeNotifier {
       }
     }
 
-    for (var doc in snapshot.docs) {
-      if (doc.get("createdAt").toString().substring(0, 7) == getMonth) {}
-    }
-
+    //グラフのy軸の最大値（最も計測時間が長いデータ）を取得
     for (int i = 0; i < spots1.length; i++) {
       double v = spots1[i].y;
       if (v > max) {
@@ -122,16 +105,19 @@ class GraphModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  //先月のデータを取得
   void getLastMonthData() async {
     monthCounter--;
     fetchGraphData();
   }
 
+  //翌月のデータを取得（当月のデータ表示中は押下不可）
   void getNextMonthData() async {
     monthCounter++;
     fetchGraphData();
   }
 
+  //グラフの表示変更
   changes() {
     if (extendWidth == false) {
       extendWidth = true;

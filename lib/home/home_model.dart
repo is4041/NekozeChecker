@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:tflite/tflite.dart';
 
 import '../camera/camera_model.dart';
-import '../data.dart';
 import '../utils.dart';
 
 final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -14,6 +13,7 @@ final FirebaseFirestore firestore = FirebaseFirestore.instance;
 class HomeModel extends ChangeNotifier {
   final getDate = Timestamp.now().toDate();
 
+  //Tfliteをロードする
   Future loadModel() async {
     Tflite.close();
     try {
@@ -27,6 +27,7 @@ class HomeModel extends ChangeNotifier {
     }
   }
 
+  //警告音が鳴るまでの時間を取得する
   getTimeToNotification() async {
     final document =
         await firestore.collection("users").doc(Utils.userId).get();
@@ -41,6 +42,7 @@ class HomeModel extends ChangeNotifier {
     }
   }
 
+  //ProviderIdを取得する
   getProviderId() {
     if (FirebaseAuth.instance.currentUser!.isAnonymous == false) {
       print("googleUser");
@@ -51,6 +53,7 @@ class HomeModel extends ChangeNotifier {
     }
   }
 
+  //userIdを取得する
   getUserId() async {
     Utils.userId = firebaseAuth.currentUser!.uid;
     print("userId : ${Utils.userId}");
@@ -58,6 +61,7 @@ class HomeModel extends ChangeNotifier {
     print("showTutorial : ${Utils.showTutorial}");
   }
 
+  //平均データを取得する
   getAverage() async {
     //今日の平均リスト
     List averageOfToday = [];
@@ -109,6 +113,7 @@ class HomeModel extends ChangeNotifier {
       Utils.numberOfMeasurementsToday = averageOfToday.length;
       Utils.todayMeasuringTime = totalOfTodaySec;
     } else {
+      Utils.todayMeasuringTime = 0;
       Utils.percentOfTodayGoodPostureSec = 0;
       Utils.numberOfMeasurementsToday = 0;
     }
@@ -128,6 +133,7 @@ class HomeModel extends ChangeNotifier {
       Utils.numberOfMeasurementsThisMonth = averageOfThisMonth.length;
       Utils.thisMonthMeasuringTime = totalOfThisMonthSec;
     } else {
+      Utils.thisMonthMeasuringTime = 0;
       Utils.percentOfThisMonthGoodPostureSec = 0;
       Utils.numberOfMeasurementsThisMonth = 0;
     }
@@ -146,17 +152,11 @@ class HomeModel extends ChangeNotifier {
       Utils.numberOfOverallMeasurements = averageOfAll.length;
       Utils.overallMeasuringTime = totalOfAllSec;
     } else {
+      Utils.overallMeasuringTime = 0;
       Utils.percentOfAllGoodPostureSec = 0;
       Utils.numberOfOverallMeasurements = 0;
     }
 
     notifyListeners();
-  }
-
-  upDateDailyAverage() async {
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(Utils.userId)
-        .update({"dailyAverage": ""});
   }
 }

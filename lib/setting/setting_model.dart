@@ -4,10 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:posture_correction/utils.dart';
 
-import '../camera/camera_model.dart';
-import '../data.dart';
-import '../home/home_model.dart';
-
 class SettingModel extends ChangeNotifier {
   final googleLogin = GoogleSignIn(scopes: [
     'email',
@@ -16,6 +12,7 @@ class SettingModel extends ChangeNotifier {
 
   int secondsListIndex = 0;
 
+  //警告音が鳴るまでの秒数リスト
   final secondsList = [
     5,
     10,
@@ -35,6 +32,7 @@ class SettingModel extends ChangeNotifier {
     3600,
   ];
 
+  //匿名アカウントからgoogleアカウントへの更新
   googleSignIn() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     // Obtain the auth details from the request
@@ -54,6 +52,7 @@ class SettingModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  //設定している警告音が鳴るまでの秒数のインデックス番号を取得
   searchListIndex() {
     secondsList.asMap().forEach((int i, int seconds) {
       if (seconds == Utils.timeToNotification) {
@@ -64,8 +63,8 @@ class SettingModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  //姿勢不良になってから警告音が鳴るまでの時間を更新
   upDateTimeToNotification() async {
-    // throw Error;
     await FirebaseFirestore.instance
         .collection("users")
         .doc(Utils.userId)
@@ -75,6 +74,7 @@ class SettingModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  //ログアウト（googleアカウントのみ）
   logout() async {
     await FirebaseAuth.instance.signOut();
     Utils.percentOfAllGoodPostureSec = 0;
@@ -88,8 +88,8 @@ class SettingModel extends ChangeNotifier {
     Utils.timeToNotification = 15;
   }
 
+  //全データ削除（初期化）
   deleteUser() async {
-    // throw Error;
     await FirebaseFirestore.instance
         .collection("users")
         .doc(Utils.userId)

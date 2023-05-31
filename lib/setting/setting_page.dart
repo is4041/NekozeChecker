@@ -1,11 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:posture_correction/setting/setting_model.dart';
-import 'package:posture_correction/setting/setting_model.dart';
-import 'package:posture_correction/signin/signin_page.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +17,6 @@ class SettingPage extends StatelessWidget {
             backgroundColor: Colors.grey[100],
             appBar: AppBar(
               elevation: 0,
-              // shadowColor: Colors.green,
               backgroundColor: Colors.grey[100],
               title: Text(
                 "設  定",
@@ -46,6 +41,7 @@ class SettingPage extends StatelessWidget {
                         style: TextStyle(fontSize: 13, color: Colors.grey),
                       ),
                     ),
+                    //googleアカウント提携ボタン（匿名ログイン時のみ押下可）
                     Ink(
                       decoration: BoxDecoration(
                           border: Border(
@@ -55,6 +51,7 @@ class SettingPage extends StatelessWidget {
                           color: Colors.white),
                       height: 45,
                       width: double.infinity,
+                      //匿名ログイン時
                       child: Utils.isAnonymous == "isAnonymous"
                           ? InkWell(
                               highlightColor: Colors.grey[400],
@@ -128,6 +125,7 @@ class SettingPage extends StatelessWidget {
                                 ),
                               ),
                             )
+                          //googleログイン時
                           : Padding(
                               padding: const EdgeInsets.only(left: 10.0),
                               child: Align(
@@ -148,10 +146,11 @@ class SettingPage extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0),
                       child: Text(
-                        "猫背を通知するまでの時間",
+                        "姿勢不良を通知するまでの時間",
                         style: TextStyle(fontSize: 13, color: Colors.grey),
                       ),
                     ),
+                    //警告音が鳴るまでの秒数設定
                     InkWell(
                       onTap: () {
                         showCupertinoModalPopup(
@@ -213,6 +212,7 @@ class SettingPage extends StatelessWidget {
                                     Divider(
                                       thickness: 1,
                                     ),
+                                    //ドラムロール
                                     Expanded(
                                       child: CupertinoPicker(
                                         onSelectedItemChanged: (int index) {
@@ -237,6 +237,7 @@ class SettingPage extends StatelessWidget {
                               );
                             });
                       },
+                      //設定秒数を表示
                       child: Container(
                         height: 45,
                         width: double.infinity,
@@ -260,9 +261,9 @@ class SettingPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // SizedBox(
-                    //   height: 50,
-                    // ),
+                    SizedBox(
+                      height: 50,
+                    ),
                     // Padding(
                     //   padding: const EdgeInsets.only(left: 10.0),
                     //   child: Text(
@@ -270,6 +271,7 @@ class SettingPage extends StatelessWidget {
                     //     style: TextStyle(fontSize: 13, color: Colors.grey),
                     //   ),
                     // ),
+                    // //ユーザーIDを表示
                     // Container(
                     //   height: 45,
                     //   width: double.infinity,
@@ -290,9 +292,9 @@ class SettingPage extends StatelessWidget {
                     //         )),
                     //   ),
                     // ),
-                    SizedBox(
-                      height: 50,
-                    ),
+                    // SizedBox(
+                    //   height: 50,
+                    // ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0),
                       child: Text(
@@ -300,6 +302,7 @@ class SettingPage extends StatelessWidget {
                         style: TextStyle(fontSize: 13, color: Colors.grey),
                       ),
                     ),
+                    //ログアウトボタン（googleログイン時のみ押下可）
                     Ink(
                       decoration: BoxDecoration(
                           border: Border(
@@ -309,6 +312,7 @@ class SettingPage extends StatelessWidget {
                           color: Colors.white),
                       height: 45,
                       width: double.infinity,
+                      //googleログイン時
                       child: Utils.isAnonymous == "isNotAnonymous"
                           ? InkWell(
                               highlightColor: Colors.grey[400],
@@ -365,6 +369,7 @@ class SettingPage extends StatelessWidget {
                                 ),
                               ),
                             )
+                          //匿名ログイン時
                           : Center(
                               child: Text(
                                 "ログアウト",
@@ -382,6 +387,7 @@ class SettingPage extends StatelessWidget {
                         style: TextStyle(fontSize: 13, color: Colors.grey),
                       ),
                     ),
+                    //全データ消去（初期化）ボタン
                     Ink(
                       decoration: BoxDecoration(
                           border: Border(

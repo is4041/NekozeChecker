@@ -8,7 +8,6 @@ import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
 
 import 'camera_model.dart';
-import '../home/home_page.dart';
 
 final AudioCache _cache = AudioCache();
 AudioPlayer? audioPlayer;
@@ -32,6 +31,7 @@ class CameraPage extends StatelessWidget {
         builder: (context, snapshot) {
           return Scaffold(
             body: Consumer<CameraModel>(builder: (context, model, child) {
+              //カメラの利用許可の有無で表示するページを変更
               if (model.controller == null) {
                 return Center(
                   child: Padding(
@@ -61,7 +61,7 @@ class CameraPage extends StatelessWidget {
                               Navigator.of(context).pop();
                             },
                             style: ElevatedButton.styleFrom(
-                                primary: Colors.green,
+                                primary: Colors.greenAccent.shade700,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 )),
@@ -96,10 +96,11 @@ class CameraPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  //停止ボタン
+                  //計測終了ボタン
                   Align(
                     alignment: const Alignment(0, 0.9),
                     child: FloatingActionButton(
+                      //計測時間0秒を回避する
                       onPressed: model.measuringSec > 0
                           ? () async {
                               notificationTimer?.cancel();
@@ -191,7 +192,6 @@ class CameraPage extends StatelessWidget {
                                 },
                                 label: Text("音量チェック"),
                                 icon: Icon(Icons.volume_up),
-                                // child: Text("　音量チェック　"),
                                 style: ElevatedButton.styleFrom(
                                   elevation: 0,
                                   primary: Colors.red,
@@ -200,6 +200,10 @@ class CameraPage extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                            ),
+                            Text(
+                              "警告音設定秒数：${Utils.timeToNotification}秒",
+                              style: TextStyle(color: Colors.white),
                             ),
                             const SizedBox(
                               height: 50,
@@ -221,7 +225,7 @@ class CameraPage extends StatelessWidget {
                                           borderRadius:
                                               BorderRadius.circular(50),
                                         ),
-                                        primary: Colors.green,
+                                        primary: Colors.greenAccent.shade700,
                                       ),
                                       child: Text(
                                         "戻る",
@@ -244,8 +248,9 @@ class CameraPage extends StatelessWidget {
                                               BorderRadius.circular(50),
                                         ),
                                         primary: hiddenOkButton == false
-                                            ? Colors.green
-                                            : Colors.green.withOpacity(0.3),
+                                            ? Colors.greenAccent.shade700
+                                            : Colors.greenAccent.shade700
+                                                .withOpacity(0.3),
                                       ),
                                       child: Text(
                                         "OK",
@@ -258,6 +263,7 @@ class CameraPage extends StatelessWidget {
                         ),
                       ),
                     ),
+                  //姿勢情報を取得できない場合に表示（離席中など）
                   if (isCounting! && !detection)
                     Center(
                       child: Text(
@@ -298,6 +304,7 @@ class CameraPage extends StatelessWidget {
   }
 }
 
+//画面に緑線・赤線・白点を表示
 class Painter extends CustomPainter {
   List? params;
   final CameraModel model;
@@ -314,6 +321,7 @@ class Painter extends CustomPainter {
         print("Timer Start");
       }
       for (var re in params!) {
+        //nose（鼻）の位置情報を取得する
         re["keypoints"].values.forEach((k) {
           if (k["part"] == "nose"
               // ||
@@ -322,6 +330,7 @@ class Painter extends CustomPainter {
               // k["part"] == "leftEar" ||
               // k["part"] == "rightEar"
               ) {
+            //noseの位置に白点を表示
             paint.color = Colors.white;
             canvas.drawCircle(
                 Offset(size.width * k["x"], size.height * k["y"]), 5, paint);
@@ -331,7 +340,6 @@ class Painter extends CustomPainter {
               paint.strokeWidth = 3;
               canvas.drawLine(Offset(0, size.height / 2),
                   Offset(size.width, size.height / 2), paint);
-              //todo 動作が重くなれば下記のLineは消す
               paint.color = Colors.greenAccent;
               paint.strokeWidth = 3;
               canvas.drawLine(Offset(0, (size.height / 2) - 30),
@@ -345,7 +353,6 @@ class Painter extends CustomPainter {
               paint.strokeWidth = 3;
               canvas.drawLine(Offset(0, size.height / 2),
                   Offset(size.width, size.height / 2), paint);
-              //todo 動作が重くなれば下記のLineは消す
               paint.color = Colors.greenAccent;
               paint.strokeWidth = 3;
               canvas.drawLine(Offset(0, (size.height / 2) - 30),
@@ -369,8 +376,9 @@ class Painter extends CustomPainter {
     }
   }
 
+  //時間経過で警告音を鳴らす
   notificationSound(bool beyond) async {
-    //中央ライン以下の時の処理
+    //noseが中央ライン以下の時の処理
     if (beyond && !soundLoop!) {
       soundLoop = true;
       hiddenOkButton = true;
@@ -387,7 +395,7 @@ class Painter extends CustomPainter {
           model.counter();
         }
       });
-      //中央ライン以上の時の処理
+      //noseが中央ライン以上の時の処理
     } else if (!beyond && soundLoop!) {
       soundLoop = false;
       hiddenOkButton = false;

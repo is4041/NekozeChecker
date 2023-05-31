@@ -1,11 +1,8 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:posture_correction/signin/signin_page.dart';
-import 'package:posture_correction/utils.dart';
 
 final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
@@ -13,20 +10,24 @@ class SignInModel extends ChangeNotifier {
   bool isLoading = false;
   int activePage = 0;
 
+  //ページ更新
   active() {
     notifyListeners();
   }
 
+  //インジケータ表示
   startLoading() {
     isLoading = true;
     notifyListeners();
   }
 
+  //インジケータ非表示
   endLoading() {
     isLoading = false;
     notifyListeners();
   }
 
+  //Googleでサインイン
   signInWithGoogle() async {
     final user = await googleSignIn.signIn();
 
@@ -55,8 +56,8 @@ class SignInModel extends ChangeNotifier {
     }
   }
 
+  //匿名でサインイン
   signInWithAnonymousUser() async {
-    throw Error;
     try {
       await firebaseAuth.signInAnonymously();
       final uid = firebaseAuth.currentUser!.uid;

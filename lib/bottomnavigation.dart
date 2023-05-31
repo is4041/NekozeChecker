@@ -30,7 +30,6 @@ class _State extends State<BottomNavigation> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: pages[selectedIndex],
-      //候補1
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: const [
@@ -46,63 +45,6 @@ class _State extends State<BottomNavigation> {
         onTap: onTapItem,
         selectedItemColor: Colors.greenAccent.shade700,
       ),
-      //候補2
-      // bottomNavigationBar: SizedBox(
-      //   height: 100,
-      //   child: NavigationBar(
-      //     backgroundColor: Colors.transparent,
-      //     selectedIndex: selectedIndex,
-      //     onDestinationSelected: (index) => setState(() {
-      //       selectedIndex = index;
-      //     }),
-      //     destinations: const [
-      //       NavigationDestination(
-      //         selectedIcon: Icon(
-      //           Icons.home,
-      //           color: Colors.green,
-      //         ),
-      //         icon: Icon(
-      //           Icons.home,
-      //           color: Colors.green,
-      //         ),
-      //         label: "ホーム",
-      //       ),
-      //       NavigationDestination(
-      //         selectedIcon: Icon(
-      //           Icons.history,
-      //           color: Colors.green,
-      //         ),
-      //         icon: Icon(
-      //           Icons.history,
-      //           color: Colors.green,
-      //         ),
-      //         label: "履歴",
-      //       ),
-      //       NavigationDestination(
-      //         selectedIcon: Icon(
-      //           Icons.show_chart,
-      //           color: Colors.green,
-      //         ),
-      //         icon: Icon(
-      //           Icons.show_chart,
-      //           color: Colors.green,
-      //         ),
-      //         label: "グラフ",
-      //       ),
-      //       NavigationDestination(
-      //         selectedIcon: Icon(
-      //           Icons.settings,
-      //           color: Colors.green,
-      //         ),
-      //         icon: Icon(
-      //           Icons.settings,
-      //           color: Colors.green,
-      //         ),
-      //         label: "設定",
-      //       ),
-      //     ],
-      //   ),
-      // ),
     );
   }
 }

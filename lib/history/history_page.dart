@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:posture_correction/history/history_model.dart';
 import 'package:provider/provider.dart';
 
@@ -26,9 +25,7 @@ class HistoryPage extends StatelessWidget {
               ),
             ),
             body: Consumer<HistoryModel>(builder: (context, model, child) {
-              const style = TextStyle(fontSize: 17);
-              const styleGreen = TextStyle(fontSize: 17, color: Colors.green);
-              const styleRed = TextStyle(fontSize: 17, color: Colors.red);
+              final style = TextStyle(fontSize: 17);
               final List<Data>? data = model.data;
               return Stack(
                 children: [
@@ -37,9 +34,9 @@ class HistoryPage extends StatelessWidget {
                         padding: EdgeInsets.zero,
                         itemCount: data!.length,
                         itemBuilder: (BuildContext context, int index) {
-                          //日付
+                          //日付を取得
                           String createdAt = data[index].createdAt!;
-                          //姿勢（良）を時・分・秒に変換
+                          //計測時間を時・分・秒に変換
                           num measuringHourValue =
                               data[index].measuringSec! ~/ 60 ~/ 60;
                           num measuringMinuteValue =
@@ -65,19 +62,17 @@ class HistoryPage extends StatelessWidget {
                           num goodSecondValue = (data[index].measuringSec! -
                                   data[index].measuringBadPostureSec!) %
                               60;
-                          //カウント回数
+                          //警告音カウント回数
                           num notificationCounter =
                               data[index].notificationCounter!;
-                          //設定したカウンターの秒数
+                          //設定した警告音通知までの秒数
                           int timeToNotification =
                               data[index].timeToNotification!;
-
+                          //姿勢（良）の割合を取得
                           num measuringSec = data[index].measuringSec!;
                           num measuringGoodPostureSec =
                               (data[index].measuringSec! -
                                   data[index].measuringBadPostureSec!);
-                          num measuringBadPostureSec =
-                              data[index].measuringBadPostureSec!;
                           num rateOfGoodPosture = double.parse(
                               ((measuringGoodPostureSec / measuringSec) * 100)
                                   .toStringAsFixed(1));
@@ -90,10 +85,11 @@ class HistoryPage extends StatelessWidget {
                               onTap: () {
                                 TextEditingController titleController =
                                     TextEditingController();
-                                titleController.text = data[index].title!;
-                                //下1行はtextFieldの入力内容の保存に関する意図しない処理を回避
-                                model.title = data[index].title!.toString();
+                                titleController.text = data[index].memo!;
+                                //textFieldの入力内容の保存に関する意図しない処理を回避
+                                model.memo = data[index].memo!.toString();
 
+                                //モーダルダイアログ
                                 showModalBottomSheet(
                                     backgroundColor: Colors.transparent,
                                     isScrollControlled: true,
@@ -116,7 +112,8 @@ class HistoryPage extends StatelessWidget {
                                           child: Column(
                                             children: [
                                               Container(
-                                                color: Colors.green,
+                                                color:
+                                                    Colors.greenAccent.shade700,
                                                 height: 60,
                                                 child: Row(
                                                   mainAxisAlignment:
@@ -125,7 +122,6 @@ class HistoryPage extends StatelessWidget {
                                                   children: [
                                                     Container(
                                                       width: 70,
-                                                      // color: Colors.red,
                                                       child: Center(
                                                         child: ElevatedButton(
                                                           onPressed: () {
@@ -199,9 +195,10 @@ class HistoryPage extends StatelessWidget {
                                                                 width: 0.5),
                                                           ),
                                                         ),
+                                                        //メモ入力フィールド
                                                         child: TextField(
                                                           onChanged: (text) {
-                                                            model.title = text;
+                                                            model.memo = text;
                                                           },
                                                           controller:
                                                               titleController,
@@ -222,6 +219,7 @@ class HistoryPage extends StatelessWidget {
                                                           ),
                                                         ),
                                                       ),
+                                                      //メモの内容を保存するボタン
                                                       Align(
                                                         alignment: Alignment
                                                             .centerRight,
@@ -247,7 +245,8 @@ class HistoryPage extends StatelessWidget {
                                                                   ElevatedButton
                                                                       .styleFrom(
                                                                 primary: Colors
-                                                                    .green,
+                                                                    .greenAccent
+                                                                    .shade700,
                                                               ),
                                                               child:
                                                                   Text("保存")),
@@ -273,25 +272,25 @@ class HistoryPage extends StatelessWidget {
                                                                 width: 0.5),
                                                           ),
                                                         ),
-                                                        // color: Colors.white,
-
                                                         child: Column(
                                                           children: [
+                                                            //計測回数を表示
                                                             Row(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
                                                                       .spaceBetween,
                                                               children: [
-                                                                Text("計測回数",
+                                                                Text("計測No.",
                                                                     style:
                                                                         style),
                                                                 Text(
-                                                                  "${data.length - index}回目",
+                                                                  "No.${data.length - index}",
                                                                   style: style,
                                                                 ),
                                                               ],
                                                             ),
                                                             Divider(),
+                                                            //計測日を表示
                                                             Row(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
@@ -317,137 +316,55 @@ class HistoryPage extends StatelessWidget {
                                                               ],
                                                             ),
                                                             Divider(),
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Text("計測時間",
-                                                                    style:
-                                                                        style),
-                                                                Row(
-                                                                  children: [
-                                                                    Text(
-                                                                      measuringHourValue >
-                                                                              0
-                                                                          ? "$measuringHourValue時間"
-                                                                          : "　",
-                                                                      style:
-                                                                          style,
-                                                                    ),
-                                                                    Text(
-                                                                      measuringMinuteValue >
-                                                                              0
-                                                                          ? "$measuringMinuteValue分"
-                                                                          : "",
-                                                                      style:
-                                                                          style,
-                                                                    ),
-                                                                    Text(
-                                                                      measuringSecondValue >
-                                                                              0
-                                                                          ? "$measuringSecondValue秒"
-                                                                          : "",
-                                                                      style:
-                                                                          style,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ],
-                                                            ),
+                                                            //計測時間を表示
+                                                            TimeValue(
+                                                                posture: "",
+                                                                hourValue:
+                                                                    measuringHourValue,
+                                                                minuteValue:
+                                                                    measuringMinuteValue,
+                                                                secondValue:
+                                                                    measuringSecondValue,
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        17,
+                                                                    color: Colors
+                                                                        .black)),
                                                             Divider(),
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Row(
-                                                                  children: [
-                                                                    Text("姿勢",
-                                                                        style:
-                                                                            style),
-                                                                    Text("(良)",
-                                                                        style:
-                                                                            styleGreen),
-                                                                  ],
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    Text(
-                                                                      goodHourValue >
-                                                                              0
-                                                                          ? "$goodHourValue時間"
-                                                                          : "　",
-                                                                      style:
-                                                                          styleGreen,
-                                                                    ),
-                                                                    Text(
-                                                                      goodMinuteValue >
-                                                                              0
-                                                                          ? "$goodMinuteValue分"
-                                                                          : "",
-                                                                      style:
-                                                                          styleGreen,
-                                                                    ),
-                                                                    Text(
-                                                                      goodSecondValue == 0 &&
-                                                                              measuringSec >= 60
-                                                                          ? ""
-                                                                          : "$goodSecondValue秒",
-                                                                      style:
-                                                                          styleGreen,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ],
-                                                            ),
+                                                            //計測時間（姿勢・良）を表示
+                                                            TimeValue(
+                                                                posture:
+                                                                    "（姿勢・良）",
+                                                                hourValue:
+                                                                    goodHourValue,
+                                                                minuteValue:
+                                                                    goodMinuteValue,
+                                                                secondValue:
+                                                                    goodSecondValue,
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        17,
+                                                                    color: Colors
+                                                                        .greenAccent
+                                                                        .shade700)),
                                                             Divider(),
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Row(
-                                                                  children: [
-                                                                    Text("姿勢",
-                                                                        style:
-                                                                            style),
-                                                                    Text("(不良)",
-                                                                        style:
-                                                                            styleRed),
-                                                                  ],
-                                                                ),
-                                                                Row(
-                                                                  children: [
-                                                                    Text(
-                                                                      badHourValue >
-                                                                              0
-                                                                          ? "$badHourValue時間"
-                                                                          : "　",
-                                                                      style:
-                                                                          styleRed,
-                                                                    ),
-                                                                    Text(
-                                                                      badMinuteValue >
-                                                                              0
-                                                                          ? "$badMinuteValue分"
-                                                                          : "",
-                                                                      style:
-                                                                          styleRed,
-                                                                    ),
-                                                                    Text(
-                                                                      badSecondValue == 0 &&
-                                                                              measuringBadPostureSec >= 60
-                                                                          ? ""
-                                                                          : "$badSecondValue秒",
-                                                                      style:
-                                                                          styleRed,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ],
-                                                            ),
+                                                            //計測時間（姿勢・不良）を表示
+                                                            TimeValue(
+                                                                posture:
+                                                                    "（姿勢・不良）",
+                                                                hourValue:
+                                                                    badHourValue,
+                                                                minuteValue:
+                                                                    badMinuteValue,
+                                                                secondValue:
+                                                                    badSecondValue,
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        17,
+                                                                    color: Colors
+                                                                        .red)),
                                                             Divider(),
+                                                            //警告音が鳴った回数を表示
                                                             Row(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
@@ -457,8 +374,8 @@ class HistoryPage extends StatelessWidget {
                                                                   timeToNotification ~/
                                                                               60 >
                                                                           0
-                                                                      ? "猫背通知回数（設定：${(timeToNotification / 60).floor()}分）"
-                                                                      : "猫背通知回数（設定：$timeToNotification秒）",
+                                                                      ? "警告音が鳴った回数（設定：${(timeToNotification / 60).floor()}分）"
+                                                                      : "警告音が鳴った回数（設定：$timeToNotification秒）",
                                                                   style: style,
                                                                 ),
                                                                 Text(
@@ -473,9 +390,8 @@ class HistoryPage extends StatelessWidget {
                                                       SizedBox(
                                                         height: 80,
                                                       ),
+                                                      //データ削除ボタン
                                                       InkWell(
-                                                        // highlightColor: Colors.grey,
-                                                        // splashColor: Colors.green,
                                                         onTap: () async {
                                                           await showDialog(
                                                             context: context,
@@ -579,7 +495,10 @@ class HistoryPage extends StatelessWidget {
                                                           child: Center(
                                                             child: Text(
                                                               "データ削除",
-                                                              style: styleRed,
+                                                              style: TextStyle(
+                                                                  fontSize: 17,
+                                                                  color: Colors
+                                                                      .red),
                                                             ),
                                                           ),
                                                         ),
@@ -597,10 +516,11 @@ class HistoryPage extends StatelessWidget {
                                       );
                                     });
                               },
-                              //履歴リスト
+                              //履歴
                               title: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  //No.を表示
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: Text(
@@ -608,6 +528,7 @@ class HistoryPage extends StatelessWidget {
                                       style: TextStyle(fontSize: 10),
                                     ),
                                   ),
+                                  //日付を表示
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -618,64 +539,60 @@ class HistoryPage extends StatelessWidget {
                                             createdAt.substring(5, 7) +
                                             "/ " +
                                             createdAt.substring(8, 10),
-                                        // style: TextStyle(
-                                        //     fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
                                   Row(
                                     children: [
+                                      //計測時間を表示
                                       Expanded(
-                                        child: Container(
-                                          // color: Colors.grey[300],
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "計測時間",
-                                                style: TextStyle(
-                                                  fontSize: 11,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "計測時間",
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                              ),
+                                            ),
+                                            Wrap(
+                                              children: [
+                                                Text(
+                                                  measuringHourValue > 0
+                                                      ? "$measuringHourValue時間"
+                                                      : "",
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600),
                                                 ),
-                                              ),
-                                              Wrap(
-                                                children: [
-                                                  Text(
-                                                    measuringHourValue > 0
-                                                        ? "$measuringHourValue時間"
-                                                        : "",
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w600),
-                                                  ),
-                                                  Text(
-                                                    measuringMinuteValue > 0
-                                                        ? "$measuringMinuteValue分"
-                                                        : "",
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w600),
-                                                  ),
-                                                  Text(
-                                                    measuringSecondValue > 0
-                                                        ? "$measuringSecondValue秒"
-                                                        : "",
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w600),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
+                                                Text(
+                                                  measuringMinuteValue > 0
+                                                      ? "$measuringMinuteValue分"
+                                                      : "",
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                                Text(
+                                                  measuringSecondValue > 0
+                                                      ? "$measuringSecondValue秒"
+                                                      : "",
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
                                       ),
+                                      //計測時間（姿勢・良）を表示
                                       Expanded(
                                         child: Container(
-                                          // color: Colors.grey[200],
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -728,10 +645,9 @@ class HistoryPage extends StatelessWidget {
                                                             FontWeight.w600),
                                                   ),
                                                   Text(
-                                                    goodSecondValue == 0 &&
-                                                            measuringSec >= 60
-                                                        ? ""
-                                                        : "$goodSecondValue秒",
+                                                    goodSecondValue > 0
+                                                        ? "$goodSecondValue秒"
+                                                        : "",
                                                     style: TextStyle(
                                                         fontSize: 14,
                                                         color: Colors
@@ -740,76 +656,28 @@ class HistoryPage extends StatelessWidget {
                                                         fontWeight:
                                                             FontWeight.w600),
                                                   ),
+                                                  Visibility(
+                                                    visible:
+                                                        measuringGoodPostureSec ==
+                                                            0,
+                                                    child: Text(
+                                                      "0秒",
+                                                      style: TextStyle(
+                                                          fontSize: 14,
+                                                          color: Colors
+                                                              .greenAccent
+                                                              .shade700,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
                                             ],
                                           ),
                                         ),
                                       ),
-                                      // Expanded(
-                                      //   child: Container(
-                                      //     // color: Colors.grey[300],
-                                      //     child: Column(
-                                      //       crossAxisAlignment:
-                                      //           CrossAxisAlignment.start,
-                                      //       children: [
-                                      //         Row(
-                                      //           mainAxisAlignment:
-                                      //               MainAxisAlignment.start,
-                                      //           children: [
-                                      //             Text(
-                                      //               "姿勢",
-                                      //               style: TextStyle(
-                                      //                 fontSize: 11,
-                                      //                 // color: Colors.grey
-                                      //               ),
-                                      //             ),
-                                      //             Text(
-                                      //               "(不良)",
-                                      //               style: TextStyle(
-                                      //                   fontSize: 11,
-                                      //                   color: Colors.red),
-                                      //             ),
-                                      //           ],
-                                      //         ),
-                                      //         Text(
-                                      //           badHour > 0
-                                      //               ? "$badHour時間"
-                                      //               : "　",
-                                      //           style: TextStyle(
-                                      //               fontSize: 14,
-                                      //               color: Colors.red,
-                                      //               fontWeight:
-                                      //                   FontWeight.w600),
-                                      //         ),
-                                      //         Row(
-                                      //           children: [
-                                      //             Text(
-                                      //               badMinute > 0
-                                      //                   ? "$badMinute分"
-                                      //                   : "",
-                                      //               style: TextStyle(
-                                      //                   fontSize: 14,
-                                      //                   color: Colors.red,
-                                      //                   fontWeight:
-                                      //                       FontWeight.w600),
-                                      //             ),
-                                      //             Text(
-                                      //               badSecond > 0
-                                      //                   ? "$badSecond秒"
-                                      //                   : "",
-                                      //               style: TextStyle(
-                                      //                   fontSize: 14,
-                                      //                   color: Colors.red,
-                                      //                   fontWeight:
-                                      //                       FontWeight.w600),
-                                      //             ),
-                                      //           ],
-                                      //         ),
-                                      //       ],
-                                      //     ),
-                                      //   ),
-                                      // ),
+                                      //計測時間（姿勢・良）の割合を表示、割合に応じて色を変化
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
@@ -890,7 +758,7 @@ class HistoryPage extends StatelessWidget {
                                   SizedBox(
                                     height: 20,
                                     child: Text(
-                                      "${data[index].title}",
+                                      "${data[index].memo}",
                                       style: TextStyle(
                                           fontSize: 13, color: Colors.grey),
                                     ),
@@ -904,6 +772,7 @@ class HistoryPage extends StatelessWidget {
                           );
                         }),
                   ),
+                  //ローディング中のインジケータ
                   if (model.isLoading)
                     const Center(
                       child: CircularProgressIndicator(),
@@ -913,5 +782,44 @@ class HistoryPage extends StatelessWidget {
             }),
           );
         });
+  }
+}
+
+class TimeValue extends StatelessWidget {
+  TimeValue({
+    required this.posture,
+    required this.hourValue,
+    required this.minuteValue,
+    required this.secondValue,
+    required this.style,
+  });
+  final String posture;
+  final num hourValue;
+  final num minuteValue;
+  final num secondValue;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text("計測時間${(posture)}", style: style),
+        Row(
+          children: [
+            Text(hourValue > 0 ? "$hourValue時間" : "", style: style),
+            Text(minuteValue > 0 ? "$minuteValue分" : "", style: style),
+            Text(
+              secondValue > 0 ? "$secondValue秒" : "",
+              style: style,
+            ),
+            Visibility(
+              visible: hourValue == 0 && minuteValue == 0 && secondValue == 0,
+              child: Text("0秒", style: style),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }

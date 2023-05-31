@@ -3,18 +3,18 @@ import 'package:flutter/cupertino.dart';
 
 import '../camera/camera_model.dart';
 import '../data.dart';
-import '../utils.dart';
 
 class HistoryModel extends ChangeNotifier {
   bool isLoading = false;
   bool showSwitch = false;
   List<Map<String, String>> data5 = [];
   List<Data>? data = [];
-  String title = "";
+  String memo = "";
   String userId = firebaseAuth.currentUser!.uid;
   dynamic totalAverage;
   dynamic dailyAverage;
 
+  //データ取得
   Future fetchData() async {
     isLoading = true;
     final QuerySnapshot snapshot = await FirebaseFirestore.instance
@@ -30,24 +30,26 @@ class HistoryModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  //メモをアップデート
   Future updateTitle(Data data) async {
-    if (title.isNotEmpty) {
+    if (memo.isNotEmpty) {
       final doc = FirebaseFirestore.instance
           .collection("measurements")
           .doc(data.documentID);
       await doc.update({
-        "title": title,
+        "memo": memo,
       });
     } else {
       final doc = FirebaseFirestore.instance
           .collection("measurements")
           .doc(data.documentID);
       await doc.update({
-        "title": "",
+        "memo": "",
       });
     }
   }
 
+  //データ消去
   Future delete(Data data) async {
     return FirebaseFirestore.instance
         .collection("measurements")
