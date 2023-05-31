@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +6,6 @@ import 'package:posture_correction/help/help_page.dart';
 import 'package:posture_correction/home/home_model.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
-
-import '../data.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -24,21 +21,24 @@ class HomePage extends StatelessWidget {
         builder: (context, snapshot) {
           return Scaffold(
             body: Consumer<HomeModel>(builder: (context, model, child) {
+              //全体の計測時間を時・分・秒に変換
               int hour = Utils.overallMeasuringTime ~/ 60 ~/ 60;
               int minute = Utils.overallMeasuringTime ~/ 60 % 60;
               int second = Utils.overallMeasuringTime % 60;
+              //当月の計測時間を時・分・秒に変換
               int hour2 = Utils.thisMonthMeasuringTime ~/ 60 ~/ 60;
               int minute2 = Utils.thisMonthMeasuringTime ~/ 60 % 60;
               int second2 = Utils.thisMonthMeasuringTime % 60;
+              //今日の計測時間を時・分・秒に変換
               int hour3 = Utils.todayMeasuringTime ~/ 60 ~/ 60;
               int minute3 = Utils.todayMeasuringTime ~/ 60 % 60;
               int second3 = Utils.todayMeasuringTime % 60;
               return SingleChildScrollView(
                 child: Column(
                   children: [
+                    //ヘルプページへ遷移
                     Container(
                       alignment: Alignment.bottomRight,
-                      // color: Colors.green,
                       height: screenSize.height * 0.1,
                       child: Padding(
                         padding: const EdgeInsets.only(right: 20.0),
@@ -55,6 +55,7 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                     ),
+                    //カメラページへ遷移
                     SizedBox(
                       height: 200,
                       width: 200,
@@ -65,6 +66,7 @@ class HomePage extends StatelessWidget {
                               MaterialPageRoute(
                                   builder: (context) => CameraPage()));
                           model.getAverage();
+                          //カメラページから戻った際に計測結果をダイアログで表示
                           if (value != null) {
                             await showDialog(
                                 context: context,
@@ -85,7 +87,9 @@ class HomePage extends StatelessWidget {
                                                 Text(
                                                   "(良)：${value[1] ~/ 60 ~/ 60}時間${value[1] ~/ 60 % 60}分${value[1] % 60}秒",
                                                   style: TextStyle(
-                                                      color: Color(0xff00c904)),
+                                                    color: Colors
+                                                        .greenAccent.shade700,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -148,16 +152,20 @@ class HomePage extends StatelessWidget {
                                                             Text(
                                                               "●",
                                                               style: TextStyle(
-                                                                  fontSize: 18,
-                                                                  color: Color(
-                                                                      0xff00c904)),
+                                                                fontSize: 18,
+                                                                color: Colors
+                                                                    .greenAccent
+                                                                    .shade700,
+                                                              ),
                                                             ),
                                                             Text(
                                                               "：${((value[1] / value[0]) * 100).toStringAsFixed(1)}％",
                                                               style: TextStyle(
-                                                                  fontSize: 15,
-                                                                  color: Color(
-                                                                      0xff00c904)),
+                                                                fontSize: 15,
+                                                                color: Colors
+                                                                    .greenAccent
+                                                                    .shade700,
+                                                              ),
                                                             ),
                                                           ],
                                                         ),
@@ -200,21 +208,27 @@ class HomePage extends StatelessWidget {
                         },
                         child: Text(
                           "start",
-                          style:
-                              TextStyle(fontSize: 40, color: Color(0xff00c904)),
+                          style: TextStyle(
+                            fontSize: 40,
+                            color: Colors.greenAccent.shade700,
+                          ),
                         ),
                         style: ElevatedButton.styleFrom(
                           primary: Colors.white,
-                          onPrimary: Colors.green,
+                          onPrimary: Colors.greenAccent.shade700,
                           elevation: 0,
                           shape: CircleBorder(),
-                          side: BorderSide(width: 5, color: Color(0xff00c904)),
+                          side: BorderSide(
+                            width: 5,
+                            color: Colors.greenAccent.shade700,
+                          ),
                         ),
                       ),
                     ),
                     SizedBox(
                       height: 50,
                     ),
+                    //総合・今月・今日の平均データを表示
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
                       child: Stack(
@@ -238,423 +252,44 @@ class HomePage extends StatelessWidget {
                             child: Column(
                               children: [
                                 //総合データ
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Container(
-                                          height: 25,
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: FittedBox(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(3.0),
-                                              child: Text(
-                                                "総合データ",
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  // color: Colors.green
-                                                  // color: Color(0xff00c904),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Container(
-                                          height: 70,
-                                          width: 200,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: FittedBox(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(3.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "計測回数：${Utils.numberOfOverallMeasurements} 回",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      // color: Color(0xff00c904),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "計測時間：$hour時間$minute分$second秒",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      // color: Color(0xff00c904),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "姿勢　(良)：${Utils.percentOfAllGoodPostureSec}%",
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            Color(0xff00c904)),
-                                                  ),
-                                                  Text(
-                                                    "姿勢(不良)：${Utils.percentOfAllGoodPostureSec > 0 ? (100 - Utils.percentOfAllGoodPostureSec).toStringAsFixed(1) : 0.0}%",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Color(0xffff1a1a),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Stack(
-                                      children: [
-                                        Container(
-                                          height: 120,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: AspectRatio(
-                                            aspectRatio: 1,
-                                            child: PieChart(
-                                              PieChartData(
-                                                borderData:
-                                                    FlBorderData(show: false),
-                                                startDegreeOffset: 270,
-                                                sectionsSpace: 0,
-                                                centerSpaceRadius: 40,
-                                                sections: showingSections1(),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          height: 120,
-                                          width: 120,
-                                          child: Center(
-                                            child: Text(
-                                              "${Utils.percentOfAllGoodPostureSec}%",
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color:
-                                                    Utils.percentOfAllGoodPostureSec >
-                                                            0
-                                                        ? Color(0xff00c904)
-                                                        : Colors.grey,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                PieGraph(
+                                    dataOfDate: "総合データ",
+                                    numberOfMeasurements:
+                                        Utils.numberOfOverallMeasurements,
+                                    hour: hour,
+                                    minute: minute,
+                                    second: second,
+                                    rateOfGoodPosture:
+                                        Utils.percentOfAllGoodPostureSec,
+                                    showingRate: showingSections),
                                 SizedBox(
                                   height: 10,
                                 ),
                                 //今月のデータ
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Container(
-                                          height: 25,
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: FittedBox(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(3.0),
-                                              child: Text(
-                                                "今月のデータ",
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  // color: Color(0xff00c904),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Container(
-                                          height: 70,
-                                          width: 200,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: FittedBox(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(3.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "計測回数：${Utils.numberOfMeasurementsThisMonth} 回",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      // color: Color(0xff00c904),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "計測時間：$hour2時間$minute2分$second2秒",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      // color: Color(0xff00c904),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "姿勢　(良)：${Utils.percentOfThisMonthGoodPostureSec}%",
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            Color(0xff00c904)),
-                                                  ),
-                                                  Text(
-                                                    "姿勢(不良)：${Utils.percentOfThisMonthGoodPostureSec > 0 ? (100 - Utils.percentOfThisMonthGoodPostureSec).toStringAsFixed(1) : 0.0}%",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Color(0xffff1a1a),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Stack(
-                                      children: [
-                                        Container(
-                                          height: 120,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: AspectRatio(
-                                            aspectRatio: 1,
-                                            child: PieChart(
-                                              PieChartData(
-                                                borderData:
-                                                    FlBorderData(show: false),
-                                                startDegreeOffset: 270,
-                                                sectionsSpace: 0,
-                                                centerSpaceRadius: 40,
-                                                sections: showingSections2(),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          height: 120,
-                                          width: 120,
-                                          child: Center(
-                                            child: Text(
-                                              "${Utils.percentOfThisMonthGoodPostureSec}%",
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color:
-                                                    Utils.percentOfThisMonthGoodPostureSec >
-                                                            0
-                                                        ? Color(0xff00c904)
-                                                        : Colors.grey,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                PieGraph(
+                                    dataOfDate: "今月のデータ",
+                                    numberOfMeasurements:
+                                        Utils.numberOfMeasurementsThisMonth,
+                                    hour: hour2,
+                                    minute: minute2,
+                                    second: second2,
+                                    rateOfGoodPosture:
+                                        Utils.percentOfThisMonthGoodPostureSec,
+                                    showingRate: showingSections),
                                 SizedBox(
                                   height: 10,
                                 ),
                                 //今日のデータ
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Container(
-                                          height: 25,
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: FittedBox(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(3.0),
-                                              child: Text(
-                                                "今日のデータ",
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  // color: Color(0xff00c904),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Container(
-                                          height: 70,
-                                          width: 200,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: FittedBox(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(3.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "計測回数：${Utils.numberOfMeasurementsToday} 回",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      // color: Color(0xff00c904),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "計測時間：$hour3時間$minute3分$second3秒",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      // color: Color(0xff00c904),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "姿勢　(良)：${Utils.percentOfTodayGoodPostureSec}%",
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            Color(0xff00c904)),
-                                                  ),
-                                                  Text(
-                                                    "姿勢(不良)：${Utils.percentOfTodayGoodPostureSec > 0 ? (100 - Utils.percentOfTodayGoodPostureSec).toStringAsFixed(1) : 0.0}%",
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Color(0xffff1a1a),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Stack(
-                                      children: [
-                                        Container(
-                                          height: 120,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: AspectRatio(
-                                            aspectRatio: 1,
-                                            child: PieChart(
-                                              PieChartData(
-                                                borderData:
-                                                    FlBorderData(show: false),
-                                                startDegreeOffset: 270,
-                                                sectionsSpace: 0,
-                                                centerSpaceRadius: 40,
-                                                sections: showingSections3(),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          height: 120,
-                                          width: 120,
-                                          child: Center(
-                                            child: Text(
-                                              "${Utils.percentOfTodayGoodPostureSec}%",
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color:
-                                                    Utils.percentOfTodayGoodPostureSec >
-                                                            0
-                                                        ? Color(0xff00c904)
-                                                        : Colors.grey,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                PieGraph(
+                                    dataOfDate: "今日のデータ",
+                                    numberOfMeasurements:
+                                        Utils.numberOfMeasurementsToday,
+                                    hour: hour3,
+                                    minute: minute3,
+                                    second: second3,
+                                    rateOfGoodPosture:
+                                        Utils.percentOfTodayGoodPostureSec,
+                                    showingRate: showingSections),
                               ],
                             ),
                           )
@@ -669,89 +304,7 @@ class HomePage extends StatelessWidget {
         });
   }
 
-//全体平均の円グラフ
-  List<PieChartSectionData> showingSections1() {
-    return List.generate(2, (i) {
-      final radius = 10.0;
-      switch (i) {
-        case 0:
-          return PieChartSectionData(
-            color: Color(0xff00c904),
-            value: Utils.percentOfAllGoodPostureSec,
-            radius: radius,
-            showTitle: false,
-          );
-        case 1:
-          return PieChartSectionData(
-            color: Utils.percentOfAllGoodPostureSec == 0
-                ? Color(0xffd0d0d0)
-                : Color(0xffff1a1a),
-            value: 100 - Utils.percentOfAllGoodPostureSec,
-            showTitle: false,
-            radius: radius,
-          );
-        default:
-          throw Error();
-      }
-    });
-  }
-
-//今月の平均の円グラフ
-  List<PieChartSectionData> showingSections2() {
-    return List.generate(2, (i) {
-      final radius = 10.0;
-      switch (i) {
-        case 0:
-          return PieChartSectionData(
-            color: Color(0xff00c904),
-            value: Utils.percentOfThisMonthGoodPostureSec,
-            radius: radius,
-            showTitle: false,
-          );
-        case 1:
-          return PieChartSectionData(
-            color: Utils.percentOfThisMonthGoodPostureSec == 0
-                ? Color(0xffd0d0d0)
-                : Color(0xffff1a1a),
-            value: 100 - Utils.percentOfThisMonthGoodPostureSec,
-            showTitle: false,
-            radius: radius,
-          );
-        default:
-          throw Error();
-      }
-    });
-  }
-
-  //今日の平均の円グラフ
-  List<PieChartSectionData> showingSections3() {
-    return List.generate(2, (i) {
-      final radius = 10.0;
-      switch (i) {
-        case 0:
-          return PieChartSectionData(
-            color: Color(0xff00c904),
-            value: Utils.percentOfTodayGoodPostureSec,
-            radius: radius,
-            showTitle: false,
-          );
-        case 1:
-          return PieChartSectionData(
-            color: Utils.percentOfTodayGoodPostureSec != 0 &&
-                    Utils.numberOfMeasurementsToday > 0
-                ? Color(0xffff1a1a)
-                : Color(0xffd0d0d0),
-            value: 100 - Utils.percentOfTodayGoodPostureSec,
-            showTitle: false,
-            radius: radius,
-          );
-        default:
-          throw Error();
-      }
-    });
-  }
-
-  //アラートダイアログに表示
+  //計測を終えた後アラートダイアログに結果を円グラフで表示
   List<PieChartSectionData> showingSections4(value) {
     return List.generate(2, (i) {
       final radius = 15.0;
@@ -775,4 +328,176 @@ class HomePage extends StatelessWidget {
       }
     });
   }
+}
+
+//計測データを表示（円グラフを除く）
+class PieGraph extends StatelessWidget {
+  PieGraph(
+      {required this.dataOfDate,
+      required this.numberOfMeasurements,
+      required this.hour,
+      required this.minute,
+      required this.second,
+      required this.rateOfGoodPosture,
+      required this.showingRate});
+
+  final String dataOfDate;
+  final int numberOfMeasurements;
+  final int hour;
+  final int minute;
+  final int second;
+  final double rateOfGoodPosture;
+  final Function(double, int) showingRate;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              height: 25,
+              width: 100,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: FittedBox(
+                child: Padding(
+                  padding: const EdgeInsets.all(3.0),
+                  child: Text(
+                    dataOfDate,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            Container(
+              height: 70,
+              width: 200,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: FittedBox(
+                child: Padding(
+                  padding: const EdgeInsets.all(3.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "計測回数：$numberOfMeasurements 回",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          // color: Color(0xff00c904),
+                        ),
+                      ),
+                      Text(
+                        "計測時間：$hour時間$minute分$second秒",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        "姿勢　(良)：$rateOfGoodPosture%",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.greenAccent.shade700,
+                        ),
+                      ),
+                      Text(
+                        "姿勢(不良)：${numberOfMeasurements > 0 ? (100 - rateOfGoodPosture).toStringAsFixed(1) : 0.0}%",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xffff1a1a),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        Stack(
+          children: [
+            Container(
+              height: 120,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: PieChart(
+                  PieChartData(
+                    borderData: FlBorderData(show: false),
+                    startDegreeOffset: 270,
+                    sectionsSpace: 0,
+                    centerSpaceRadius: 40,
+                    sections:
+                        showingRate(rateOfGoodPosture, numberOfMeasurements),
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              height: 120,
+              width: 120,
+              child: Center(
+                child: Text(
+                  "$rateOfGoodPosture%",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: rateOfGoodPosture > 0
+                        ? Colors.greenAccent.shade700
+                        : Colors.grey,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+//計測データを表示（円グラフ）
+List<PieChartSectionData> showingSections(
+    rateOfGoodPosture, numberOfMeasurements) {
+  return List.generate(2, (i) {
+    final radius = 10.0;
+    switch (i) {
+      case 0:
+        return PieChartSectionData(
+          color: Colors.greenAccent.shade700,
+          value: rateOfGoodPosture,
+          radius: radius,
+          showTitle: false,
+        );
+      case 1:
+        return PieChartSectionData(
+          color:
+              numberOfMeasurements < 1 ? Color(0xffd0d0d0) : Color(0xffff1a1a),
+          value: 100.toDouble() - rateOfGoodPosture,
+          showTitle: false,
+          radius: radius,
+        );
+      default:
+        throw Error();
+    }
+  });
 }

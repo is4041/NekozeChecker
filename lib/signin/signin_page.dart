@@ -25,6 +25,7 @@ class SignInPage extends StatelessWidget {
               final PageController pageController =
                   PageController(initialPage: 0);
 
+              //ログアウト時チュートリアルページ非表示（ログアウト後アプリ再起動時は表示）
               final List<Widget> pages = Utils.showTutorial == true
                   ? [
                       PageOne(model, screenSize),
@@ -55,6 +56,7 @@ class SignInPage extends StatelessWidget {
                               return pages[index % pages.length];
                             },
                           ),
+                          //ログアウト時非表示（ログアウト後アプリ再起動時は表示）
                           Visibility(
                             visible: Utils.showTutorial == true,
                             child: Positioned(
@@ -64,6 +66,7 @@ class SignInPage extends StatelessWidget {
                               left: 0,
                               child: Column(
                                 children: [
+                                  //ページインジケータ
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
@@ -91,6 +94,7 @@ class SignInPage extends StatelessWidget {
                                   SizedBox(
                                     height: 20,
                                   ),
+                                  //次へボタン
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 20.0),
@@ -119,7 +123,6 @@ class SignInPage extends StatelessWidget {
                                           style: TextStyle(
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold),
-                                          // style: TextStyle(fontSize: 40),
                                         ),
                                       ),
                                     ),
@@ -131,6 +134,7 @@ class SignInPage extends StatelessWidget {
                         ],
                       );
                     }),
+                //ローディング中インジケータ表示
                 if (model.isLoading)
                   Container(
                     color: Colors.grey.withOpacity(0.7),
@@ -168,7 +172,6 @@ class PageOne extends StatelessWidget {
         Container(
           height: screenSize.height * 0.1,
           width: double.infinity,
-          // color: Colors.green.shade100,
           child: Center(
             child: Text(
               "Posture Correctionへようこそ",
@@ -180,11 +183,9 @@ class PageOne extends StatelessWidget {
           ),
         ),
         Container(
-          // color: Colors.red,
           height: screenSize.height * 0.25,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 50.0),
-            // padding: const EdgeInsets.only(top: 20.0, right: 50, left: 50),
             child: Text(
               "Posture Correctionはカメラを使った動作解析で顔の位置を演算し、ゲームやデスクワーク中の顔の位置変化により猫背を判定し音で知らせてくれるアプリです。",
               style: TextStyle(fontSize: 16),
@@ -271,7 +272,6 @@ class PageTwo extends StatelessWidget {
         Container(
           height: screenSize.height * 0.1,
           width: double.infinity,
-          // color: Colors.green.shade100,
           child: Center(
             child: Text(
               "スマートフォンをセットする",
@@ -283,11 +283,9 @@ class PageTwo extends StatelessWidget {
           ),
         ),
         Container(
-          // color: Colors.red,
           height: screenSize.height * 0.25,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 50.0),
-            // padding: const EdgeInsets.only(top: 20.0, right: 50, left: 50),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -330,7 +328,6 @@ class PageThree extends StatelessWidget {
               child: Container(
                 height: screenSize.height * 0.5,
                 width: double.infinity,
-                // color: Colors.red,
                 child: Image.asset(
                   "images/IMG_Unsplash.jpg",
                   fit: BoxFit.cover,
@@ -342,7 +339,6 @@ class PageThree extends StatelessWidget {
         Container(
           height: screenSize.height * 0.1,
           width: double.infinity,
-          // color: Colors.green.shade100,
           child: Center(
             child: Text(
               "白点の位置を調整する",
@@ -354,11 +350,9 @@ class PageThree extends StatelessWidget {
           ),
         ),
         Container(
-          // color: Colors.red,
           height: screenSize.height * 0.25,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 50.0),
-            // padding: const EdgeInsets.only(top: 20.0, right: 50, left: 50),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -412,7 +406,6 @@ class PageFour extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      // mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Stack(
           children: [

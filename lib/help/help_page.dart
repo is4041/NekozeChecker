@@ -18,6 +18,7 @@ class HelpPage extends StatelessWidget {
       ),
       body: ListView(
         children: [
+          //Q & A
           Padding(
             padding: const EdgeInsets.only(left: 10.0),
             child: Text(
@@ -25,14 +26,21 @@ class HelpPage extends StatelessWidget {
               style: TextStyle(fontSize: 20),
             ),
           ),
-          question("データが表示されない、保存できないのですが？",
-              "モバイルデータ通信やWifiは繋がっていますか？機内モードにはなっていませんか？当アプリはオフラインではデータの取得、保存は出来ませんのでご注意ください。"),
-          question("使用中に白点が誤作動を起こすのですが？",
-              "逆光などでうまく顔の位置情報を取得できない場合があります。場所を変えたりカーテンをするなどしてもう一度お試しください。"),
-          question("離席中に白点が誤作動を起こすのですが？",
-              "センサーが画面に映っている荷物や衣服などを誤認識する場合があります。離席中だけ端末を違う方向に向けておくなど工夫してみてください。"),
-          question("使用中いつのまにかスリープ状態になっているのですが？",
-              "使用している端末の自動スリープ機能がONになっている可能性がありますのでご確認ください。"),
+          Question(
+              question: "データが表示されない、保存できないのですが？",
+              answer:
+                  "モバイルデータ通信やWifiは繋がっていますか？機内モードにはなっていませんか？当アプリはオフラインではデータの取得、保存は出来ませんのでご注意ください。"),
+          Question(
+              question: "使用中に白点が誤作動を起こすのですが？",
+              answer:
+                  "逆光などでうまく顔の位置情報を取得できない場合があります。場所を変えたりカーテンをするなどしてもう一度お試しください。"),
+          Question(
+              question: "離席中に白点が誤作動を起こすのですが？",
+              answer:
+                  "センサーが画面に映っている荷物や衣服などを誤認識する場合があります。離席中だけ端末を違う方向に向けておくなど工夫してみてください。"),
+          Question(
+              question: "使用中いつのまにかスリープ状態になっているのですが？",
+              answer: "使用している端末の自動スリープ機能がONになっている可能性がありますのでご確認ください。"),
           Divider(
             thickness: 5,
           ),
@@ -43,19 +51,19 @@ class HelpPage extends StatelessWidget {
               style: TextStyle(fontSize: 20),
             ),
           ),
+          //チュートリアル
           Column(
             children: [
               Container(
                 height: screenSize.height * 0.1,
                 width: double.infinity,
-                // color: Colors.green.shade100,
                 child: Center(
                   child: Text(
                     "1.スマートフォンをセットする",
                     style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
-                        color: Colors.green),
+                        color: Colors.greenAccent.shade700),
                   ),
                 ),
               ),
@@ -159,7 +167,7 @@ class HelpPage extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
-                        color: Colors.green),
+                        color: Colors.greenAccent.shade700),
                   ),
                 ),
               ),
@@ -207,7 +215,7 @@ class HelpPage extends StatelessWidget {
                             style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.green),
+                                color: Colors.greenAccent.shade700),
                           ),
                           Text(
                             "を超えて一定時間経つと通知音が鳴ります。",
@@ -225,8 +233,17 @@ class HelpPage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget question(String question, String answer) {
+//Questionクラス
+class Question extends StatelessWidget {
+  Question({required this.question, required this.answer});
+
+  final String question;
+  final String answer;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Container(
@@ -249,9 +266,6 @@ class HelpPage extends StatelessWidget {
                 Flexible(
                   child: Text(
                     question,
-                    // style: TextStyle(
-                    //   fontSize: 20,
-                    // ),
                   ),
                 ),
               ],

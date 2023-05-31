@@ -22,6 +22,7 @@ class CameraModel extends ChangeNotifier {
   int notificationCounter = 0;
   bool darkMode = false;
 
+  //カメラ起動
   Future getCamera() async {
     cam = await availableCameras();
     final lastCamera = cam.last;
@@ -33,8 +34,6 @@ class CameraModel extends ChangeNotifier {
       if (!isDetecting) {
         isDetecting = true;
         recognition = await poseEstimation(img);
-        //todo compute
-        // recognition = await compute(poseEstimation, img);
         isDetecting = false;
         notifyListeners();
       }
@@ -42,8 +41,8 @@ class CameraModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  //姿勢推定
   static Future<List> poseEstimation(CameraImage img) async {
-    //todo var result
     final results = await Tflite.runPoseNetOnFrame(
       bytesList: img.planes.map((plane) {
         return plane.bytes;
@@ -55,6 +54,7 @@ class CameraModel extends ChangeNotifier {
     return results!;
   }
 
+  //タイマー（計測時間を計る）
   startTimer() {
     timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       measuringSec++;
@@ -66,6 +66,7 @@ class CameraModel extends ChangeNotifier {
     timer?.cancel();
   }
 
+  //タイマー（姿勢不良の間だけ作動）
   startBadPostureTimer() {
     badPostureTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       measuringBadPostureSec++;
@@ -77,31 +78,29 @@ class CameraModel extends ChangeNotifier {
     badPostureTimer?.cancel();
   }
 
+  //警告音が鳴った回数をカウント
   counter() {
     notificationCounter++;
     print("通知回数:${notificationCounter}");
   }
 
+  //firebaseにデータを保存
   addData() async {
     final createdAt = Timestamp.now().toDate().toString().substring(0, 19);
     final userId = firebaseAuth.currentUser!.uid.toString();
-    final measuringMin = double.parse((measuringSec / 60).toStringAsFixed(1));
-    final measuringBadPostureMin =
-        double.parse((measuringBadPostureSec / 60).toStringAsFixed(1));
 
     await FirebaseFirestore.instance.collection("measurements").add({
       "createdAt": createdAt,
-      // "measuringBadPostureMin": measuringBadPostureMin,
       "measuringBadPostureSec": measuringBadPostureSec,
-      // "measuringMin": measuringMin,
       "measuringSec": measuringSec,
+      "memo": "",
       "notificationCounter": notificationCounter,
       "timeToNotification": Utils.timeToNotification,
-      "title": "",
       "userId": userId,
     });
   }
 
+  //最終計測日を更新
   lastMeasuredOn() async {
     await FirebaseFirestore.instance
         .collection("users")
@@ -111,6 +110,7 @@ class CameraModel extends ChangeNotifier {
     });
   }
 
+  //ダークモード切り替え
   getScreenMode() async {
     if (darkMode == false) {
       darkMode = true;
