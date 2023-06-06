@@ -8,7 +8,6 @@ import 'package:tflite/tflite.dart';
 import 'package:flutter/foundation.dart';
 
 final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-final today = Timestamp.now().toDate().toString().substring(0, 10);
 
 class CameraModel extends ChangeNotifier {
   CameraController? controller;
@@ -106,7 +105,8 @@ class CameraModel extends ChangeNotifier {
         .collection("users")
         .doc(Utils.userId)
         .update({
-      "lastMeasuredOn": Timestamp.now().toDate().toString().substring(0, 10),
+      // "lastMeasuredOn": Timestamp.now().toDate().toString().substring(0, 10),
+      "lastMeasuredOn": Timestamp.now(),
     });
   }
 

@@ -289,36 +289,28 @@ class GraphPage extends StatelessWidget {
                             itemCount: model.data.length,
                             itemBuilder: (context, index) {
                               //計測時間を時・分・秒に変換
-                              num hourValue =
-                                  model.data[index]["measuringSec"] ~/ 60 ~/ 60;
-                              num minuteValue =
-                                  model.data[index]["measuringSec"] ~/ 60 % 60;
-                              num secondValue =
-                                  model.data[index]["measuringSec"] % 60;
+                              num measuringSec =
+                                  model.data[index]["measuringSec"];
+                              num hourValue = measuringSec ~/ 60 ~/ 60;
+                              num minuteValue = measuringSec ~/ 60 % 60;
+                              num secondValue = measuringSec % 60;
                               //姿勢（良）を時・分・秒に変換
-                              num goodHourValue = model.data[index]
-                                      ["measuringGoodPostureSec"] ~/
-                                  60 ~/
-                                  60;
-                              num goodMinuteValue = model.data[index]
-                                      ["measuringGoodPostureSec"] ~/
-                                  60 %
-                                  60;
-                              num goodSecondValue = model.data[index]
-                                      ["measuringGoodPostureSec"] %
-                                  60;
+                              num measuringGoodPostureSec =
+                                  model.data[index]["measuringGoodPostureSec"];
+                              num goodHourValue =
+                                  measuringGoodPostureSec ~/ 60 ~/ 60;
+                              num goodMinuteValue =
+                                  measuringGoodPostureSec ~/ 60 % 60;
+                              num goodSecondValue =
+                                  measuringGoodPostureSec % 60;
                               //姿勢（不良）を時・分・秒に変換
-                              num badHourValue = model.data[index]
-                                      ["measuringBadPostureSec"] ~/
-                                  60 ~/
-                                  60;
-                              num badMinuteValue = model.data[index]
-                                      ["measuringBadPostureSec"] ~/
-                                  60 %
-                                  60;
-                              num badSecondValue = model.data[index]
-                                      ["measuringBadPostureSec"] %
-                                  60;
+                              num measuringBadPostureSec =
+                                  model.data[index]["measuringBadPostureSec"];
+                              num badHourValue =
+                                  measuringBadPostureSec ~/ 60 ~/ 60;
+                              num badMinuteValue =
+                                  measuringBadPostureSec ~/ 60 % 60;
+                              num badSecondValue = measuringBadPostureSec % 60;
                               return Container(
                                 decoration: BoxDecoration(
                                   border: Border(
