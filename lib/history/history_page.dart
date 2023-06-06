@@ -37,31 +37,25 @@ class HistoryPage extends StatelessWidget {
                           //日付を取得
                           String createdAt = data[index].createdAt!;
                           //計測時間を時・分・秒に変換
-                          num measuringHourValue =
-                              data[index].measuringSec! ~/ 60 ~/ 60;
-                          num measuringMinuteValue =
-                              data[index].measuringSec! ~/ 60 % 60;
-                          num measuringSecondValue =
-                              data[index].measuringSec! % 60;
+                          num measuringSec = data[index].measuringSec!;
+                          num measuringHourValue = measuringSec ~/ 60 ~/ 60;
+                          num measuringMinuteValue = measuringSec ~/ 60 % 60;
+                          num measuringSecondValue = measuringSec % 60;
                           //姿勢（不良）を時・分・秒に変換
-                          num badHourValue =
-                              data[index].measuringBadPostureSec! ~/ 60 ~/ 60;
+                          num measuringBadPostureSec =
+                              data[index].measuringBadPostureSec!;
+                          num badHourValue = measuringBadPostureSec ~/ 60 ~/ 60;
                           num badMinuteValue =
-                              data[index].measuringBadPostureSec! ~/ 60 % 60;
-                          num badSecondValue =
-                              data[index].measuringBadPostureSec! % 60;
+                              measuringBadPostureSec ~/ 60 % 60;
+                          num badSecondValue = measuringBadPostureSec % 60;
                           //姿勢（良）を時・分・秒に変換
-                          num goodHourValue = (data[index].measuringSec! -
-                                  data[index].measuringBadPostureSec!) ~/
-                              60 ~/
-                              60;
-                          num goodMinuteValue = (data[index].measuringSec! -
-                                  data[index].measuringBadPostureSec!) ~/
-                              60 %
-                              60;
-                          num goodSecondValue = (data[index].measuringSec! -
-                                  data[index].measuringBadPostureSec!) %
-                              60;
+                          num measuringGoodPostureSec =
+                              (measuringSec - measuringBadPostureSec);
+                          num goodHourValue =
+                              measuringGoodPostureSec ~/ 60 ~/ 60;
+                          num goodMinuteValue =
+                              measuringGoodPostureSec ~/ 60 % 60;
+                          num goodSecondValue = measuringGoodPostureSec % 60;
                           //警告音カウント回数
                           num notificationCounter =
                               data[index].notificationCounter!;
@@ -69,10 +63,6 @@ class HistoryPage extends StatelessWidget {
                           int timeToNotification =
                               data[index].timeToNotification!;
                           //姿勢（良）の割合を取得
-                          num measuringSec = data[index].measuringSec!;
-                          num measuringGoodPostureSec =
-                              (data[index].measuringSec! -
-                                  data[index].measuringBadPostureSec!);
                           num rateOfGoodPosture = double.parse(
                               ((measuringGoodPostureSec / measuringSec) * 100)
                                   .toStringAsFixed(1));

@@ -3,15 +3,12 @@ import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:posture_correction/signin/signin_model.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:sign_button/sign_button.dart';
 
 import '../bottomnavigation.dart';
-
-final GoogleSignIn googleSignIn = GoogleSignIn();
 
 class SignInPage extends StatelessWidget {
   @override

@@ -40,14 +40,14 @@ class CameraPage extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const Text(
-                          "カメラが使用出来ません。",
+                          "カメラへのアクセスが\n許可されていません。",
                           style: TextStyle(fontSize: 25),
                         ),
                         const SizedBox(
                           height: 20,
                         ),
                         const Text(
-                          "端末の設定からこのアプリ（Posture correction）の\nカメラの設定をオンにしてください。",
+                          "端末の設定からこのアプリ（Posture correction）の\nカメラへのアクセスを許可してください。",
                           // style: TextStyle(fontSize: 25),
                         ),
                         const SizedBox(

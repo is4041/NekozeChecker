@@ -5,8 +5,6 @@ import 'package:posture_correction/setting/setting_model.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
 
-final auth = FirebaseAuth.instance;
-
 class SettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

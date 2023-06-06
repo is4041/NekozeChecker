@@ -2,9 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:posture_correction/signin/signin_page.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+final GoogleSignIn googleSignIn = GoogleSignIn();
 
 class SignInModel extends ChangeNotifier {
   bool isLoading = false;
@@ -47,7 +48,7 @@ class SignInModel extends ChangeNotifier {
       print("初回ログイン");
       await FirebaseFirestore.instance.collection("users").doc(uid).set({
         "createdAt": Timestamp.now(),
-        "lastMeasuredOn": "",
+        // "lastMeasuredOn": "",
         "timeToNotification": 15,
         "userId": uid,
       });
@@ -62,10 +63,10 @@ class SignInModel extends ChangeNotifier {
       await firebaseAuth.signInAnonymously();
       final uid = firebaseAuth.currentUser!.uid;
       FirebaseFirestore.instance.collection("users").doc(uid).set({
-        "userId": uid,
         "createdAt": Timestamp.now(),
-        "lastMeasuredOn": "",
+        // "lastMeasuredOn": "",
         "timeToNotification": 15,
+        "userId": uid,
       });
     } catch (e) {
       throw ("error");
