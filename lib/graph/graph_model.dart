@@ -2,12 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../camera/camera_model.dart';
+import '../utils.dart';
 
 int monthCounter = 0;
 
 class GraphModel extends ChangeNotifier {
-  String userId = firebaseAuth.currentUser!.uid;
   bool isLoading = false;
   double rateOfGoodPosture = 0;
 
@@ -45,8 +44,9 @@ class GraphModel extends ChangeNotifier {
     month = getMonth.substring(5, 7);
 
     final QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('measurements')
-        .where("userId", isEqualTo: userId.toString())
+        .collection('users')
+        .doc(Utils.userId)
+        .collection("measurements")
         .orderBy("createdAt", descending: false)
         .get();
 

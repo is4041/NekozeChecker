@@ -1,18 +1,21 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tflite/tflite.dart';
 
-import '../camera/camera_model.dart';
 import '../utils.dart';
 
 class HomeModel extends ChangeNotifier {
   final getDate = Timestamp.now().toDate();
 
   //Tfliteをロードする
-  Future loadModel() async {
+  Future loadModel(BuildContext context) async {
     Tflite.close();
     try {
       String? res;
@@ -23,42 +26,41 @@ class HomeModel extends ChangeNotifier {
     } on PlatformException {
       print("Failed to load model");
     }
+
+    await showConnectError(context);
+    await getUserId();
+    await getAverage();
+    await getTimeToNotification();
+    await getProviderId();
   }
 
-  //警告音が鳴るまでの時間を取得する
-  getTimeToNotification() async {
-    final document = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(Utils.userId)
-        .get();
-    final exists = document.exists;
-    if (exists == true) {
-      print("ログイン履歴あり");
-      Utils.timeToNotification = document["timeToNotification"];
-      print("設定秒数 : ${Utils.timeToNotification}秒");
-    } else {
-      print("初回ログイン");
-      print("設定秒数 : ${Utils.timeToNotification}秒");
-    }
-  }
-
-  //ProviderIdを取得する
-  getProviderId() {
-    if (FirebaseAuth.instance.currentUser!.isAnonymous == false) {
-      print("googleUser");
-      Utils.isAnonymous = "isNotAnonymous";
-    } else {
-      print("anonymousUser");
-      Utils.isAnonymous = "isAnonymous";
+  showConnectError(context) async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      return await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              title: Text("エラー"),
+              content: Text("通信状態をご確認ください"),
+              actions: [
+                TextButton(
+                  child: const Text("OK"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
     }
   }
 
   //userIdを取得する
   getUserId() async {
-    Utils.userId = firebaseAuth.currentUser!.uid;
+    Utils.userId = FirebaseAuth.instance.currentUser!.uid;
     print("userId : ${Utils.userId}");
     Utils.showTutorial = false;
-    print("showTutorial : ${Utils.showTutorial}");
   }
 
   //平均データを取得する
@@ -76,9 +78,11 @@ class HomeModel extends ChangeNotifier {
     List dataListOfAllBadPosture = [];
 
     final QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('measurements')
-        .where("userId", isEqualTo: Utils.userId.toString())
+        .collection('users')
+        .doc(Utils.userId)
+        .collection("measurements")
         .get();
+
     for (var doc in snapshot.docs) {
       //今日の計測時間(秒)をリストに追加
       if (doc.get("createdAt").toString().substring(0, 10) ==
@@ -158,5 +162,33 @@ class HomeModel extends ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  //警告音が鳴るまでの時間を取得する
+  getTimeToNotification() async {
+    final document = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(Utils.userId)
+        .get();
+    final exists = document.exists;
+    if (exists == true) {
+      print("ログイン履歴あり");
+      Utils.timeToNotification = document["timeToNotification"];
+      // print("設定秒数 : ${Utils.timeToNotification}秒");
+    } else {
+      print("初回ログイン");
+      // print("設定秒数 : ${Utils.timeToNotification}秒");
+    }
+  }
+
+  //ProviderIdを取得する
+  getProviderId() {
+    if (FirebaseAuth.instance.currentUser!.isAnonymous == false) {
+      // print("googleUser");
+      Utils.isAnonymous = "isNotAnonymous";
+    } else {
+      // print("anonymousUser");
+      Utils.isAnonymous = "isAnonymous";
+    }
   }
 }

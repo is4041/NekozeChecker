@@ -91,6 +91,12 @@ class SettingModel extends ChangeNotifier {
   //全データ削除（初期化）
   deleteUser() async {
     await FirebaseFirestore.instance
+        .collection('users')
+        .doc(Utils.userId)
+        .collection("measurements")
+        .doc()
+        .delete();
+    await FirebaseFirestore.instance
         .collection("users")
         .doc(Utils.userId)
         .delete();

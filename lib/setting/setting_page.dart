@@ -97,8 +97,8 @@ class SettingPage extends StatelessWidget {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return CupertinoAlertDialog(
-                                            title: Text(
-                                                "アカウントの連携に失敗しました。通信環境の良いところで再度試してください。"),
+                                            title: Text("エラー"),
+                                            content: Text("通信状態をご確認ください"),
                                             actions: [
                                               TextButton(
                                                 child: const Text("OK"),
@@ -177,8 +177,9 @@ class SettingPage extends StatelessWidget {
                                                     builder:
                                                         (BuildContext context) {
                                                       return CupertinoAlertDialog(
-                                                        title: Text(
-                                                            "保存に失敗しました。通信環境の良いところで再度試してください。"),
+                                                        title: Text("エラー"),
+                                                        content: Text(
+                                                            "通信状態をご確認ください"),
                                                         actions: [
                                                           TextButton(
                                                             child: const Text(
@@ -262,37 +263,6 @@ class SettingPage extends StatelessWidget {
                     SizedBox(
                       height: 50,
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(left: 10.0),
-                    //   child: Text(
-                    //     "ユーザーID",
-                    //     style: TextStyle(fontSize: 13, color: Colors.grey),
-                    //   ),
-                    // ),
-                    // //ユーザーIDを表示
-                    // Container(
-                    //   height: 45,
-                    //   width: double.infinity,
-                    //   decoration: BoxDecoration(
-                    //       border: Border(
-                    //         top: BorderSide(color: Colors.grey, width: 0.5),
-                    //         bottom: BorderSide(color: Colors.grey, width: 0.5),
-                    //       ),
-                    //       color: Colors.white),
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.only(left: 10.0),
-                    //     child: Align(
-                    //         alignment: Alignment.centerLeft,
-                    //         child: Text(
-                    //           Utils.userId,
-                    //           style:
-                    //               TextStyle(fontSize: 17, color: Colors.grey),
-                    //         )),
-                    //   ),
-                    // ),
-                    // SizedBox(
-                    //   height: 50,
-                    // ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0),
                       child: Text(
@@ -332,8 +302,9 @@ class SettingPage extends StatelessWidget {
                                                     builder:
                                                         (BuildContext context) {
                                                       return CupertinoAlertDialog(
-                                                        title: Text(
-                                                            "ログアウトに失敗しました。通信環境の良いところで再度試してください。"),
+                                                        title: Text("エラー"),
+                                                        content: Text(
+                                                            "通信状態をご確認ください"),
                                                         actions: [
                                                           TextButton(
                                                             child: const Text(
@@ -438,10 +409,10 @@ class SettingPage extends StatelessWidget {
                                                                 (BuildContext
                                                                     context) {
                                                               return CupertinoAlertDialog(
-                                                                title: Text(
-                                                                    "データの削除に失敗しました。"),
+                                                                title:
+                                                                    Text("エラー"),
                                                                 content: Text(
-                                                                    "通信環境の良いところで再度試してください"),
+                                                                    "通信状態をご確認ください"),
                                                                 actions: [
                                                                   TextButton(
                                                                     child: Text(

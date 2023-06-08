@@ -429,8 +429,8 @@ class HistoryPage extends StatelessWidget {
                                                                             builder:
                                                                                 (BuildContext context) {
                                                                               return CupertinoAlertDialog(
-                                                                                title: Text("データの削除に失敗しました。"),
-                                                                                content: Text("通信環境の良いところで再度試してください"),
+                                                                                title: Text("エラー"),
+                                                                                content: Text("通信状態をご確認ください"),
                                                                                 actions: [
                                                                                   TextButton(
                                                                                     child: Text(

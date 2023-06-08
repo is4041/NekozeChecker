@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:posture_correction/utils.dart';
 
-import '../camera/camera_model.dart';
 import '../data.dart';
 
 class HistoryModel extends ChangeNotifier {
@@ -10,7 +10,6 @@ class HistoryModel extends ChangeNotifier {
   List<Map<String, String>> data5 = [];
   List<Data>? data = [];
   String memo = "";
-  String userId = firebaseAuth.currentUser!.uid;
   dynamic totalAverage;
   dynamic dailyAverage;
 
@@ -18,8 +17,9 @@ class HistoryModel extends ChangeNotifier {
   Future fetchData() async {
     isLoading = true;
     final QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('measurements')
-        .where("userId", isEqualTo: userId.toString())
+        .collection('users')
+        .doc(Utils.userId)
+        .collection("measurements")
         .orderBy("createdAt", descending: true)
         .get();
 
@@ -32,26 +32,23 @@ class HistoryModel extends ChangeNotifier {
 
   //メモをアップデート
   Future updateTitle(Data data) async {
-    if (memo.isNotEmpty) {
-      final doc = FirebaseFirestore.instance
-          .collection("measurements")
-          .doc(data.documentID);
-      await doc.update({
-        "memo": memo,
-      });
-    } else {
-      final doc = FirebaseFirestore.instance
-          .collection("measurements")
-          .doc(data.documentID);
-      await doc.update({
-        "memo": "",
-      });
-    }
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(Utils.userId)
+        .collection("measurements")
+        .doc(data.documentID)
+        .update(memo.isNotEmpty
+            ? {"memo": memo}
+            : {
+                "memo": "",
+              });
   }
 
-  //データ消去
+  //計測データ消去
   Future delete(Data data) async {
-    return FirebaseFirestore.instance
+    return await FirebaseFirestore.instance
+        .collection("users")
+        .doc(Utils.userId)
         .collection("measurements")
         .doc(data.documentID)
         .delete();
