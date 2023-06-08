@@ -108,9 +108,29 @@ class CameraPage extends StatelessWidget {
                               isCounting = false;
                               model.stopTimer();
                               model.stopBadPostureTimer();
-                              if (model.measuringSec > 300) {
-                                await model.addData();
-                                await model.lastMeasuredOn();
+                              if (model.measuringSec >= 300) {
+                                try {
+                                  await model.addData();
+                                } catch (e) {
+                                  await showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return CupertinoAlertDialog(
+                                          title: Text("エラー"),
+                                          content: Text(e.toString()),
+                                          actions: [
+                                            TextButton(
+                                              child: Text(
+                                                "OK",
+                                              ),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      });
+                                }
                               } else {
                                 await showDialog(
                                     context: context,
@@ -133,8 +153,32 @@ class CameraPage extends StatelessWidget {
                                           TextButton(
                                             child: const Text("保存"),
                                             onPressed: () async {
-                                              await model.addData();
-                                              await model.lastMeasuredOn();
+                                              try {
+                                                await model.addData();
+                                              } catch (e) {
+                                                await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return CupertinoAlertDialog(
+                                                        title: Text("エラー"),
+                                                        content:
+                                                            Text(e.toString()),
+                                                        actions: [
+                                                          TextButton(
+                                                            child: Text(
+                                                              "OK",
+                                                            ),
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                        ],
+                                                      );
+                                                    });
+                                              }
                                               Navigator.of(context).pop();
                                             },
                                           ),

@@ -30,30 +30,33 @@ class SignInModel extends ChangeNotifier {
 
   //Googleでサインイン
   signInWithGoogle() async {
-    final user = await googleSignIn.signIn();
+    try {
+      final user = await googleSignIn.signIn();
 
-    final auth = await user!.authentication;
-    final credential = GoogleAuthProvider.credential(
-      accessToken: auth.accessToken,
-      idToken: auth.idToken,
-    );
-    final userCredential =
-        await FirebaseAuth.instance.signInWithCredential(credential);
-    final uid = userCredential.user!.uid;
-    final document =
-        await FirebaseFirestore.instance.collection("users").doc(uid).get();
-    final exists = document.exists;
-    //初回ログイン時だけ作動
-    if (exists == false) {
-      print("初回ログイン");
-      await FirebaseFirestore.instance.collection("users").doc(uid).set({
-        "createdAt": Timestamp.now(),
-        // "lastMeasuredOn": "",
-        "timeToNotification": 15,
-        "userId": uid,
-      });
-    } else {
-      print("ログイン履歴あり");
+      final auth = await user!.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: auth.accessToken,
+        idToken: auth.idToken,
+      );
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      final uid = userCredential.user!.uid;
+      final document =
+          await FirebaseFirestore.instance.collection("users").doc(uid).get();
+      final exists = document.exists;
+      //初回ログイン時だけ作動
+      if (exists == false) {
+        print("初回ログイン");
+        await FirebaseFirestore.instance.collection("users").doc(uid).set({
+          "createdAt": Timestamp.now(),
+          "timeToNotification": 15,
+          "userId": uid,
+        });
+      } else {
+        print("ログイン履歴あり");
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -64,7 +67,6 @@ class SignInModel extends ChangeNotifier {
       final uid = firebaseAuth.currentUser!.uid;
       FirebaseFirestore.instance.collection("users").doc(uid).set({
         "createdAt": Timestamp.now(),
-        // "lastMeasuredOn": "",
         "timeToNotification": 15,
         "userId": uid,
       });

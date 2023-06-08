@@ -465,8 +465,7 @@ class PageFour extends StatelessWidget {
                     builder: (BuildContext context) {
                       return CupertinoAlertDialog(
                         title: Text("エラー"),
-                        content:
-                            Text("ユーザーデータの作成に失敗しました。通信環境の良いところで再度試してください。"),
+                        content: Text("通信状態をご確認ください"),
                         actions: [
                           TextButton(
                             child: const Text("OK"),
@@ -510,10 +509,11 @@ class PageFour extends StatelessWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text(e.toString()),
+                          title: Text("エラー"),
+                          content: Text(e.toString()),
                           actions: [
                             TextButton(
-                              child: const Text("ok"),
+                              child: const Text("OK"),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },

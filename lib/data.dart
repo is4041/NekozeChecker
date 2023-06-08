@@ -8,7 +8,6 @@ class Data {
     notificationCounter = doc["notificationCounter"];
     timeToNotification = doc["timeToNotification"];
     memo = doc["memo"];
-    userId = doc["userId"];
     documentID = doc.id;
   }
   String? createdAt;
@@ -17,6 +16,5 @@ class Data {
   int? notificationCounter;
   int? timeToNotification;
   String? memo;
-  String? userId;
   String? documentID;
 }

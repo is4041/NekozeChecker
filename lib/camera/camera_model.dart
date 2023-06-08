@@ -2,12 +2,10 @@ import 'dart:async';
 
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:tflite/tflite.dart';
 import 'package:flutter/foundation.dart';
-
-final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
 class CameraModel extends ChangeNotifier {
   CameraController? controller;
@@ -85,18 +83,26 @@ class CameraModel extends ChangeNotifier {
 
   //firebaseにデータを保存
   addData() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty) {
+      throw ("通信状態をご確認ください");
+    }
     final createdAt = Timestamp.now().toDate().toString().substring(0, 19);
-    final userId = firebaseAuth.currentUser!.uid.toString();
 
-    await FirebaseFirestore.instance.collection("measurements").add({
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(Utils.userId)
+        .collection("measurements")
+        .add({
       "createdAt": createdAt,
       "measuringBadPostureSec": measuringBadPostureSec,
       "measuringSec": measuringSec,
       "memo": "",
       "notificationCounter": notificationCounter,
       "timeToNotification": Utils.timeToNotification,
-      "userId": userId,
     });
+
+    await lastMeasuredOn();
   }
 
   //最終計測日を更新
@@ -105,7 +111,6 @@ class CameraModel extends ChangeNotifier {
         .collection("users")
         .doc(Utils.userId)
         .update({
-      // "lastMeasuredOn": Timestamp.now().toDate().toString().substring(0, 10),
       "lastMeasuredOn": Timestamp.now(),
     });
   }
