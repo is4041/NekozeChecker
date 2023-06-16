@@ -170,7 +170,6 @@ class SettingPage extends StatelessWidget {
                                               try {
                                                 await model
                                                     .upDateTimeToNotification();
-                                                await model.searchListIndex();
                                               } catch (e) {
                                                 await showDialog(
                                                     context: context,
@@ -303,8 +302,8 @@ class SettingPage extends StatelessWidget {
                                                         (BuildContext context) {
                                                       return CupertinoAlertDialog(
                                                         title: Text("エラー"),
-                                                        content: Text(
-                                                            "通信状態をご確認ください"),
+                                                        content:
+                                                            Text(e.toString()),
                                                         actions: [
                                                           TextButton(
                                                             child: const Text(
@@ -411,8 +410,8 @@ class SettingPage extends StatelessWidget {
                                                               return CupertinoAlertDialog(
                                                                 title:
                                                                     Text("エラー"),
-                                                                content: Text(
-                                                                    "通信状態をご確認ください"),
+                                                                content: Text(e
+                                                                    .toString()),
                                                                 actions: [
                                                                   TextButton(
                                                                     child: Text(

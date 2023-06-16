@@ -27,33 +27,36 @@ class HomeModel extends ChangeNotifier {
       print("Failed to load model");
     }
 
-    await showConnectError(context);
-    await getUserId();
-    await getAverage();
-    await getTimeToNotification();
-    await getProviderId();
-  }
-
-  showConnectError(context) async {
+    //オンラインとオフラインで処理を分ける
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
-      return await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CupertinoAlertDialog(
-              title: Text("エラー"),
-              content: Text("通信状態をご確認ください"),
-              actions: [
-                TextButton(
-                  child: const Text("OK"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          });
+      await showConnectError(context);
+    } else {
+      await getUserId();
+      await getAverage();
+      await getTimeToNotification();
+      await getProviderId();
     }
+  }
+
+  //オフライン時に表示
+  showConnectError(context) async {
+    return await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text("エラー"),
+            content: Text("通信状態をご確認ください"),
+            actions: [
+              TextButton(
+                child: const Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
   }
 
   //userIdを取得する
@@ -174,10 +177,9 @@ class HomeModel extends ChangeNotifier {
     if (exists == true) {
       print("ログイン履歴あり");
       Utils.timeToNotification = document["timeToNotification"];
-      // print("設定秒数 : ${Utils.timeToNotification}秒");
+      print("設定秒数 : ${Utils.timeToNotification}秒");
     } else {
       print("初回ログイン");
-      // print("設定秒数 : ${Utils.timeToNotification}秒");
     }
   }
 

@@ -7,6 +7,7 @@ import 'package:posture_correction/signin/signin_model.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:sign_button/sign_button.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 import '../bottomnavigation.dart';
 
@@ -162,7 +163,7 @@ class PageOne extends StatelessWidget {
           height: screenSize.height * 0.5,
           width: double.infinity,
           child: Image.asset(
-            "images/IMG_0195.JPG",
+            "images/IMG_0196.JPG",
             fit: BoxFit.cover,
           ),
         ),
@@ -411,8 +412,10 @@ class PageFour extends StatelessWidget {
               width: double.infinity,
               child: Opacity(
                 opacity: 0.8,
-                child: Image.asset(
-                  "images/nicole-wolf-CZ9AjMGKIFI-unsplash.jpg",
+                child: FadeInImage.memoryNetwork(
+                  placeholder: kTransparentImage,
+                  image:
+                      "https://images.unsplash.com/photo-1549082984-1323b94df9a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
                   fit: BoxFit.cover,
                 ),
               ),
@@ -422,7 +425,6 @@ class PageFour extends StatelessWidget {
               child: Container(
                 height: screenSize.height * 0.5,
                 width: double.infinity,
-                color: Colors.black.withOpacity(0.1),
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -432,14 +434,14 @@ class PageFour extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 50,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white),
+                            color: Colors.greenAccent),
                       ),
                       Text(
                         "Correction",
                         style: TextStyle(
                             fontSize: 50,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white),
+                            color: Colors.grey[50]),
                       ),
                     ],
                   ),
