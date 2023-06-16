@@ -228,8 +228,6 @@ class HistoryPage extends StatelessWidget {
                                                                     .updateTitle(
                                                                         data[
                                                                             index]);
-                                                                await model
-                                                                    .fetchData();
                                                               },
                                                               style:
                                                                   ElevatedButton
@@ -407,8 +405,6 @@ class HistoryPage extends StatelessWidget {
                                                                       try {
                                                                         await model
                                                                             .delete(data[index]);
-                                                                        await model
-                                                                            .fetchData();
                                                                         Navigator.of(context)
                                                                             .pop();
                                                                         final snackBar =
@@ -430,7 +426,7 @@ class HistoryPage extends StatelessWidget {
                                                                                 (BuildContext context) {
                                                                               return CupertinoAlertDialog(
                                                                                 title: Text("エラー"),
-                                                                                content: Text("通信状態をご確認ください"),
+                                                                                content: Text(e.toString()),
                                                                                 actions: [
                                                                                   TextButton(
                                                                                     child: Text(

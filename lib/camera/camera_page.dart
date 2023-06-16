@@ -131,6 +131,7 @@ class CameraPage extends StatelessWidget {
                                         );
                                       });
                                 }
+                                //計測時間が5分(300秒)未満で表示
                               } else {
                                 await showDialog(
                                     context: context,

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -65,6 +66,11 @@ class SettingModel extends ChangeNotifier {
 
   //姿勢不良になってから警告音が鳴るまでの時間を更新
   upDateTimeToNotification() async {
+    await searchListIndex();
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty) {
+      return;
+    }
     await FirebaseFirestore.instance
         .collection("users")
         .doc(Utils.userId)
@@ -76,6 +82,10 @@ class SettingModel extends ChangeNotifier {
 
   //ログアウト（googleアカウントのみ）
   logout() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      throw ("通信状態をご確認ください");
+    }
     await FirebaseAuth.instance.signOut();
     Utils.percentOfAllGoodPostureSec = 0;
     Utils.percentOfTodayGoodPostureSec = 0;
@@ -83,6 +93,9 @@ class SettingModel extends ChangeNotifier {
     Utils.numberOfMeasurementsToday = 0;
     Utils.numberOfMeasurementsThisMonth = 0;
     Utils.numberOfOverallMeasurements = 0;
+    Utils.overallMeasuringTime = 0;
+    Utils.thisMonthMeasuringTime = 0;
+    Utils.todayMeasuringTime = 0;
     Utils.isAnonymous = "";
     Utils.userId = "";
     Utils.timeToNotification = 15;
@@ -90,6 +103,12 @@ class SettingModel extends ChangeNotifier {
 
   //全データ削除（初期化）
   deleteUser() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      throw ("通信状態をご確認ください");
+    } else if (Utils.userId.isEmpty) {
+      throw ("ユーザー情報が取得できていません。一度ホームに戻ってから再度試してください");
+    }
     await FirebaseFirestore.instance
         .collection('users')
         .doc(Utils.userId)
@@ -108,6 +127,9 @@ class SettingModel extends ChangeNotifier {
     Utils.numberOfMeasurementsToday = 0;
     Utils.numberOfMeasurementsThisMonth = 0;
     Utils.numberOfOverallMeasurements = 0;
+    Utils.overallMeasuringTime = 0;
+    Utils.thisMonthMeasuringTime = 0;
+    Utils.todayMeasuringTime = 0;
     Utils.isAnonymous = "";
     Utils.userId = "";
     Utils.timeToNotification = 15;

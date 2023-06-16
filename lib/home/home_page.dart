@@ -7,6 +7,7 @@ import 'package:posture_correction/help/help_page.dart';
 import 'package:posture_correction/home/home_model.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -29,272 +30,291 @@ class HomePage extends StatelessWidget {
               int hour3 = Utils.todayMeasuringTime ~/ 60 ~/ 60;
               int minute3 = Utils.todayMeasuringTime ~/ 60 % 60;
               int second3 = Utils.todayMeasuringTime % 60;
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    //ヘルプページへ遷移
-                    Container(
-                      alignment: Alignment.bottomRight,
-                      height: screenSize.height * 0.1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 20.0),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HelpPage()));
-                          },
-                          child: Text("?"),
-                          style: ElevatedButton.styleFrom(
-                              shape: CircleBorder(), primary: Colors.grey),
+              return Stack(children: [
+                SizedBox(
+                  height: double.infinity,
+                  width: double.infinity,
+                  child: FadeInImage.memoryNetwork(
+                    placeholder: kTransparentImage,
+                    image:
+                        "https://images.unsplash.com/photo-1613408181923-f058a1b0e00c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzR8fCVFNyVCNyU5MXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      //ヘルプページへ遷移
+                      Container(
+                        alignment: Alignment.bottomRight,
+                        height: screenSize.height * 0.1,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 20.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => HelpPage()));
+                            },
+                            child: Text("?"),
+                            style: ElevatedButton.styleFrom(
+                                shape: CircleBorder(), primary: Colors.grey),
+                          ),
                         ),
                       ),
-                    ),
-                    //カメラページへ遷移
-                    SizedBox(
-                      height: 200,
-                      width: 200,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          final value = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => CameraPage()));
-                          model.getAverage();
-                          //カメラページから戻った際に計測結果をダイアログで表示
-                          if (value != null) {
-                            await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text("計測結果"),
-                                    content: Container(
-                                      height: 240,
-                                      child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                                "計測時間：${value[0] ~/ 60 ~/ 60}時間${value[0] ~/ 60 % 60}分${value[0] % 60}秒"),
-                                            Row(
-                                              children: [
-                                                Text("姿勢"),
-                                                Text(
-                                                  "(良)：${value[1] ~/ 60 ~/ 60}時間${value[1] ~/ 60 % 60}分${value[1] % 60}秒",
-                                                  style: TextStyle(
-                                                    color: Colors
-                                                        .greenAccent.shade700,
+                      //カメラページへ遷移
+                      SizedBox(
+                        height: 200,
+                        width: 200,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final value = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => CameraPage()));
+                            model.getAverage();
+                            //カメラページから戻った際に計測結果をダイアログで表示
+                            if (value != null) {
+                              await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("計測結果"),
+                                      content: Container(
+                                        height: 240,
+                                        child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                  "計測時間：${value[0] ~/ 60 ~/ 60}時間${value[0] ~/ 60 % 60}分${value[0] % 60}秒"),
+                                              Row(
+                                                children: [
+                                                  Text("姿勢"),
+                                                  Text(
+                                                    "(良)：${value[1] ~/ 60 ~/ 60}時間${value[1] ~/ 60 % 60}分${value[1] % 60}秒",
+                                                    style: TextStyle(
+                                                      color: Colors
+                                                          .greenAccent.shade700,
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                Text("姿勢"),
-                                                Text(
-                                                  "(不良)：${value[2] ~/ 60 ~/ 60}時間${value[2] ~/ 60 % 60}分${value[2] % 60}秒",
-                                                  style: TextStyle(
-                                                      color: Color(0xffff1a1a)),
-                                                ),
-                                              ],
-                                            ),
-                                            Text("猫背通知回数：${value[3]}回"),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              children: [
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Align(
-                                                    alignment: Alignment.center,
-                                                    child: Container(
-                                                      height: 120,
-                                                      child: AspectRatio(
-                                                        aspectRatio: 1,
-                                                        child: PieChart(
-                                                          PieChartData(
-                                                            borderData:
-                                                                FlBorderData(
-                                                                    show:
-                                                                        false),
-                                                            startDegreeOffset:
-                                                                270,
-                                                            sectionsSpace: 0,
-                                                            centerSpaceRadius:
-                                                                40,
-                                                            sections:
-                                                                showingSections4(
-                                                                    value),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text("姿勢"),
+                                                  Text(
+                                                    "(不良)：${value[2] ~/ 60 ~/ 60}時間${value[2] ~/ 60 % 60}分${value[2] % 60}秒",
+                                                    style: TextStyle(
+                                                        color:
+                                                            Color(0xffff1a1a)),
+                                                  ),
+                                                ],
+                                              ),
+                                              Text("猫背通知回数：${value[3]}回"),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                children: [
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Container(
+                                                        height: 120,
+                                                        child: AspectRatio(
+                                                          aspectRatio: 1,
+                                                          child: PieChart(
+                                                            PieChartData(
+                                                              borderData:
+                                                                  FlBorderData(
+                                                                      show:
+                                                                          false),
+                                                              startDegreeOffset:
+                                                                  270,
+                                                              sectionsSpace: 0,
+                                                              centerSpaceRadius:
+                                                                  40,
+                                                              sections:
+                                                                  showingSections4(
+                                                                      value),
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: SizedBox(
-                                                    height: 120,
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
-                                                      children: [
-                                                        Row(
-                                                          children: [
-                                                            Text(
-                                                              "●",
-                                                              style: TextStyle(
-                                                                fontSize: 18,
-                                                                color: Colors
-                                                                    .greenAccent
-                                                                    .shade700,
-                                                              ),
-                                                            ),
-                                                            Text(
-                                                              "：${((value[1] / value[0]) * 100).toStringAsFixed(1)}％",
-                                                              style: TextStyle(
-                                                                fontSize: 15,
-                                                                color: Colors
-                                                                    .greenAccent
-                                                                    .shade700,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            Text(
-                                                              "●",
-                                                              style: TextStyle(
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: SizedBox(
+                                                      height: 120,
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              Text(
+                                                                "●",
+                                                                style:
+                                                                    TextStyle(
                                                                   fontSize: 18,
-                                                                  color: Color(
-                                                                      0xffff1a1a)),
-                                                            ),
-                                                            Text(
-                                                              "：${((value[2] / value[0]) * 100).toStringAsFixed(1)}％",
-                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .greenAccent
+                                                                      .shade700,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                "：${((value[1] / value[0]) * 100).toStringAsFixed(1)}％",
+                                                                style:
+                                                                    TextStyle(
                                                                   fontSize: 15,
-                                                                  color: Color(
-                                                                      0xffff1a1a)),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
+                                                                  color: Colors
+                                                                      .greenAccent
+                                                                      .shade700,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Text(
+                                                                "●",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        18,
+                                                                    color: Color(
+                                                                        0xffff1a1a)),
+                                                              ),
+                                                              Text(
+                                                                "：${((value[2] / value[0]) * 100).toStringAsFixed(1)}％",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    color: Color(
+                                                                        0xffff1a1a)),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ]),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text("閉じる"))
-                                    ],
-                                  );
-                                });
-                          }
-                        },
-                        child: Text(
-                          "start",
-                          style: TextStyle(
-                            fontSize: 40,
-                            color: Colors.greenAccent.shade700,
+                                                ],
+                                              ),
+                                            ]),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text("閉じる"))
+                                      ],
+                                    );
+                                  });
+                            }
+                          },
+                          child: Text(
+                            "start",
+                            style: TextStyle(
+                              fontSize: 40,
+                              color: Colors.greenAccent.shade700,
+                            ),
                           ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
-                          onPrimary: Colors.greenAccent.shade700,
-                          elevation: 0,
-                          shape: CircleBorder(),
-                          side: BorderSide(
-                            width: 5,
-                            color: Colors.greenAccent.shade700,
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.white,
+                            onPrimary: Colors.greenAccent.shade700,
+                            elevation: 0,
+                            shape: CircleBorder(),
+                            side: BorderSide(
+                              width: 5,
+                              color: Colors.greenAccent.shade700,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    //総合・今月・今日の平均データを表示
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Stack(
-                        children: [
-                          Container(
-                            height: 400,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.lightGreenAccent,
-                                  Color(0xff009904),
+                      SizedBox(
+                        height: 50,
+                      ),
+                      //総合・今月・今日の平均データを表示
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Stack(
+                          children: [
+                            Container(
+                              height: 400,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.lightGreenAccent,
+                                    Color(0xff009904),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                children: [
+                                  //総合データ
+                                  PieGraph(
+                                      dataOfDate: "総合データ",
+                                      numberOfMeasurements:
+                                          Utils.numberOfOverallMeasurements,
+                                      hour: hour,
+                                      minute: minute,
+                                      second: second,
+                                      rateOfGoodPosture:
+                                          Utils.percentOfAllGoodPostureSec,
+                                      showingRate: showingSections),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  //今月のデータ
+                                  PieGraph(
+                                      dataOfDate: "今月のデータ",
+                                      numberOfMeasurements:
+                                          Utils.numberOfMeasurementsThisMonth,
+                                      hour: hour2,
+                                      minute: minute2,
+                                      second: second2,
+                                      rateOfGoodPosture: Utils
+                                          .percentOfThisMonthGoodPostureSec,
+                                      showingRate: showingSections),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  //今日のデータ
+                                  PieGraph(
+                                      dataOfDate: "今日のデータ",
+                                      numberOfMeasurements:
+                                          Utils.numberOfMeasurementsToday,
+                                      hour: hour3,
+                                      minute: minute3,
+                                      second: second3,
+                                      rateOfGoodPosture:
+                                          Utils.percentOfTodayGoodPostureSec,
+                                      showingRate: showingSections),
                                 ],
                               ),
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Column(
-                              children: [
-                                //総合データ
-                                PieGraph(
-                                    dataOfDate: "総合データ",
-                                    numberOfMeasurements:
-                                        Utils.numberOfOverallMeasurements,
-                                    hour: hour,
-                                    minute: minute,
-                                    second: second,
-                                    rateOfGoodPosture:
-                                        Utils.percentOfAllGoodPostureSec,
-                                    showingRate: showingSections),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                //今月のデータ
-                                PieGraph(
-                                    dataOfDate: "今月のデータ",
-                                    numberOfMeasurements:
-                                        Utils.numberOfMeasurementsThisMonth,
-                                    hour: hour2,
-                                    minute: minute2,
-                                    second: second2,
-                                    rateOfGoodPosture:
-                                        Utils.percentOfThisMonthGoodPostureSec,
-                                    showingRate: showingSections),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                //今日のデータ
-                                PieGraph(
-                                    dataOfDate: "今日のデータ",
-                                    numberOfMeasurements:
-                                        Utils.numberOfMeasurementsToday,
-                                    hour: hour3,
-                                    minute: minute3,
-                                    second: second3,
-                                    rateOfGoodPosture:
-                                        Utils.percentOfTodayGoodPostureSec,
-                                    showingRate: showingSections),
-                              ],
-                            ),
-                          )
-                        ],
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              );
+              ]);
             }),
           );
         });
