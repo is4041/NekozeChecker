@@ -30,9 +30,10 @@ class SignInPage extends StatelessWidget {
                       PageTwo(model, screenSize),
                       PageThree(model, screenSize),
                       PageFour(model, screenSize),
+                      PageFive(model, screenSize),
                     ]
                   : [
-                      PageFour(model, screenSize),
+                      PageFive(model, screenSize),
                     ];
               return Stack(children: [
                 StreamBuilder<User?>(
@@ -100,7 +101,7 @@ class SignInPage extends StatelessWidget {
                                       height: 40,
                                       width: double.infinity,
                                       child: ElevatedButton(
-                                        onPressed: model.activePage < 3
+                                        onPressed: model.activePage < 4
                                             ? () {
                                                 pageController.nextPage(
                                                     duration: const Duration(
@@ -109,7 +110,7 @@ class SignInPage extends StatelessWidget {
                                               }
                                             : () {},
                                         style: ElevatedButton.styleFrom(
-                                            primary: model.activePage < 3
+                                            primary: model.activePage < 4
                                                 ? Colors.green
                                                 : Colors.grey,
                                             shape: RoundedRectangleBorder(
@@ -159,7 +160,7 @@ class PageOne extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
+        SizedBox(
           height: screenSize.height * 0.5,
           width: double.infinity,
           child: Image.asset(
@@ -167,26 +168,39 @@ class PageOne extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        Container(
+        SizedBox(
           height: screenSize.height * 0.1,
           width: double.infinity,
           child: Center(
-            child: Text(
-              "Posture Correctionへようこそ",
-              style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green),
+            child: FittedBox(
+              child: Text(
+                "Posture Correctionへようこそ",
+                style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green),
+              ),
             ),
           ),
         ),
-        Container(
+        SizedBox(
           height: screenSize.height * 0.25,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 50.0),
-            child: Text(
-              "Posture Correctionはカメラを使った動作解析で顔の位置を演算し、ゲームやデスクワーク中の顔の位置変化により猫背を判定し音で知らせてくれるアプリです。",
-              style: TextStyle(fontSize: 16),
+            child: Column(
+              children: [
+                Text(
+                  "Posture Correctionはゲームやデスクワーク中の前傾姿勢による顔の位置変化をカメラでリアルタイムに読み取り姿勢不良を検知すると音で警告してくれるアプリです。",
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  "使い方の説明は次ページから→",
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
             ),
           ),
         ),
@@ -207,80 +221,30 @@ class PageTwo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    right: BorderSide(color: Colors.white),
-                    bottom: BorderSide(color: Colors.white),
-                  ),
-                ),
-                height: screenSize.height * 0.25,
-                child: Image.asset(
-                  "images/IMG_0147.JPG",
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: Colors.white),
-                  ),
-                ),
-                height: screenSize.height * 0.25,
-                child: Image.asset(
-                  "images/IMG_0146.JPG",
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ],
+        SizedBox(
+          height: screenSize.height * 0.5,
+          width: double.infinity,
+          child: Image.asset(
+            "images/IMG_0203.JPG",
+            fit: BoxFit.cover,
+          ),
         ),
-        Row(
-          children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    right: BorderSide(color: Colors.white),
-                  ),
-                ),
-                height: screenSize.height * 0.25,
-                child: Image.asset(
-                  "images/IMG_0164.JPG",
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                height: screenSize.height * 0.25,
-                child: Image.asset(
-                  "images/IMG_0171.JPG",
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ],
-        ),
-        Container(
+        SizedBox(
           height: screenSize.height * 0.1,
           width: double.infinity,
           child: Center(
-            child: Text(
-              "スマートフォンをセットする",
-              style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green),
+            child: FittedBox(
+              child: Text(
+                "スマートフォンをセットする",
+                style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green),
+              ),
             ),
           ),
         ),
-        Container(
+        SizedBox(
           height: screenSize.height * 0.25,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 50.0),
@@ -289,14 +253,14 @@ class PageTwo extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "セットをしたらstartボタンを押してカメラを起動しましょう。",
+                  "スマートフォンをモニター付近にセットしたら緑色のstartボタンを押してカメラを起動しましょう。",
                   style: TextStyle(fontSize: 16),
                 ),
                 SizedBox(
                   height: 10,
                 ),
                 Text(
-                  "※スマートフォン用スタンド（100均などで購入できます）を使うのがおすすめですが立てかけられる物なら何を使っても大丈夫です。",
+                  "※スマートフォン用スタンド（100均などで購入できます）を使うことをおすすめしますが立てかけられる物なら何でもOKです。例：コップ",
                   style: TextStyle(fontSize: 12),
                 ),
               ],
@@ -323,7 +287,7 @@ class PageThree extends StatelessWidget {
         Stack(
           children: [
             Center(
-              child: Container(
+              child: SizedBox(
                 height: screenSize.height * 0.5,
                 width: double.infinity,
                 child: Image.asset(
@@ -334,20 +298,22 @@ class PageThree extends StatelessWidget {
             ),
           ],
         ),
-        Container(
+        SizedBox(
           height: screenSize.height * 0.1,
           width: double.infinity,
           child: Center(
-            child: Text(
-              "白点の位置を調整する",
-              style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green),
+            child: FittedBox(
+              child: Text(
+                "白点の位置を調整する",
+                style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green),
+              ),
             ),
           ),
         ),
-        Container(
+        SizedBox(
           height: screenSize.height * 0.25,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 50.0),
@@ -355,7 +321,7 @@ class PageThree extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "姿勢を正し、鼻の位置に表示される白点が緑線の枠内に収まるように端末の位置を調整します。",
+                  "姿勢を正し、鼻の位置に表示される白点がグリーンラインの枠内に収まるように端末の位置を調整します。",
                   style: TextStyle(fontSize: 16),
                 ),
                 Text(
@@ -365,24 +331,9 @@ class PageThree extends StatelessWidget {
                 SizedBox(
                   height: 10,
                 ),
-                Wrap(
-                  children: [
-                    Text(
-                      "白点が",
-                      style: TextStyle(fontSize: 12),
-                    ),
-                    Text(
-                      "下側の緑線",
-                      style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green),
-                    ),
-                    Text(
-                      "を超えて一定時間経つと通知音が鳴ります。",
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ],
+                Text(
+                  "白点がグリーンラインの枠内から出たまま一定時間経つと警告音が鳴ります。",
+                  style: TextStyle(fontSize: 1),
                 ),
               ],
             ),
@@ -405,9 +356,59 @@ class PageFour extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        SizedBox(
+          height: screenSize.height * 0.5,
+          width: double.infinity,
+          child: Image.network(
+            "https://images.unsplash.com/photo-1605171399454-f2a0e51b811b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1931&q=80",
+            fit: BoxFit.cover,
+          ),
+        ),
+        SizedBox(
+          height: screenSize.height * 0.1,
+          width: double.infinity,
+          child: Center(
+            child: FittedBox(
+              child: Text(
+                " 使わなくなった端末を活用できます ",
+                style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: screenSize.height * 0.25,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50.0),
+            child: Text(
+              "使わなくなった端末はありませんか？\nカメラ使用中は他の操作ができないためPC作業中やゲーム中にも今お使いの端末でメール返信などの操作をされる方は当アプリを、使わなくなった端末にインストールして使用するということもできます。",
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+//5ページ目
+//ページの高さは合計でscreenSize.height * 0.85とする
+class PageFive extends StatelessWidget {
+  final SignInModel model;
+  // ignore: prefer_typing_uninitialized_variables
+  var screenSize;
+  PageFive(this.model, this.screenSize);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
         Stack(
           children: [
-            Container(
+            SizedBox(
               height: screenSize.height * 0.5,
               width: double.infinity,
               child: Opacity(

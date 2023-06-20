@@ -11,6 +11,7 @@ class Utils {
   static String? isAnonymous = "";
   static String userId = "";
   static int timeToNotification = 15;
+  static double greenLineRange = 0.45;
   static bool darkScreenMode = false;
   static bool showTutorial = true;
 }

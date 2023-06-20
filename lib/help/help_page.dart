@@ -40,6 +40,9 @@ class HelpPage extends StatelessWidget {
           Question(
               question: "このアプリを利用する際は端末の自動スリープ機能はOFFにした方がいいですか？",
               answer: "はい。スリープ状態になると計測が中断されますのでOFFにすることを強くおすすめします。"),
+          Question(
+              question: "白点が上側のグリーンラインより上を越えた時間やその時に鳴った警告音の記録はどうなりますか？",
+              answer: "時間は姿勢（良）として記録されますが、警告音は記録されません。"),
           Divider(
             thickness: 5,
           ),
@@ -53,7 +56,7 @@ class HelpPage extends StatelessWidget {
           //チュートリアル
           Column(
             children: [
-              Container(
+              SizedBox(
                 height: screenSize.height * 0.1,
                 width: double.infinity,
                 child: Center(
@@ -66,97 +69,42 @@ class HelpPage extends StatelessWidget {
                   ),
                 ),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          right: BorderSide(color: Colors.white),
-                          bottom: BorderSide(color: Colors.white),
-                        ),
-                      ),
-                      height: screenSize.height * 0.25,
-                      child: Image.asset(
-                        "images/IMG_0147.JPG",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(color: Colors.white),
-                        ),
-                      ),
-                      height: screenSize.height * 0.25,
-                      child: Image.asset(
-                        "images/IMG_0146.JPG",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ],
+              SizedBox(
+                height: screenSize.height * 0.5,
+                width: double.infinity,
+                child: Image.asset(
+                  "images/IMG_0203.JPG",
+                  fit: BoxFit.cover,
+                ),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          right: BorderSide(color: Colors.white),
-                        ),
-                      ),
-                      height: screenSize.height * 0.25,
-                      child: Image.asset(
-                        "images/IMG_0164.JPG",
-                        fit: BoxFit.cover,
-                      ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10, right: 50.0, left: 50),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "セットをしたらstartボタンを押してカメラを起動しましょう。",
+                      style: TextStyle(fontSize: 16),
                     ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      height: screenSize.height * 0.25,
-                      child: Image.asset(
-                        "images/IMG_0171.JPG",
-                        fit: BoxFit.cover,
-                      ),
+                    SizedBox(
+                      height: 10,
                     ),
-                  ),
-                ],
-              ),
-              Container(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.only(top: 10, right: 50.0, left: 50),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "セットをしたらstartボタンを押してカメラを起動しましょう。",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        "※スマートフォン用スタンド（100均などで購入できます）を使うのがおすすめですが立てかけられる物なら何を使っても大丈夫です。",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ],
-                  ),
+                    Text(
+                      "※スマートフォン用スタンド（100均などで購入できます）を使うのがおすすめですが立てかけられる物なら何を使っても大丈夫です。",
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
           Divider(
-            thickness: 5,
+            thickness: 1,
           ),
           Column(
             children: [
-              Container(
+              SizedBox(
                 height: screenSize.height * 0.1,
                 width: double.infinity,
                 child: Center(
@@ -169,61 +117,86 @@ class HelpPage extends StatelessWidget {
                   ),
                 ),
               ),
-              Stack(
-                children: [
-                  Center(
-                    child: Container(
-                      height: screenSize.height * 0.5,
-                      width: double.infinity,
-                      // color: Colors.red,
-                      child: Image.asset(
-                        "images/IMG_Unsplash.jpg",
-                        fit: BoxFit.cover,
-                      ),
+              SizedBox(
+                height: screenSize.height * 0.5,
+                width: double.infinity,
+                child: Image.asset(
+                  "images/IMG_Unsplash.jpg",
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10, right: 50.0, left: 50),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "姿勢を正し、鼻の位置に表示される白点がグリーンラインの枠内に収まるように端末の位置を調整します。",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      "白点が枠内から出ないように姿勢を保ち続けましょう。",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "白点がグリーンラインの枠内から出たまま一定時間経つと警告音が鳴ります。",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Divider(
+            thickness: 5,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Text(
+              "オススメ",
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+          Column(
+            children: [
+              SizedBox(
+                height: screenSize.height * 0.1,
+                width: double.infinity,
+                child: Center(
+                  child: FittedBox(
+                    child: Text(
+                      " 使わなくなった端末を活用できます ",
+                      style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.greenAccent.shade700),
                     ),
                   ),
-                ],
-              ),
-              Container(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.only(top: 10, right: 50.0, left: 50),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "姿勢を正し、鼻の位置に表示される白点が緑線の枠内に収まるように端末の位置を調整します。",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      Text(
-                        "白点が枠内から出ないように姿勢を保ち続けましょう。",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Wrap(
-                        children: [
-                          Text(
-                            "白点が",
-                            style: TextStyle(fontSize: 12),
-                          ),
-                          Text(
-                            "下側の緑線",
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.greenAccent.shade700),
-                          ),
-                          Text(
-                            "を超えて一定時間経つと通知音が鳴ります。",
-                            style: TextStyle(fontSize: 12),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
                 ),
+              ),
+              SizedBox(
+                height: screenSize.height * 0.5,
+                width: double.infinity,
+                child: Image.network(
+                  "https://images.unsplash.com/photo-1605171399454-f2a0e51b811b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1931&q=80",
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10, right: 50.0, left: 50),
+                child: Text(
+                  "使わなくなった端末はありませんか？\nカメラ使用中は他の操作ができないためPC作業中やゲーム中にも今お使いの端末でメール返信などの操作をされる方は当アプリを、使わなくなった端末にインストールして使用するということもできます。",
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+              SizedBox(
+                height: 10,
               ),
             ],
           )
