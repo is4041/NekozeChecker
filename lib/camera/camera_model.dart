@@ -78,7 +78,6 @@ class CameraModel extends ChangeNotifier {
   //警告音が鳴った回数をカウント
   counter() {
     notificationCounter++;
-    print("通知回数:${notificationCounter}");
   }
 
   //firebaseにデータを保存

@@ -35,116 +35,7 @@ class SettingPage extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0),
                       child: Text(
-                        "アカウント提携",
-                        style: TextStyle(fontSize: 13, color: Colors.grey),
-                      ),
-                    ),
-                    //googleアカウント提携ボタン（匿名ログイン時のみ押下可）
-                    Ink(
-                      decoration: BoxDecoration(
-                          border: Border(
-                            top: BorderSide(color: Colors.grey, width: 0.5),
-                            bottom: BorderSide(color: Colors.grey, width: 0.5),
-                          ),
-                          color: Colors.white),
-                      height: 45,
-                      width: double.infinity,
-                      //匿名ログイン時
-                      child: Utils.isAnonymous == "isAnonymous"
-                          ? InkWell(
-                              highlightColor: Colors.grey[400],
-                              onTap: () async {
-                                try {
-                                  await model.googleSignIn();
-                                  await showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return CupertinoAlertDialog(
-                                          title: Text("アカウント提携が完了しました"),
-                                          actions: [
-                                            TextButton(
-                                              child: const Text("OK"),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            )
-                                          ],
-                                        );
-                                      });
-                                } catch (e) {
-                                  if (e.toString() ==
-                                      "[firebase_auth/credential-already-in-use] This credential is already associated with a different user account.") {
-                                    await showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return CupertinoAlertDialog(
-                                            title: Text("エラー"),
-                                            content: Text(
-                                                "このアカウントはすでに別のユーザーアカウントに関連付けられています。"),
-                                            actions: [
-                                              TextButton(
-                                                child: const Text("OK"),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                              )
-                                            ],
-                                          );
-                                        });
-                                  } else if (e.toString() !=
-                                      "Null check operator used on a null value") {
-                                    await showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return CupertinoAlertDialog(
-                                            title: Text("エラー"),
-                                            content: Text("通信状態をご確認ください"),
-                                            actions: [
-                                              TextButton(
-                                                child: const Text("OK"),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                              )
-                                            ],
-                                          );
-                                        });
-                                  }
-                                }
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 10.0),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    "Googleアカウント提携",
-                                    style: TextStyle(fontSize: 17),
-                                  ),
-                                ),
-                              ),
-                            )
-                          //googleログイン時
-                          : Padding(
-                              padding: const EdgeInsets.only(left: 10.0),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  Utils.isAnonymous == "isNotAnonymous"
-                                      ? "Googleアカウント提携済"
-                                      : "Googleアカウント提携",
-                                  style: TextStyle(
-                                      fontSize: 17, color: Colors.grey),
-                                ),
-                              ),
-                            ),
-                    ),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Text(
-                        "姿勢不良を通知するまでの時間",
+                        "白点がグリーンラインの枠外に出た時に警告するまでの時間",
                         style: TextStyle(fontSize: 13, color: Colors.grey),
                       ),
                     ),
@@ -258,6 +149,158 @@ class SettingPage extends StatelessWidget {
                               )),
                         ),
                       ),
+                    ),
+                    SizedBox(
+                      height: 50,
+                    ),
+                    //緑線の間隔の設定
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Text(
+                        "グリーンラインの間隔",
+                        style: TextStyle(fontSize: 13, color: Colors.grey),
+                      ),
+                    ),
+                    //スライダーで範囲を調整
+                    Container(
+                      height: 45,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(color: Colors.grey, width: 0.5),
+                            bottom: BorderSide(color: Colors.grey, width: 0.5),
+                          ),
+                          color: Colors.white),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(flex: 1, child: Center(child: Text("広い"))),
+                            Expanded(
+                              flex: 10,
+                              child: Slider(
+                                activeColor: Colors.greenAccent.shade700,
+                                value: Utils.greenLineRange,
+                                max: 0.47,
+                                min: 0.43,
+                                divisions: 4,
+                                onChanged: (double value) {
+                                  Utils.greenLineRange =
+                                      double.parse(value.toStringAsFixed(2));
+                                  model.changeGreenLineRange();
+                                },
+                              ),
+                            ),
+                            Expanded(flex: 1, child: Center(child: Text("狭い"))),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 50,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Text(
+                        "アカウント提携",
+                        style: TextStyle(fontSize: 13, color: Colors.grey),
+                      ),
+                    ),
+                    //googleアカウント提携ボタン（匿名ログイン時のみ押下可）
+                    Ink(
+                      decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(color: Colors.grey, width: 0.5),
+                            bottom: BorderSide(color: Colors.grey, width: 0.5),
+                          ),
+                          color: Colors.white),
+                      height: 45,
+                      width: double.infinity,
+                      //匿名ログイン時
+                      child: Utils.isAnonymous == "isAnonymous"
+                          ? InkWell(
+                              highlightColor: Colors.grey[400],
+                              onTap: () async {
+                                try {
+                                  await model.googleSignIn();
+                                  await showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return CupertinoAlertDialog(
+                                          title: Text("アカウント提携が完了しました"),
+                                          actions: [
+                                            TextButton(
+                                              child: const Text("OK"),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            )
+                                          ],
+                                        );
+                                      });
+                                } catch (e) {
+                                  if (e.toString() ==
+                                      "[firebase_auth/credential-already-in-use] This credential is already associated with a different user account.") {
+                                    await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CupertinoAlertDialog(
+                                            title: Text("エラー"),
+                                            content: Text(
+                                                "このアカウントはすでに別のユーザーアカウントに関連付けられています。"),
+                                            actions: [
+                                              TextButton(
+                                                child: const Text("OK"),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              )
+                                            ],
+                                          );
+                                        });
+                                  } else if (e.toString() !=
+                                      "Null check operator used on a null value") {
+                                    await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return CupertinoAlertDialog(
+                                            title: Text("エラー"),
+                                            content: Text("通信状態をご確認ください"),
+                                            actions: [
+                                              TextButton(
+                                                child: const Text("OK"),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              )
+                                            ],
+                                          );
+                                        });
+                                  }
+                                }
+                              },
+                              child: Center(
+                                child: Text(
+                                  "Googleアカウント提携",
+                                  style: TextStyle(fontSize: 17),
+                                ),
+                              ),
+                            )
+                          //googleログイン時
+                          : Padding(
+                              padding: const EdgeInsets.only(left: 10.0),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  Utils.isAnonymous == "isNotAnonymous"
+                                      ? "Googleアカウント提携済"
+                                      : "Googleアカウント提携",
+                                  style: TextStyle(
+                                      fontSize: 17, color: Colors.grey),
+                                ),
+                              ),
+                            ),
                     ),
                     SizedBox(
                       height: 50,

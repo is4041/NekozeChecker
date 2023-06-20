@@ -379,7 +379,7 @@ class Painter extends CustomPainter {
             paint.color = Colors.white;
             canvas.drawCircle(
                 Offset(size.width * k["x"], size.height * k["y"]), 5, paint);
-            //noseのkeypointsが中央ライン以下にあるとき
+            //noseのkeypointsが下側の緑線以下にあるとき
             if (k["part"] == "nose" && k["y"] > 0.5) {
               paint.color = Colors.red;
               paint.strokeWidth = 3;
@@ -387,11 +387,27 @@ class Painter extends CustomPainter {
                   Offset(size.width, size.height / 2), paint);
               paint.color = Colors.greenAccent;
               paint.strokeWidth = 3;
-              canvas.drawLine(Offset(0, (size.height / 2) - 30),
-                  Offset(size.width, (size.height / 2) - 30), paint);
+              canvas.drawLine(
+                  Offset(0, size.height * Utils.greenLineRange),
+                  Offset(size.width, size.height * Utils.greenLineRange),
+                  paint);
               beyond = true;
               notificationSound(beyond);
-              //noseのkeypointsが中央ライン以上にあるとき
+              //noseのkeypointsが上側の緑線以上にあるとき
+            } else if (k["part"] == "nose" && k["y"] < Utils.greenLineRange) {
+              paint.color = Colors.greenAccent;
+              paint.strokeWidth = 3;
+              canvas.drawLine(Offset(0, size.height / 2),
+                  Offset(size.width, size.height / 2), paint);
+              paint.color = Colors.yellowAccent;
+              paint.strokeWidth = 3;
+              canvas.drawLine(
+                  Offset(0, size.height * Utils.greenLineRange),
+                  Offset(size.width, size.height * Utils.greenLineRange),
+                  paint);
+              beyond = true;
+              notificationSound2(beyond);
+              //noseのkeypointsが2本の緑線の間にあるとき
             } else if (!beyond) {
               hiddenOkButton = false;
               paint.color = Colors.greenAccent;
@@ -400,8 +416,10 @@ class Painter extends CustomPainter {
                   Offset(size.width, size.height / 2), paint);
               paint.color = Colors.greenAccent;
               paint.strokeWidth = 3;
-              canvas.drawLine(Offset(0, (size.height / 2) - 30),
-                  Offset(size.width, (size.height / 2) - 30), paint);
+              canvas.drawLine(
+                  Offset(0, size.height * Utils.greenLineRange),
+                  Offset(size.width, size.height * Utils.greenLineRange),
+                  paint);
               notificationSound(beyond);
             }
           }
@@ -411,25 +429,21 @@ class Painter extends CustomPainter {
     } else if (detection || isAdjusting!) {
       notificationTimer?.cancel();
       detection = false;
-      print("計測停止中");
       soundLoop = false;
       model.stopTimer();
-      print("Timer Stop");
       model.stopBadPostureTimer();
-      print("Bad Posture Timer Stop");
+      print("Timer Stop");
       await audioPlayer?.stop();
     }
   }
 
-  //時間経過で警告音を鳴らす
+  //時間経過で警告音を鳴らす（noseのkeypointsが下側の緑線より下にある時）
   notificationSound(bool beyond) async {
-    //noseが中央ライン以下の時の処理
     if (beyond && !soundLoop!) {
       soundLoop = true;
       hiddenOkButton = true;
       if (isCounting!) {
         model.startBadPostureTimer();
-        print("猫背タイマースタート");
       }
       print("${Utils.timeToNotification}秒後警告");
 
@@ -440,11 +454,28 @@ class Painter extends CustomPainter {
           model.counter();
         }
       });
-      //noseが中央ライン以上の時の処理
     } else if (!beyond && soundLoop!) {
       soundLoop = false;
       hiddenOkButton = false;
       model.stopBadPostureTimer();
+      notificationTimer?.cancel();
+      await audioPlayer?.stop();
+    }
+  }
+
+  //時間経過で警告音を鳴らす（noseのkeypointsが上側の緑線より上にある時）
+  notificationSound2(bool beyond) async {
+    if (beyond && !soundLoop!) {
+      soundLoop = true;
+      hiddenOkButton = true;
+
+      notificationTimer =
+          Timer(Duration(seconds: Utils.timeToNotification), () async {
+        audioPlayer = await _cache.loop("sounds/notification.mp3");
+      });
+    } else if (!beyond && soundLoop!) {
+      soundLoop = false;
+      hiddenOkButton = false;
       notificationTimer?.cancel();
       await audioPlayer?.stop();
     }

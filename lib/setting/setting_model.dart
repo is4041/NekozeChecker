@@ -80,6 +80,10 @@ class SettingModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  changeGreenLineRange() {
+    notifyListeners();
+  }
+
   //ログアウト（googleアカウントのみ）
   logout() async {
     final connectivityResult = await Connectivity().checkConnectivity();

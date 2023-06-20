@@ -37,14 +37,14 @@ class HomePage extends StatelessWidget {
                   child: FadeInImage.memoryNetwork(
                     placeholder: kTransparentImage,
                     image:
-                        "https://images.unsplash.com/photo-1613408181923-f058a1b0e00c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzR8fCVFNyVCNyU5MXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+                        "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fCVFNiU5QyVCQSUyMCVFMyU4MSU4QSVFMyU4MSU5NyVFMyU4MiU4MyVFMyU4MiU4Q3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
                     fit: BoxFit.cover,
                   ),
                 ),
                 SingleChildScrollView(
                   child: Column(
                     children: [
-                      //ヘルプページへ遷移
+                      //ヘルプページへ遷移するボタン
                       Container(
                         alignment: Alignment.bottomRight,
                         height: screenSize.height * 0.1,
@@ -63,7 +63,7 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      //カメラページへ遷移
+                      //カメラページへの遷移ボタン
                       SizedBox(
                         height: 200,
                         width: 200,
