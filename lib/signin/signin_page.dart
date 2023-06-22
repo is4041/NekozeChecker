@@ -82,7 +82,8 @@ class SignInPage extends StatelessWidget {
                                               radius: 5,
                                               backgroundColor:
                                                   model.activePage == index
-                                                      ? Colors.green
+                                                      ? Colors
+                                                          .greenAccent.shade700
                                                       : Colors.grey.shade300,
                                             ),
                                           ),
@@ -111,7 +112,7 @@ class SignInPage extends StatelessWidget {
                                             : () {},
                                         style: ElevatedButton.styleFrom(
                                             primary: model.activePage < 4
-                                                ? Colors.green
+                                                ? Colors.greenAccent.shade700
                                                 : Colors.grey,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
@@ -178,7 +179,7 @@ class PageOne extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green),
+                    color: Colors.greenAccent.shade700),
               ),
             ),
           ),
@@ -239,7 +240,7 @@ class PageTwo extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green),
+                    color: Colors.greenAccent.shade700),
               ),
             ),
           ),
@@ -308,7 +309,7 @@ class PageThree extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green),
+                    color: Colors.greenAccent.shade700),
               ),
             ),
           ),
@@ -333,7 +334,7 @@ class PageThree extends StatelessWidget {
                 ),
                 Text(
                   "白点がグリーンラインの枠内から出たまま一定時間経つと警告音が鳴ります。",
-                  style: TextStyle(fontSize: 1),
+                  style: TextStyle(fontSize: 12),
                 ),
               ],
             ),
@@ -360,7 +361,8 @@ class PageFour extends StatelessWidget {
           height: screenSize.height * 0.5,
           width: double.infinity,
           child: Image.network(
-            "https://images.unsplash.com/photo-1605171399454-f2a0e51b811b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1931&q=80",
+            "",
+            // "https://images.unsplash.com/photo-1605171399454-f2a0e51b811b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1931&q=80",
             fit: BoxFit.cover,
           ),
         ),
@@ -374,7 +376,7 @@ class PageFour extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green),
+                    color: Colors.greenAccent.shade700),
               ),
             ),
           ),
@@ -484,7 +486,7 @@ class PageFive extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(
                 elevation: 5,
-                primary: Colors.green,
+                primary: Colors.greenAccent.shade700,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50),
                 )),

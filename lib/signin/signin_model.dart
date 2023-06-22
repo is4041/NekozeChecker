@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:posture_correction/utils.dart';
 
 final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -45,14 +46,12 @@ class SignInModel extends ChangeNotifier {
     final exists = document.exists;
     //初回ログイン時だけ作動
     if (exists == false) {
-      print("初回ログイン");
       await FirebaseFirestore.instance.collection("users").doc(uid).set({
         "createdAt": Timestamp.now(),
+        "greenLineRange": 0.45,
         "timeToNotification": 15,
         "userId": uid,
       });
-    } else {
-      print("ログイン履歴あり");
     }
   }
 
@@ -62,6 +61,7 @@ class SignInModel extends ChangeNotifier {
     final uid = firebaseAuth.currentUser!.uid;
     FirebaseFirestore.instance.collection("users").doc(uid).set({
       "createdAt": Timestamp.now(),
+      "greenLineRange": 0.45,
       "timeToNotification": 15,
       "userId": uid,
     });

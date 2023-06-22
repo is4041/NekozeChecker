@@ -218,7 +218,7 @@ class SettingPage extends StatelessWidget {
                       height: 45,
                       width: double.infinity,
                       //匿名ログイン時
-                      child: Utils.isAnonymous == "isAnonymous"
+                      child: Utils.isAnonymous == true
                           ? InkWell(
                               highlightColor: Colors.grey[400],
                               onTap: () async {
@@ -248,7 +248,7 @@ class SettingPage extends StatelessWidget {
                                           return CupertinoAlertDialog(
                                             title: Text("エラー"),
                                             content: Text(
-                                                "このアカウントはすでに別のユーザーアカウントに関連付けられています。"),
+                                                "このアカウントはすでに別のユーザーアカウントに関連付けられています。今お使いの端末でこのアカウントに提携するためには全データ削除（初期化）を行った後SignInWithGoogleボタンから提携してください"),
                                             actions: [
                                               TextButton(
                                                 child: const Text("OK"),
@@ -293,7 +293,7 @@ class SettingPage extends StatelessWidget {
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  Utils.isAnonymous == "isNotAnonymous"
+                                  Utils.isAnonymous == false
                                       ? "Googleアカウント提携済"
                                       : "Googleアカウント提携",
                                   style: TextStyle(
@@ -323,7 +323,7 @@ class SettingPage extends StatelessWidget {
                       height: 45,
                       width: double.infinity,
                       //googleログイン時
-                      child: Utils.isAnonymous == "isNotAnonymous"
+                      child: Utils.isAnonymous == false
                           ? InkWell(
                               highlightColor: Colors.grey[400],
                               onTap: () async {

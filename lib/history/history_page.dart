@@ -10,6 +10,12 @@ class HistoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
+    // final textStyleGreen = TextStyle(
+    //     fontSize: 14,
+    //     color: Colors
+    //         .greenAccent.shade700,
+    //     fontWeight:
+    //     FontWeight.w600);
     return ChangeNotifierProvider<HistoryModel>(
         create: (_) => HistoryModel()..fetchData(),
         builder: (context, snapshot) {
@@ -544,33 +550,12 @@ class HistoryPage extends StatelessWidget {
                                             ),
                                             Wrap(
                                               children: [
-                                                Text(
-                                                  measuringHourValue > 0
-                                                      ? "$measuringHourValue時間"
-                                                      : "",
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                Text(
-                                                  measuringMinuteValue > 0
-                                                      ? "$measuringMinuteValue分"
-                                                      : "",
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                Text(
-                                                  measuringSecondValue > 0
-                                                      ? "$measuringSecondValue秒"
-                                                      : "",
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
+                                                timeValue(measuringHourValue,
+                                                    "時間", Colors.black),
+                                                timeValue(measuringMinuteValue,
+                                                    "分", Colors.black),
+                                                timeValue(measuringSecondValue,
+                                                    "秒", Colors.black),
                                               ],
                                             ),
                                           ],
@@ -578,50 +563,52 @@ class HistoryPage extends StatelessWidget {
                                       ),
                                       //計測時間（姿勢・良）を表示
                                       Expanded(
-                                        child: Container(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    "姿勢",
-                                                    style: TextStyle(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "姿勢",
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "(良)",
+                                                  style: TextStyle(
                                                       fontSize: 11,
-                                                      // color: Colors.grey
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "(良)",
-                                                    style: TextStyle(
-                                                        fontSize: 11,
-                                                        color: Colors
-                                                            .greenAccent
-                                                            .shade700),
-                                                  ),
-                                                ],
-                                              ),
-                                              Wrap(
-                                                children: [
-                                                  Text(
-                                                    goodHourValue > 0
-                                                        ? "$goodHourValue時間"
-                                                        : "",
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors
-                                                            .greenAccent
-                                                            .shade700,
-                                                        fontWeight:
-                                                            FontWeight.w600),
-                                                  ),
-                                                  Text(
-                                                    goodMinuteValue > 0
-                                                        ? "$goodMinuteValue分"
-                                                        : "",
+                                                      color: Colors.greenAccent
+                                                          .shade700),
+                                                ),
+                                              ],
+                                            ),
+                                            Wrap(
+                                              children: [
+                                                timeValue(
+                                                    goodHourValue,
+                                                    "時間",
+                                                    Colors
+                                                        .greenAccent.shade700),
+                                                timeValue(
+                                                    goodMinuteValue,
+                                                    "分",
+                                                    Colors
+                                                        .greenAccent.shade700),
+                                                timeValue(
+                                                    goodSecondValue,
+                                                    "秒",
+                                                    Colors
+                                                        .greenAccent.shade700),
+                                                Visibility(
+                                                  visible:
+                                                      measuringGoodPostureSec ==
+                                                          0,
+                                                  child: Text(
+                                                    "0秒",
                                                     style: TextStyle(
                                                         fontSize: 14,
                                                         color: Colors
@@ -630,37 +617,10 @@ class HistoryPage extends StatelessWidget {
                                                         fontWeight:
                                                             FontWeight.w600),
                                                   ),
-                                                  Text(
-                                                    goodSecondValue > 0
-                                                        ? "$goodSecondValue秒"
-                                                        : "",
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors
-                                                            .greenAccent
-                                                            .shade700,
-                                                        fontWeight:
-                                                            FontWeight.w600),
-                                                  ),
-                                                  Visibility(
-                                                    visible:
-                                                        measuringGoodPostureSec ==
-                                                            0,
-                                                    child: Text(
-                                                      "0秒",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors
-                                                              .greenAccent
-                                                              .shade700,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
                                       ),
                                       //計測時間（姿勢・良）の割合を表示、割合に応じて色を変化
@@ -771,6 +731,15 @@ class HistoryPage extends StatelessWidget {
   }
 }
 
+//履歴の時間の表示に関するウィジェット
+Widget timeValue(time, timeUnit, color) {
+  return Text(
+    time > 0 ? "$time$timeUnit" : "",
+    style: TextStyle(fontSize: 14, color: color, fontWeight: FontWeight.w600),
+  );
+}
+
+//履歴詳細の時間の表示に関するクラス
 class TimeValue extends StatelessWidget {
   TimeValue({
     required this.posture,

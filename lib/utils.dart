@@ -1,4 +1,10 @@
 class Utils {
+  static String userId = "";
+  static int timeToNotification = 15;
+  static double greenLineRange = 0.45;
+  static bool isAnonymous = false;
+  static bool darkScreenMode = false;
+  static bool showTutorial = true;
   static double percentOfAllGoodPostureSec = 0;
   static double percentOfTodayGoodPostureSec = 0;
   static double percentOfThisMonthGoodPostureSec = 0;
@@ -8,10 +14,4 @@ class Utils {
   static int overallMeasuringTime = 0;
   static int thisMonthMeasuringTime = 0;
   static int todayMeasuringTime = 0;
-  static String? isAnonymous = "";
-  static String userId = "";
-  static int timeToNotification = 15;
-  static double greenLineRange = 0.45;
-  static bool darkScreenMode = false;
-  static bool showTutorial = true;
 }
