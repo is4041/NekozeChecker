@@ -73,7 +73,7 @@ class HomePage extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => CameraPage()));
-                            model.getAverage();
+                            model.getAverageData();
                             //カメラページから戻った際に計測結果をダイアログで表示
                             if (value != null) {
                               await showDialog(

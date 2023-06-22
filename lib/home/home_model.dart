@@ -33,9 +33,8 @@ class HomeModel extends ChangeNotifier {
       await showConnectError(context);
     } else {
       await getUserId();
-      await getAverage();
-      await getTimeToNotification();
-      await getProviderId();
+      await getUserData();
+      await getAverageData();
     }
   }
 
@@ -60,14 +59,31 @@ class HomeModel extends ChangeNotifier {
   }
 
   //userIdを取得する
-  getUserId() async {
+  getUserId() {
     Utils.userId = FirebaseAuth.instance.currentUser!.uid;
     print("userId : ${Utils.userId}");
+  }
+
+  //ユーザーデータを取得する
+  getUserData() async {
+    final document = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(Utils.userId)
+        .get();
+
+    Utils.greenLineRange = document["greenLineRange"];
+    Utils.timeToNotification = document["timeToNotification"];
+
+    if (FirebaseAuth.instance.currentUser!.isAnonymous == false) {
+      Utils.isAnonymous = false;
+    } else {
+      Utils.isAnonymous = true;
+    }
     Utils.showTutorial = false;
   }
 
   //平均データを取得する
-  getAverage() async {
+  getAverageData() async {
     //今日のデータリスト
     List dataListOfToday = [];
     List dataListOfTodayBadPosture = [];
@@ -165,32 +181,5 @@ class HomeModel extends ChangeNotifier {
     }
 
     notifyListeners();
-  }
-
-  //警告音が鳴るまでの時間を取得する
-  getTimeToNotification() async {
-    final document = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(Utils.userId)
-        .get();
-    final exists = document.exists;
-    if (exists == true) {
-      print("ログイン履歴あり");
-      Utils.timeToNotification = document["timeToNotification"];
-      print("設定秒数 : ${Utils.timeToNotification}秒");
-    } else {
-      print("初回ログイン");
-    }
-  }
-
-  //ProviderIdを取得する
-  getProviderId() {
-    if (FirebaseAuth.instance.currentUser!.isAnonymous == false) {
-      // print("googleUser");
-      Utils.isAnonymous = "isNotAnonymous";
-    } else {
-      // print("anonymousUser");
-      Utils.isAnonymous = "isAnonymous";
-    }
   }
 }

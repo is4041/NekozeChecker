@@ -33,6 +33,47 @@ class SettingModel extends ChangeNotifier {
     3600,
   ];
 
+  //白点がグリーンラインの枠外に出た時に警告するまでの時間を更新
+  upDateTimeToNotification() async {
+    await searchListIndex();
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty) {
+      return;
+    }
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(Utils.userId)
+        .update({
+      "timeToNotification": Utils.timeToNotification,
+    });
+    notifyListeners();
+  }
+
+  //設定している警告音が鳴るまでの秒数のインデックス番号を取得
+  searchListIndex() {
+    secondsList.asMap().forEach((int i, int seconds) {
+      if (seconds == Utils.timeToNotification) {
+        secondsListIndex = i;
+      }
+    });
+    notifyListeners();
+  }
+
+  //グリーンラインの間隔の調整内容を更新する
+  changeGreenLineRange() async {
+    notifyListeners();
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty) {
+      return;
+    }
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(Utils.userId)
+        .update({
+      "greenLineRange": Utils.greenLineRange,
+    });
+  }
+
   //匿名アカウントからgoogleアカウントへの更新
   googleSignIn() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -53,37 +94,6 @@ class SettingModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  //設定している警告音が鳴るまでの秒数のインデックス番号を取得
-  searchListIndex() {
-    secondsList.asMap().forEach((int i, int seconds) {
-      if (seconds == Utils.timeToNotification) {
-        secondsListIndex = i;
-        print('Index: $i' + ' 秒数: $seconds秒');
-      }
-    });
-    notifyListeners();
-  }
-
-  //姿勢不良になってから警告音が鳴るまでの時間を更新
-  upDateTimeToNotification() async {
-    await searchListIndex();
-    final connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty) {
-      return;
-    }
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(Utils.userId)
-        .update({
-      "timeToNotification": Utils.timeToNotification,
-    });
-    notifyListeners();
-  }
-
-  changeGreenLineRange() {
-    notifyListeners();
-  }
-
   //ログアウト（googleアカウントのみ）
   logout() async {
     final connectivityResult = await Connectivity().checkConnectivity();
@@ -91,6 +101,10 @@ class SettingModel extends ChangeNotifier {
       throw ("通信状態をご確認ください");
     }
     await FirebaseAuth.instance.signOut();
+    Utils.userId = "";
+    Utils.timeToNotification = 15;
+    Utils.greenLineRange = 0.45;
+    Utils.isAnonymous = false;
     Utils.percentOfAllGoodPostureSec = 0;
     Utils.percentOfTodayGoodPostureSec = 0;
     Utils.percentOfThisMonthGoodPostureSec = 0;
@@ -100,9 +114,6 @@ class SettingModel extends ChangeNotifier {
     Utils.overallMeasuringTime = 0;
     Utils.thisMonthMeasuringTime = 0;
     Utils.todayMeasuringTime = 0;
-    Utils.isAnonymous = "";
-    Utils.userId = "";
-    Utils.timeToNotification = 15;
   }
 
   //全データ削除（初期化）
@@ -125,6 +136,10 @@ class SettingModel extends ChangeNotifier {
         .delete();
     await FirebaseAuth.instance.currentUser!.delete();
     await FirebaseAuth.instance.signOut();
+    Utils.userId = "";
+    Utils.timeToNotification = 15;
+    Utils.greenLineRange = 0.45;
+    Utils.isAnonymous = false;
     Utils.percentOfAllGoodPostureSec = 0;
     Utils.percentOfTodayGoodPostureSec = 0;
     Utils.percentOfThisMonthGoodPostureSec = 0;
@@ -134,8 +149,5 @@ class SettingModel extends ChangeNotifier {
     Utils.overallMeasuringTime = 0;
     Utils.thisMonthMeasuringTime = 0;
     Utils.todayMeasuringTime = 0;
-    Utils.isAnonymous = "";
-    Utils.userId = "";
-    Utils.timeToNotification = 15;
   }
 }
