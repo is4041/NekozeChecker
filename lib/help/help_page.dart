@@ -85,7 +85,7 @@ class HelpPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "セットをしたらstartボタンを押してカメラを起動しましょう。",
+                      "セットをしたらSTARTボタンを押してカメラを起動しましょう。",
                       style: TextStyle(fontSize: 16),
                     ),
                     SizedBox(
@@ -184,9 +184,8 @@ class HelpPage extends StatelessWidget {
               SizedBox(
                 height: screenSize.height * 0.5,
                 width: double.infinity,
-                child: Image.network(
-                  "",
-                  // "https://images.unsplash.com/photo-1605171399454-f2a0e51b811b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1931&q=80",
+                child: Image.asset(
+                  "images/IMG_0215.jpg",
                   fit: BoxFit.cover,
                 ),
               ),

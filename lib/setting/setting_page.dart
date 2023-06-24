@@ -181,6 +181,7 @@ class SettingPage extends StatelessWidget {
                               flex: 10,
                               child: Slider(
                                 activeColor: Colors.greenAccent.shade700,
+                                inactiveColor: Colors.grey.withOpacity(0.3),
                                 value: Utils.greenLineRange,
                                 max: 0.47,
                                 min: 0.43,
