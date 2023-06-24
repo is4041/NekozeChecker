@@ -10,12 +10,6 @@ class HistoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
-    // final textStyleGreen = TextStyle(
-    //     fontSize: 14,
-    //     color: Colors
-    //         .greenAccent.shade700,
-    //     fontWeight:
-    //     FontWeight.w600);
     return ChangeNotifierProvider<HistoryModel>(
         create: (_) => HistoryModel()..fetchData(),
         builder: (context, snapshot) {
@@ -248,6 +242,17 @@ class HistoryPage extends StatelessWidget {
                                                       ),
                                                       SizedBox(
                                                         height: 30,
+                                                      ),
+                                                      Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Text(
+                                                          " 計測データ",
+                                                          style: TextStyle(
+                                                              fontSize: 12,
+                                                              color:
+                                                                  Colors.grey),
+                                                        ),
                                                       ),
                                                       Container(
                                                         padding: EdgeInsets.all(

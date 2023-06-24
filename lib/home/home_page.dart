@@ -222,7 +222,7 @@ class HomePage extends StatelessWidget {
                             }
                           },
                           child: Text(
-                            "start",
+                            "START",
                             style: TextStyle(
                               fontSize: 40,
                               color: Colors.greenAccent.shade700,
