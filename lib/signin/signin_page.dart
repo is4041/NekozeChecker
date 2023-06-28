@@ -26,10 +26,10 @@ class SignInPage extends StatelessWidget {
               //ログアウト時チュートリアルページ非表示（ログアウト後アプリ再起動時は表示）
               final List<Widget> pages = Utils.showTutorial == true
                   ? [
-                      PageOne(model, screenSize),
-                      PageTwo(model, screenSize),
-                      PageThree(model, screenSize),
-                      PageFour(model, screenSize),
+                      PageOne(screenSize),
+                      PageTwo(screenSize),
+                      PageThree(screenSize),
+                      PageFour(screenSize),
                       PageFive(model, screenSize),
                     ]
                   : [
@@ -150,257 +150,126 @@ class SignInPage extends StatelessWidget {
 }
 
 //1ページ目
-//ページの高さは合計でscreenSize.height * 0.85とする
 class PageOne extends StatelessWidget {
-  final SignInModel model;
-  // ignore: prefer_typing_uninitialized_variables
-  var screenSize;
-  PageOne(this.model, this.screenSize);
+  dynamic screenSize;
+  PageOne(this.screenSize);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: screenSize.height * 0.5,
-          width: double.infinity,
-          child: Image.asset(
-            "images/IMG_0196.JPG",
-            fit: BoxFit.cover,
+    return PageContents(
+      screenSize: screenSize,
+      image: "images/IMG_0196.JPG",
+      title: "Posture Correctionへようこそ",
+      description: Column(
+        children: [
+          Text(
+            "Posture Correctionはゲームやデスクワーク中の前傾姿勢による顔の位置変化をカメラでリアルタイムに読み取り姿勢不良を検知すると音で警告してくれるアプリです。",
+            style: TextStyle(fontSize: 16),
           ),
-        ),
-        SizedBox(
-          height: screenSize.height * 0.1,
-          width: double.infinity,
-          child: Center(
-            child: FittedBox(
-              child: Text(
-                "Posture Correctionへようこそ",
-                style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.greenAccent.shade700),
-              ),
-            ),
+          SizedBox(
+            height: 20,
           ),
-        ),
-        SizedBox(
-          height: screenSize.height * 0.25,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50.0),
-            child: Column(
-              children: [
-                Text(
-                  "Posture Correctionはゲームやデスクワーク中の前傾姿勢による顔の位置変化をカメラでリアルタイムに読み取り姿勢不良を検知すると音で警告してくれるアプリです。",
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  "使い方の説明は次ページから→",
-                  style: TextStyle(fontSize: 12),
-                ),
-              ],
-            ),
+          Text(
+            "使い方の説明は次ページから→",
+            style: TextStyle(fontSize: 12),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
 //2ページ目
-//ページの高さは合計でscreenSize.height * 0.85とする
 class PageTwo extends StatelessWidget {
-  final SignInModel model;
-  // ignore: prefer_typing_uninitialized_variables
-  var screenSize;
-  PageTwo(this.model, this.screenSize);
+  dynamic screenSize;
+  PageTwo(this.screenSize);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: screenSize.height * 0.5,
-          width: double.infinity,
-          child: Image.asset(
-            "images/IMG_0203.JPG",
-            fit: BoxFit.cover,
+    return PageContents(
+      screenSize: screenSize,
+      image: "images/IMG_0203.JPG",
+      title: "スマートフォンをセットする",
+      description: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "スマートフォンをモニター付近にセットしたら緑色のstartボタンを押してカメラを起動しましょう。",
+            style: TextStyle(fontSize: 16),
           ),
-        ),
-        SizedBox(
-          height: screenSize.height * 0.1,
-          width: double.infinity,
-          child: Center(
-            child: FittedBox(
-              child: Text(
-                "スマートフォンをセットする",
-                style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.greenAccent.shade700),
-              ),
-            ),
+          SizedBox(
+            height: 10,
           ),
-        ),
-        SizedBox(
-          height: screenSize.height * 0.25,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "スマートフォンをモニター付近にセットしたら緑色のstartボタンを押してカメラを起動しましょう。",
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  "※スマートフォン用スタンド（100均などで購入できます）を使うことをおすすめしますが立てかけられる物なら何でもOKです。例：コップ",
-                  style: TextStyle(fontSize: 12),
-                ),
-              ],
-            ),
+          Text(
+            "※スマートフォン用スタンド（100均などで購入できます）を使うことをおすすめしますが立てかけられる物なら何でもOKです。例：コップ",
+            style: TextStyle(fontSize: 12),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
 //3ページ目
-//ページの高さは合計でscreenSize.height * 0.85とする
 class PageThree extends StatelessWidget {
-  final SignInModel model;
-  // ignore: prefer_typing_uninitialized_variables
-  var screenSize;
-  PageThree(this.model, this.screenSize);
+  dynamic screenSize;
+  PageThree(this.screenSize);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Stack(
-          children: [
-            Center(
-              child: SizedBox(
-                height: screenSize.height * 0.5,
-                width: double.infinity,
-                child: Image.asset(
-                  "images/IMG_Unsplash.jpg",
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: screenSize.height * 0.1,
-          width: double.infinity,
-          child: Center(
-            child: FittedBox(
-              child: Text(
-                "白点の位置を調整する",
-                style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.greenAccent.shade700),
-              ),
-            ),
+    return PageContents(
+      screenSize: screenSize,
+      image: "images/IMG_Unsplash.jpg",
+      title: "白点の位置を調整する",
+      description: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "姿勢を正し、鼻の位置に表示される白点がグリーンラインの枠内に収まるように端末の位置を調整します。",
+            style: TextStyle(fontSize: 16),
           ),
-        ),
-        SizedBox(
-          height: screenSize.height * 0.25,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "姿勢を正し、鼻の位置に表示される白点がグリーンラインの枠内に収まるように端末の位置を調整します。",
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  "白点が枠内から出ないように姿勢を保ち続けましょう。",
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  "白点がグリーンラインの枠内から出たまま一定時間経つと警告音が鳴ります。",
-                  style: TextStyle(fontSize: 12),
-                ),
-              ],
-            ),
+          Text(
+            "白点が枠内から出ないように姿勢を保ち続けましょう。",
+            style: TextStyle(fontSize: 16),
           ),
-        ),
-      ],
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            "白点がグリーンラインの枠内から出たまま一定時間経つと警告音が鳴ります。",
+            style: TextStyle(fontSize: 12),
+          ),
+        ],
+      ),
     );
   }
 }
 
 //4ページ目
-//ページの高さは合計でscreenSize.height * 0.85とする
 class PageFour extends StatelessWidget {
-  final SignInModel model;
-  // ignore: prefer_typing_uninitialized_variables
-  var screenSize;
-  PageFour(this.model, this.screenSize);
+  dynamic screenSize;
+  PageFour(this.screenSize);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: screenSize.height * 0.5,
-          width: double.infinity,
-          child: Image.asset(
-            "images/IMG_0215.jpg",
-            fit: BoxFit.cover,
-          ),
-        ),
-        SizedBox(
-          height: screenSize.height * 0.1,
-          width: double.infinity,
-          child: Center(
-            child: FittedBox(
-              child: Text(
-                " 使わなくなった端末を活用できます ",
-                style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.greenAccent.shade700),
-              ),
-            ),
-          ),
-        ),
-        SizedBox(
-          height: screenSize.height * 0.25,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50.0),
-            child: Text(
-              "使わなくなった端末はありませんか？\nカメラ使用中は他の操作ができないためPC作業中やゲーム中にも今お使いの端末でメール返信などの操作をされる方は当アプリを、使わなくなった端末にインストールして使用するということもできます。",
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-        ),
-      ],
+    return PageContents(
+      screenSize: screenSize,
+      image: "images/IMG_0215.jpg",
+      title: " 使わなくなった端末を活用できます ",
+      description: Text(
+        "使わなくなった端末はありませんか？\nカメラ使用中は他の操作ができないためPC作業中やゲーム中にも今お使いの端末でメール返信などの操作をされる方は当アプリを、使わなくなった端末にインストールして使用するということもできます。",
+        style: TextStyle(fontSize: 16),
+      ),
     );
   }
 }
 
 //5ページ目
-//ページの高さは合計でscreenSize.height * 0.85とする
 class PageFive extends StatelessWidget {
   final SignInModel model;
   // ignore: prefer_typing_uninitialized_variables
-  var screenSize;
+  dynamic screenSize;
   PageFive(this.model, this.screenSize);
 
   @override
@@ -529,6 +398,58 @@ class PageFive extends StatelessWidget {
               }
               model.endLoading();
             }),
+      ],
+    );
+  }
+}
+
+//ページの構成内容
+class PageContents extends StatelessWidget {
+  PageContents(
+      {required this.screenSize,
+      required this.image,
+      required this.title,
+      required this.description});
+
+  dynamic screenSize;
+  String image;
+  String title;
+  Widget description;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: screenSize.height * 0.5,
+          width: double.infinity,
+          child: Image.asset(
+            image,
+            fit: BoxFit.cover,
+          ),
+        ),
+        SizedBox(
+          height: screenSize.height * 0.1,
+          width: double.infinity,
+          child: Center(
+            child: FittedBox(
+              child: Text(
+                title,
+                style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.greenAccent.shade700),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: screenSize.height * 0.25,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50.0),
+            child: description,
+          ),
+        ),
       ],
     );
   }

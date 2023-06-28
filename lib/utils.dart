@@ -5,13 +5,13 @@ class Utils {
   static bool isAnonymous = false;
   static bool darkScreenMode = false;
   static bool showTutorial = true;
-  static double percentOfAllGoodPostureSec = 0;
+  static int totalMeasurementTimeForTheDay = 0;
+  static int totalMeasurementTimeForThisMonth = 0;
+  static int totalMeasurementTimeForAll = 0;
   static double percentOfTodayGoodPostureSec = 0;
   static double percentOfThisMonthGoodPostureSec = 0;
+  static double percentOfAllGoodPostureSec = 0;
   static int numberOfMeasurementsToday = 0;
   static int numberOfMeasurementsThisMonth = 0;
-  static int numberOfOverallMeasurements = 0;
-  static int overallMeasuringTime = 0;
-  static int thisMonthMeasuringTime = 0;
-  static int todayMeasuringTime = 0;
+  static int numberOfAllMeasurements = 0;
 }
