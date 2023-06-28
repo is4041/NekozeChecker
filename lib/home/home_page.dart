@@ -19,17 +19,17 @@ class HomePage extends StatelessWidget {
           return Scaffold(
             body: Consumer<HomeModel>(builder: (context, model, child) {
               //全体の計測時間を時・分・秒に変換
-              int hour = Utils.overallMeasuringTime ~/ 60 ~/ 60;
-              int minute = Utils.overallMeasuringTime ~/ 60 % 60;
-              int second = Utils.overallMeasuringTime % 60;
+              int hour = Utils.totalMeasurementTimeForAll ~/ 60 ~/ 60;
+              int minute = Utils.totalMeasurementTimeForAll ~/ 60 % 60;
+              int second = Utils.totalMeasurementTimeForAll % 60;
               //当月の計測時間を時・分・秒に変換
-              int hour2 = Utils.thisMonthMeasuringTime ~/ 60 ~/ 60;
-              int minute2 = Utils.thisMonthMeasuringTime ~/ 60 % 60;
-              int second2 = Utils.thisMonthMeasuringTime % 60;
+              int hour2 = Utils.totalMeasurementTimeForThisMonth ~/ 60 ~/ 60;
+              int minute2 = Utils.totalMeasurementTimeForThisMonth ~/ 60 % 60;
+              int second2 = Utils.totalMeasurementTimeForThisMonth % 60;
               //今日の計測時間を時・分・秒に変換
-              int hour3 = Utils.todayMeasuringTime ~/ 60 ~/ 60;
-              int minute3 = Utils.todayMeasuringTime ~/ 60 % 60;
-              int second3 = Utils.todayMeasuringTime % 60;
+              int hour3 = Utils.totalMeasurementTimeForTheDay ~/ 60 ~/ 60;
+              int minute3 = Utils.totalMeasurementTimeForTheDay ~/ 60 % 60;
+              int second3 = Utils.totalMeasurementTimeForTheDay % 60;
               return Stack(children: [
                 SizedBox(
                   height: double.infinity,
@@ -270,7 +270,7 @@ class HomePage extends StatelessWidget {
                                   PieGraph(
                                       dataOfDate: "総合データ",
                                       numberOfMeasurements:
-                                          Utils.numberOfOverallMeasurements,
+                                          Utils.numberOfAllMeasurements,
                                       hour: hour,
                                       minute: minute,
                                       second: second,

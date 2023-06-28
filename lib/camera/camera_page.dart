@@ -358,6 +358,10 @@ class Painter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) async {
     final paint = Paint();
+    final aboveLineStart = Offset(0, size.height * Utils.greenLineRange);
+    final aboveLineEnd = Offset(size.width, size.height * Utils.greenLineRange);
+    final belowLineStart = Offset(0, size.height / 2);
+    final belowLineEnd = Offset(size.width, size.height / 2);
     if (params!.isNotEmpty) {
       //okボタン押下で計測を開始（ボタン押下前からの計測開始をを阻止する）
       if (isCounting! && !detection) {
@@ -381,30 +385,22 @@ class Painter extends CustomPainter {
                 Offset(size.width * k["x"], size.height * k["y"]), 5, paint);
             //noseのkeypointsが下側の緑線以下にあるとき
             if (k["part"] == "nose" && k["y"] > 0.5) {
-              paint.color = Colors.red;
-              paint.strokeWidth = 3;
-              canvas.drawLine(Offset(0, size.height / 2),
-                  Offset(size.width, size.height / 2), paint);
               paint.color = Colors.greenAccent;
               paint.strokeWidth = 3;
-              canvas.drawLine(
-                  Offset(0, size.height * Utils.greenLineRange),
-                  Offset(size.width, size.height * Utils.greenLineRange),
-                  paint);
+              canvas.drawLine(aboveLineStart, aboveLineEnd, paint);
+              paint.color = Colors.red;
+              paint.strokeWidth = 3;
+              canvas.drawLine(belowLineStart, belowLineEnd, paint);
               beyond = true;
               notificationSound(beyond);
               //noseのkeypointsが上側の緑線以上にあるとき
             } else if (k["part"] == "nose" && k["y"] < Utils.greenLineRange) {
-              paint.color = Colors.greenAccent;
-              paint.strokeWidth = 3;
-              canvas.drawLine(Offset(0, size.height / 2),
-                  Offset(size.width, size.height / 2), paint);
               paint.color = Colors.yellowAccent;
               paint.strokeWidth = 3;
-              canvas.drawLine(
-                  Offset(0, size.height * Utils.greenLineRange),
-                  Offset(size.width, size.height * Utils.greenLineRange),
-                  paint);
+              canvas.drawLine(aboveLineStart, aboveLineEnd, paint);
+              paint.color = Colors.greenAccent;
+              paint.strokeWidth = 3;
+              canvas.drawLine(belowLineStart, belowLineEnd, paint);
               beyond = true;
               notificationSound2(beyond);
               //noseのkeypointsが2本の緑線の間にあるとき
@@ -412,14 +408,10 @@ class Painter extends CustomPainter {
               hiddenOkButton = false;
               paint.color = Colors.greenAccent;
               paint.strokeWidth = 3;
-              canvas.drawLine(Offset(0, size.height / 2),
-                  Offset(size.width, size.height / 2), paint);
+              canvas.drawLine(aboveLineStart, aboveLineEnd, paint);
               paint.color = Colors.greenAccent;
               paint.strokeWidth = 3;
-              canvas.drawLine(
-                  Offset(0, size.height * Utils.greenLineRange),
-                  Offset(size.width, size.height * Utils.greenLineRange),
-                  paint);
+              canvas.drawLine(belowLineStart, belowLineEnd, paint);
               notificationSound(beyond);
             }
           }

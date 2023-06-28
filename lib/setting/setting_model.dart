@@ -110,10 +110,10 @@ class SettingModel extends ChangeNotifier {
     Utils.percentOfThisMonthGoodPostureSec = 0;
     Utils.numberOfMeasurementsToday = 0;
     Utils.numberOfMeasurementsThisMonth = 0;
-    Utils.numberOfOverallMeasurements = 0;
-    Utils.overallMeasuringTime = 0;
-    Utils.thisMonthMeasuringTime = 0;
-    Utils.todayMeasuringTime = 0;
+    Utils.numberOfAllMeasurements = 0;
+    Utils.totalMeasurementTimeForAll = 0;
+    Utils.totalMeasurementTimeForThisMonth = 0;
+    Utils.totalMeasurementTimeForTheDay = 0;
   }
 
   //全データ削除（初期化）
@@ -145,9 +145,9 @@ class SettingModel extends ChangeNotifier {
     Utils.percentOfThisMonthGoodPostureSec = 0;
     Utils.numberOfMeasurementsToday = 0;
     Utils.numberOfMeasurementsThisMonth = 0;
-    Utils.numberOfOverallMeasurements = 0;
-    Utils.overallMeasuringTime = 0;
-    Utils.thisMonthMeasuringTime = 0;
-    Utils.todayMeasuringTime = 0;
+    Utils.numberOfAllMeasurements = 0;
+    Utils.totalMeasurementTimeForAll = 0;
+    Utils.totalMeasurementTimeForThisMonth = 0;
+    Utils.totalMeasurementTimeForTheDay = 0;
   }
 }

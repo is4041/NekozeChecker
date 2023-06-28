@@ -273,7 +273,7 @@ class HistoryPage extends StatelessWidget {
                                                         ),
                                                         child: Column(
                                                           children: [
-                                                            //計測回数を表示
+                                                            //計測No.を表示
                                                             Row(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
@@ -317,51 +317,52 @@ class HistoryPage extends StatelessWidget {
                                                             Divider(),
                                                             //計測時間を表示
                                                             TimeValue(
-                                                                posture: "",
-                                                                hourValue:
-                                                                    measuringHourValue,
-                                                                minuteValue:
-                                                                    measuringMinuteValue,
-                                                                secondValue:
-                                                                    measuringSecondValue,
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        17,
-                                                                    color: Colors
-                                                                        .black)),
+                                                              posture: "",
+                                                              hourValue:
+                                                                  measuringHourValue,
+                                                              minuteValue:
+                                                                  measuringMinuteValue,
+                                                              secondValue:
+                                                                  measuringSecondValue,
+                                                              style: TextStyle(
+                                                                  fontSize: 17,
+                                                                  color: Colors
+                                                                      .black),
+                                                            ),
                                                             Divider(),
                                                             //計測時間（姿勢・良）を表示
                                                             TimeValue(
-                                                                posture:
-                                                                    "（姿勢・良）",
-                                                                hourValue:
-                                                                    goodHourValue,
-                                                                minuteValue:
-                                                                    goodMinuteValue,
-                                                                secondValue:
-                                                                    goodSecondValue,
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        17,
-                                                                    color: Colors
-                                                                        .greenAccent
-                                                                        .shade700)),
+                                                              posture: "（姿勢・良）",
+                                                              hourValue:
+                                                                  goodHourValue,
+                                                              minuteValue:
+                                                                  goodMinuteValue,
+                                                              secondValue:
+                                                                  goodSecondValue,
+                                                              style: TextStyle(
+                                                                fontSize: 17,
+                                                                color: Colors
+                                                                    .greenAccent
+                                                                    .shade700,
+                                                              ),
+                                                            ),
                                                             Divider(),
                                                             //計測時間（姿勢・不良）を表示
                                                             TimeValue(
-                                                                posture:
-                                                                    "（姿勢・不良）",
-                                                                hourValue:
-                                                                    badHourValue,
-                                                                minuteValue:
-                                                                    badMinuteValue,
-                                                                secondValue:
-                                                                    badSecondValue,
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        17,
-                                                                    color: Colors
-                                                                        .red)),
+                                                              posture:
+                                                                  "（姿勢・不良）",
+                                                              hourValue:
+                                                                  badHourValue,
+                                                              minuteValue:
+                                                                  badMinuteValue,
+                                                              secondValue:
+                                                                  badSecondValue,
+                                                              style: TextStyle(
+                                                                fontSize: 17,
+                                                                color:
+                                                                    Colors.red,
+                                                              ),
+                                                            ),
                                                             Divider(),
                                                             //警告音が鳴った回数を表示
                                                             Row(
@@ -373,8 +374,8 @@ class HistoryPage extends StatelessWidget {
                                                                   timeToNotification ~/
                                                                               60 >
                                                                           0
-                                                                      ? "警告音が鳴った回数（設定：${(timeToNotification / 60).floor()}分）"
-                                                                      : "警告音が鳴った回数（設定：$timeToNotification秒）",
+                                                                      ? "警告回数（設定：${(timeToNotification / 60).floor()}分）"
+                                                                      : "警告回数（設定：$timeToNotification秒）",
                                                                   style: style,
                                                                 ),
                                                                 Text(
@@ -608,6 +609,7 @@ class HistoryPage extends StatelessWidget {
                                                     "秒",
                                                     Colors
                                                         .greenAccent.shade700),
+                                                //無表示を防ぐ
                                                 Visibility(
                                                   visible:
                                                       measuringGoodPostureSec ==
@@ -736,15 +738,7 @@ class HistoryPage extends StatelessWidget {
   }
 }
 
-//履歴の時間の表示に関するウィジェット
-Widget timeValue(time, timeUnit, color) {
-  return Text(
-    time > 0 ? "$time$timeUnit" : "",
-    style: TextStyle(fontSize: 14, color: color, fontWeight: FontWeight.w600),
-  );
-}
-
-//履歴詳細の時間の表示に関するクラス
+//履歴詳細の時間の表示
 class TimeValue extends StatelessWidget {
   TimeValue({
     required this.posture,
@@ -782,4 +776,12 @@ class TimeValue extends StatelessWidget {
       ],
     );
   }
+}
+
+//履歴の時間の表示
+Widget timeValue(time, timeUnit, color) {
+  return Text(
+    time > 0 ? "$time$timeUnit" : "",
+    style: TextStyle(fontSize: 14, color: color, fontWeight: FontWeight.w600),
+  );
 }

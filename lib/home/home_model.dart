@@ -82,7 +82,7 @@ class HomeModel extends ChangeNotifier {
     Utils.showTutorial = false;
   }
 
-  //平均データを取得する
+  //平均データを計算する
   getAverageData() async {
     //今日のデータリスト
     List dataListOfToday = [];
@@ -103,83 +103,82 @@ class HomeModel extends ChangeNotifier {
         .get();
 
     for (var doc in snapshot.docs) {
-      //今日の計測時間(秒)をリストに追加
+      //今日の計測時間(秒)を取得してリストに追加
       if (doc.get("createdAt").toString().substring(0, 10) ==
           getDate.toString().substring(0, 10)) {
         dataListOfToday.add(doc.get("measuringSec"));
         dataListOfTodayBadPosture.add(doc.get("measuringBadPostureSec"));
       }
 
-      //今月の計測時間(秒)をリストに追加
+      //今月の計測時間(秒)を取得してリストに追加
       if (doc.get("createdAt").toString().substring(0, 7) ==
           getDate.toString().substring(0, 7)) {
         dataListOfThisMonth.add(doc.get("measuringSec"));
         dataListOfThisMonthBadPosture.add(doc.get("measuringBadPostureSec"));
       }
 
-      //全体の計測時間(秒)をリストに追加
+      //全ての計測時間(秒)を取得してリストに追加
       dataListOfAll.add(doc.get("measuringSec"));
       dataListOfAllBadPosture.add(doc.get("measuringBadPostureSec"));
     }
 
-    //今日の平均データを割り出す計算
-    if (dataListOfToday.isNotEmpty) {
-      final totalOfTodaySec = dataListOfToday.reduce((a, b) => a + b);
-      final totalOfTodayBadPostureSec =
-          dataListOfTodayBadPosture.reduce((a, b) => a + b);
-      final totalOfTodayGoodPostureSec =
-          totalOfTodaySec - totalOfTodayBadPostureSec;
-      Utils.percentOfTodayGoodPostureSec = double.parse(
-          ((totalOfTodayGoodPostureSec / totalOfTodaySec) * 100)
-              .toStringAsFixed(1));
+    //今日の計測データを集計する
+    calculate(
+      dateRange: '今日',
+      dataList: dataListOfToday,
+      dataListOfBadPosture: dataListOfTodayBadPosture,
+    );
 
-      Utils.numberOfMeasurementsToday = dataListOfToday.length;
-      Utils.todayMeasuringTime = totalOfTodaySec;
-    } else {
-      Utils.todayMeasuringTime = 0;
-      Utils.percentOfTodayGoodPostureSec = 0;
-      Utils.numberOfMeasurementsToday = 0;
-    }
+    //今月の計測データを集計する
+    calculate(
+      dateRange: '今月',
+      dataList: dataListOfThisMonth,
+      dataListOfBadPosture: dataListOfThisMonthBadPosture,
+    );
 
-    //今月の平均データを割り出す計算
-    if (dataListOfThisMonth.isNotEmpty) {
-      final totalOfThisMonthSec = dataListOfThisMonth.reduce((a, b) => a + b);
-      final totalOfThisMonthBadPostureSec =
-          dataListOfThisMonthBadPosture.reduce((a, b) => a + b);
-      final totalOfThisMonthGoodPostureSec =
-          totalOfThisMonthSec - totalOfThisMonthBadPostureSec;
-      final averageOfThisMonthGoodPostureSec = double.parse(
-          ((totalOfThisMonthGoodPostureSec / totalOfThisMonthSec) * 100)
-              .toStringAsFixed(1));
-
-      Utils.percentOfThisMonthGoodPostureSec = averageOfThisMonthGoodPostureSec;
-      Utils.numberOfMeasurementsThisMonth = dataListOfThisMonth.length;
-      Utils.thisMonthMeasuringTime = totalOfThisMonthSec;
-    } else {
-      Utils.thisMonthMeasuringTime = 0;
-      Utils.percentOfThisMonthGoodPostureSec = 0;
-      Utils.numberOfMeasurementsThisMonth = 0;
-    }
-
-    //全体平均のデータを割り出す計算
-    if (dataListOfAll.isNotEmpty) {
-      final totalOfAllSec = dataListOfAll.reduce((a, b) => a + b);
-      final totalOfAllBadPostureSec =
-          dataListOfAllBadPosture.reduce((a, b) => a + b);
-      final totalOfAllGoodPostureSec = totalOfAllSec - totalOfAllBadPostureSec;
-      final averageOfAllGoodPostureSec = double.parse(
-          ((totalOfAllGoodPostureSec / totalOfAllSec) * 100)
-              .toStringAsFixed(1));
-
-      Utils.percentOfAllGoodPostureSec = averageOfAllGoodPostureSec;
-      Utils.numberOfOverallMeasurements = dataListOfAll.length;
-      Utils.overallMeasuringTime = totalOfAllSec;
-    } else {
-      Utils.overallMeasuringTime = 0;
-      Utils.percentOfAllGoodPostureSec = 0;
-      Utils.numberOfOverallMeasurements = 0;
-    }
-
+    //全ての計測データを集計する
+    calculate(
+      dateRange: '全体',
+      dataList: dataListOfAll,
+      dataListOfBadPosture: dataListOfAllBadPosture,
+    );
     notifyListeners();
+  }
+
+  //計測データを集計する
+  calculate({
+    required String dateRange,
+    required List dataList,
+    required List dataListOfBadPosture,
+  }) {
+    int totalMeasurementTime = 0;
+    double percentOfGoodPostureSec = 0;
+    int numberOfMeasurements = 0;
+
+    if (dataList.isNotEmpty) {
+      totalMeasurementTime = dataList.reduce((a, b) => a + b);
+      final totalOfBadPostureSec = dataListOfBadPosture.reduce((a, b) => a + b);
+      final totalOfGoodPostureSec = totalMeasurementTime - totalOfBadPostureSec;
+
+      percentOfGoodPostureSec = double.parse(
+          ((totalOfGoodPostureSec / totalMeasurementTime) * 100)
+              .toStringAsFixed(1));
+
+      numberOfMeasurements = dataList.length;
+    }
+
+    if (dateRange == "今日") {
+      Utils.totalMeasurementTimeForTheDay = totalMeasurementTime;
+      Utils.percentOfTodayGoodPostureSec = percentOfGoodPostureSec;
+      Utils.numberOfMeasurementsToday = numberOfMeasurements;
+    } else if (dateRange == "今月") {
+      Utils.totalMeasurementTimeForThisMonth = totalMeasurementTime;
+      Utils.percentOfThisMonthGoodPostureSec = percentOfGoodPostureSec;
+      Utils.numberOfMeasurementsThisMonth = numberOfMeasurements;
+    } else if (dateRange == "全体") {
+      Utils.totalMeasurementTimeForAll = totalMeasurementTime;
+      Utils.percentOfAllGoodPostureSec = percentOfGoodPostureSec;
+      Utils.numberOfAllMeasurements = numberOfMeasurements;
+    }
   }
 }
