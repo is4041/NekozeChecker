@@ -15,22 +15,22 @@ class SettingModel extends ChangeNotifier {
 
   //警告音が鳴るまでの秒数リスト
   final secondsList = [
+    1,
+    2,
+    3,
+    4,
     5,
     10,
     15,
+    20,
+    25,
     30,
+    35,
+    40,
     45,
+    50,
+    55,
     60,
-    120,
-    180,
-    240,
-    300,
-    600,
-    1200,
-    1800,
-    2400,
-    3000,
-    3600,
   ];
 
   //白点がグリーンラインの枠外に出た時に警告するまでの時間を更新
@@ -76,6 +76,12 @@ class SettingModel extends ChangeNotifier {
 
   //匿名アカウントからgoogleアカウントへの更新
   googleSignIn() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      throw ("通信状態をご確認ください");
+    } else if (Utils.userId.isEmpty) {
+      throw ("ユーザー情報が取得できていません。一度ホームに戻ってから再度試してください");
+    }
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     // Obtain the auth details from the request
     final GoogleSignInAuthentication googleAuth =
@@ -99,6 +105,8 @@ class SettingModel extends ChangeNotifier {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
       throw ("通信状態をご確認ください");
+    } else if (Utils.userId.isEmpty) {
+      throw ("ユーザー情報が取得できていません。一度ホームに戻ってから再度試してください");
     }
     await FirebaseAuth.instance.signOut();
     Utils.userId = "";

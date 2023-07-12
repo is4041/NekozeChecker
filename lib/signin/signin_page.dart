@@ -163,15 +163,11 @@ class PageOne extends StatelessWidget {
       description: Column(
         children: [
           Text(
-            "Posture Correctionはゲームやデスクワーク中の前傾姿勢による顔の位置変化をカメラでリアルタイムに読み取り姿勢不良を検知すると音で警告してくれるアプリです。",
+            "Posture Correctionはゲームやデスクワーク中の前傾姿勢を検知すると警告音でお知らせします。",
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(
             height: 20,
-          ),
-          Text(
-            "使い方の説明は次ページから→",
-            style: TextStyle(fontSize: 12),
           ),
         ],
       ),
@@ -191,11 +187,9 @@ class PageTwo extends StatelessWidget {
       image: "images/IMG_0203.JPG",
       title: "スマートフォンをセットする",
       description: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "スマートフォンをモニター付近にセットしたら緑色のstartボタンを押してカメラを起動しましょう。",
+            "モニター付近にセットしたらstartボタンを押してカメラを起動しましょう。",
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(
@@ -223,18 +217,13 @@ class PageThree extends StatelessWidget {
       image: "images/IMG_Unsplash.jpg",
       title: "白点の位置を調整する",
       description: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "姿勢を正し、鼻の位置に表示される白点がグリーンラインの枠内に収まるように端末の位置を調整します。",
-            style: TextStyle(fontSize: 16),
-          ),
-          Text(
-            "白点が枠内から出ないように姿勢を保ち続けましょう。",
+            "姿勢を正し、鼻の位置に表示される白点がグリーンラインの枠内に収まるように端末の位置を調整します。\n白点が枠内から出ないように姿勢を維持しましょう。",
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(
-            height: 10,
+            height: 5,
           ),
           Text(
             "白点がグリーンラインの枠内から出たまま一定時間経つと警告音が鳴ります。",
@@ -257,9 +246,13 @@ class PageFour extends StatelessWidget {
       screenSize: screenSize,
       image: "images/IMG_0215.jpg",
       title: " 使わなくなった端末を活用できます ",
-      description: Text(
-        "使わなくなった端末はありませんか？\nカメラ使用中は他の操作ができないためPC作業中やゲーム中にも今お使いの端末でメール返信などの操作をされる方は当アプリを、使わなくなった端末にインストールして使用するということもできます。",
-        style: TextStyle(fontSize: 16),
+      description: Column(
+        children: [
+          Text(
+            "Googleでサインインすると複数の端末の間でデータの同期ができます。\n同期をすることで今お使いの端末をデータ閲覧用、使わなくなった端末をカメラ計測用にするということもできます。",
+            style: TextStyle(fontSize: 16),
+          ),
+        ],
       ),
     );
   }
@@ -420,12 +413,18 @@ class PageContents extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: screenSize.height * 0.5,
-          width: double.infinity,
-          child: Image.asset(
-            image,
-            fit: BoxFit.cover,
+        Padding(
+          padding: const EdgeInsets.only(top: 5.0, right: 5.0, left: 5.0),
+          child: Container(
+            height: screenSize.height * 0.5,
+            width: double.infinity,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(45),
+              child: Image.asset(
+                image,
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
         ),
         SizedBox(

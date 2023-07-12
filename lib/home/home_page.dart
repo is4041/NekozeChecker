@@ -59,7 +59,12 @@ class HomePage extends StatelessWidget {
                             },
                             child: Text("?"),
                             style: ElevatedButton.styleFrom(
-                                shape: CircleBorder(), primary: Colors.grey),
+                                side: BorderSide(
+                                  color: Colors.white, //色
+                                  width: 1, //太さ
+                                ),
+                                shape: CircleBorder(),
+                                primary: Colors.grey),
                           ),
                         ),
                       ),
@@ -112,7 +117,7 @@ class HomePage extends StatelessWidget {
                                                   ),
                                                 ],
                                               ),
-                                              Text("猫背通知回数：${value[3]}回"),
+                                              Text("警告回数：${value[3]}回"),
                                               SizedBox(
                                                 height: 10,
                                               ),
