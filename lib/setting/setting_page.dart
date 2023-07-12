@@ -115,9 +115,7 @@ class SettingPage extends StatelessWidget {
                                         itemExtent: 40,
                                         children: model.secondsList
                                             .map((seconds) => Center(
-                                                child: Text(seconds ~/ 60 > 0
-                                                    ? "${(seconds / 60).toInt()} 分"
-                                                    : "${seconds} 秒")))
+                                                child: Text("${seconds} 秒")))
                                             .toList(),
                                       ),
                                     ),
@@ -140,13 +138,12 @@ class SettingPage extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                Utils.timeToNotification ~/ 60 > 0
-                                    ? "${(Utils.timeToNotification / 60).toInt()} 分"
-                                    : "${Utils.timeToNotification} 秒",
-                                style: TextStyle(fontSize: 17),
-                              )),
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "${Utils.timeToNotification} 秒",
+                              style: TextStyle(fontSize: 17),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -260,14 +257,13 @@ class SettingPage extends StatelessWidget {
                                             ],
                                           );
                                         });
-                                  } else if (e.toString() !=
-                                      "Null check operator used on a null value") {
+                                  } else {
                                     await showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
                                           return CupertinoAlertDialog(
                                             title: Text("エラー"),
-                                            content: Text("通信状態をご確認ください"),
+                                            content: Text(e.toString()),
                                             actions: [
                                               TextButton(
                                                 child: const Text("OK"),
@@ -324,7 +320,8 @@ class SettingPage extends StatelessWidget {
                       height: 45,
                       width: double.infinity,
                       //googleログイン時
-                      child: Utils.isAnonymous == false
+                      child: Utils.isAnonymous == false &&
+                              Utils.userId.isNotEmpty
                           ? InkWell(
                               highlightColor: Colors.grey[400],
                               onTap: () async {
@@ -390,7 +387,7 @@ class SettingPage extends StatelessWidget {
                             ),
                     ),
                     SizedBox(
-                      height: 50,
+                      height: 200,
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0),
@@ -507,6 +504,9 @@ class SettingPage extends StatelessWidget {
                           ),
                         ),
                       ),
+                    ),
+                    SizedBox(
+                      height: 50,
                     ),
                   ],
                 ),

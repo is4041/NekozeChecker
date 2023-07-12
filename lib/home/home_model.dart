@@ -60,6 +60,11 @@ class HomeModel extends ChangeNotifier {
 
   //userIdを取得する
   getUserId() {
+    if (FirebaseAuth.instance.currentUser!.isAnonymous == false) {
+      Utils.isAnonymous = false;
+    } else {
+      Utils.isAnonymous = true;
+    }
     Utils.userId = FirebaseAuth.instance.currentUser!.uid;
     print("userId : ${Utils.userId}");
   }
@@ -74,11 +79,6 @@ class HomeModel extends ChangeNotifier {
     Utils.greenLineRange = document["greenLineRange"];
     Utils.timeToNotification = document["timeToNotification"];
 
-    if (FirebaseAuth.instance.currentUser!.isAnonymous == false) {
-      Utils.isAnonymous = false;
-    } else {
-      Utils.isAnonymous = true;
-    }
     Utils.showTutorial = false;
   }
 

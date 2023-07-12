@@ -27,16 +27,17 @@ class HelpPage extends StatelessWidget {
             ),
           ),
           Question(
-              question: "このアプリはオフラインでも利用できますか？",
-              answer: "はい。ですが、データの表示・保存・削除は出来ませんのでご注意ください。"),
-          Question(
-              question: "カメラ使用中に白点が誤作動を起こすのですが？",
+              question: "カメラ使用中に白点が正しく鼻の位置に表示されないのですが？",
               answer:
                   "逆光などでうまく顔の位置情報を取得できない場合があります。場所を変えたりカーテンを閉めるなどしてもう一度お試しください。"),
           Question(
-              question: "離席中に白点が誤作動を起こすのですが？",
+              question: "カメラ使用中に離席できるのですか？その場合計測データにズレが生じませんか？",
               answer:
-                  "センサーが画面に映っている荷物や衣服などを顔と誤認識する場合があります。荷物を退けるか、離席中だけ端末を違う方向に向けておくなど工夫してみてください。"),
+                  "離席できます。顔の位置情報が取得できていない時は『計測停止中』と表示され自動的にタイマーが停止するので計測データにズレが生じることはありません。"),
+          Question(
+              question: "離席中に『計測停止中』と表示されずに白点が誤作動を起こすのですが？",
+              answer:
+                  "画面に映っている荷物や衣服などを顔と誤認識する場合があります。荷物を退けるか、離席中だけ端末を違う方向に向けておくなど工夫してみてください。"),
           Question(
               question: "白点が上側のグリーンラインより上を越えた時間やその時に鳴った警告音の記録はどうなりますか？",
               answer: "時間は姿勢（良）として記録されますが、警告音は記録されません。"),
@@ -55,104 +56,53 @@ class HelpPage extends StatelessWidget {
             ),
           ),
           //チュートリアル
-          Column(
-            children: [
-              SizedBox(
-                height: screenSize.height * 0.1,
-                width: double.infinity,
-                child: Center(
-                  child: Text(
-                    "1.スマートフォンをセットする",
-                    style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.greenAccent.shade700),
-                  ),
+          PageContents(
+            screenSize: screenSize,
+            image: "images/IMG_0203.JPG",
+            title: "1.スマートフォンをセットする",
+            description: Column(
+              children: [
+                Text(
+                  "セットをしたらSTARTボタンを押してカメラを起動しましょう。",
+                  style: TextStyle(fontSize: 16),
                 ),
-              ),
-              SizedBox(
-                height: screenSize.height * 0.5,
-                width: double.infinity,
-                child: Image.asset(
-                  "images/IMG_0203.JPG",
-                  fit: BoxFit.cover,
+                SizedBox(
+                  height: 10,
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10, right: 50.0, left: 50),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "セットをしたらSTARTボタンを押してカメラを起動しましょう。",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      "※スマートフォン用スタンド（100均などで購入できます）を使うのがおすすめですが立てかけられる物なら何を使っても大丈夫です。",
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ],
+                Text(
+                  "※スマートフォン用スタンド（100均などで購入できます）を使うのがおすすめですが立てかけられる物なら何を使っても大丈夫です。",
+                  style: TextStyle(fontSize: 12),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           Divider(
             thickness: 1,
           ),
-          Column(
-            children: [
-              SizedBox(
-                height: screenSize.height * 0.1,
-                width: double.infinity,
-                child: Center(
-                  child: Text(
-                    "2.白点の位置を調整する",
-                    style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.greenAccent.shade700),
-                  ),
+          PageContents(
+            screenSize: screenSize,
+            image: "images/IMG_Unsplash.jpg",
+            title: "2.白点の位置を調整する",
+            description: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "姿勢を正し、鼻の位置に表示される白点がグリーンラインの枠内に収まるように端末の位置を調整します。",
+                  style: TextStyle(fontSize: 16),
                 ),
-              ),
-              SizedBox(
-                height: screenSize.height * 0.5,
-                width: double.infinity,
-                child: Image.asset(
-                  "images/IMG_Unsplash.jpg",
-                  fit: BoxFit.cover,
+                Text(
+                  "白点が枠内から出ないように姿勢を保ち続けましょう。",
+                  style: TextStyle(fontSize: 16),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10, right: 50.0, left: 50),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "姿勢を正し、鼻の位置に表示される白点がグリーンラインの枠内に収まるように端末の位置を調整します。",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    Text(
-                      "白点が枠内から出ないように姿勢を保ち続けましょう。",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      "白点がグリーンラインの枠内から出たまま一定時間経つと警告音が鳴ります。",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                  ],
+                Text(
+                  "白点がグリーンラインの枠内から出たまま一定時間経つと警告音が鳴ります。",
+                  style: TextStyle(fontSize: 16),
                 ),
-              ),
-            ],
+                SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
           ),
           Divider(
             thickness: 5,
@@ -164,42 +114,17 @@ class HelpPage extends StatelessWidget {
               style: TextStyle(fontSize: 20),
             ),
           ),
-          Column(
-            children: [
-              SizedBox(
-                height: screenSize.height * 0.1,
-                width: double.infinity,
-                child: Center(
-                  child: FittedBox(
-                    child: Text(
-                      " 使わなくなった端末を活用できます ",
-                      style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.greenAccent.shade700),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: screenSize.height * 0.5,
-                width: double.infinity,
-                child: Image.asset(
-                  "images/IMG_0215.jpg",
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 10, right: 50.0, left: 50),
-                child: Text(
-                  "使わなくなった端末はありませんか？\nカメラ使用中は他の操作ができないためPC作業中やゲーム中にも今お使いの端末でメール返信などの操作をされる方は当アプリを、使わなくなった端末にインストールして使用するということもできます。",
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-            ],
+          PageContents(
+            screenSize: screenSize,
+            image: "images/IMG_0215.jpg",
+            title: " 使わなくなった端末を活用できます ",
+            description: Text(
+              "使わなくなった端末はありませんか？\nGoogleでサインインすると複数の端末の間でデータの同期ができます。\n同期をすることで今お使いの端末をデータ閲覧用、使わなくなった端末をカメラ計測用にするということもできます。",
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+          SizedBox(
+            height: 10,
           )
         ],
       ),
@@ -267,6 +192,55 @@ class Question extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+//PageContentsクラス
+class PageContents extends StatelessWidget {
+  PageContents(
+      {required this.screenSize,
+      required this.image,
+      required this.title,
+      required this.description});
+
+  dynamic screenSize;
+  String image;
+  String title;
+  Widget description;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: screenSize.height * 0.1,
+          width: double.infinity,
+          child: Center(
+            child: FittedBox(
+              child: Text(
+                title,
+                style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.greenAccent.shade700),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: screenSize.height * 0.5,
+          width: double.infinity,
+          child: Image.asset(
+            image,
+            fit: BoxFit.cover,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 10, right: 50.0, left: 50),
+          child: description,
+        ),
+      ],
     );
   }
 }
