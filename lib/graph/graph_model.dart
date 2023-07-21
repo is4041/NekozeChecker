@@ -94,6 +94,8 @@ class GraphModel extends ChangeNotifier {
       }
     }
 
+    data = List.from(data.reversed);
+
     //グラフのy軸の最大値（最も計測時間が長いデータ）を取得
     for (int i = 0; i < spots1.length; i++) {
       double v = spots1[i].y;

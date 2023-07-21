@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -126,7 +128,7 @@ class SettingPage extends StatelessWidget {
                       },
                       //設定秒数を表示
                       child: Container(
-                        height: 45,
+                        height: 50,
                         width: double.infinity,
                         decoration: BoxDecoration(
                             border: Border(
@@ -160,7 +162,7 @@ class SettingPage extends StatelessWidget {
                     ),
                     //スライダーで範囲を調整
                     Container(
-                      height: 45,
+                      height: 50,
                       width: double.infinity,
                       decoration: BoxDecoration(
                           border: Border(
@@ -173,7 +175,37 @@ class SettingPage extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(flex: 1, child: Center(child: Text("広い"))),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    top: BorderSide(
+                                        color: Colors.greenAccent.shade700,
+                                        width: 2),
+                                    bottom: BorderSide(
+                                        color: Colors.greenAccent.shade700,
+                                        width: 2),
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.arrow_upward,
+                                        size: 16,
+                                      ),
+                                      Icon(
+                                        Icons.arrow_downward,
+                                        size: 16,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                             Expanded(
                               flex: 10,
                               child: Slider(
@@ -190,7 +222,42 @@ class SettingPage extends StatelessWidget {
                                 },
                               ),
                             ),
-                            Expanded(flex: 1, child: Center(child: Text("狭い"))),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                height: 50,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.arrow_downward,
+                                        size: 16,
+                                      ),
+                                      Container(
+                                        height: 14,
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            top: BorderSide(
+                                                color:
+                                                    Colors.greenAccent.shade700,
+                                                width: 2),
+                                            bottom: BorderSide(
+                                                color:
+                                                    Colors.greenAccent.shade700,
+                                                width: 2),
+                                          ),
+                                        ),
+                                      ),
+                                      Icon(
+                                        Icons.arrow_upward,
+                                        size: 16,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -213,7 +280,7 @@ class SettingPage extends StatelessWidget {
                             bottom: BorderSide(color: Colors.grey, width: 0.5),
                           ),
                           color: Colors.white),
-                      height: 45,
+                      height: 50,
                       width: double.infinity,
                       //匿名ログイン時
                       child: Utils.isAnonymous == true
@@ -317,7 +384,7 @@ class SettingPage extends StatelessWidget {
                             bottom: BorderSide(color: Colors.grey, width: 0.5),
                           ),
                           color: Colors.white),
-                      height: 45,
+                      height: 50,
                       width: double.infinity,
                       //googleログイン時
                       child: Utils.isAnonymous == false &&
@@ -387,7 +454,7 @@ class SettingPage extends StatelessWidget {
                             ),
                     ),
                     SizedBox(
-                      height: 200,
+                      height: 250,
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0),
@@ -404,7 +471,7 @@ class SettingPage extends StatelessWidget {
                             bottom: BorderSide(color: Colors.grey, width: 0.5),
                           ),
                           color: Colors.white),
-                      height: 45,
+                      height: 50,
                       width: double.infinity,
                       child: InkWell(
                         highlightColor: Colors.grey[400],

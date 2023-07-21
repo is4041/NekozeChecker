@@ -331,7 +331,7 @@ class GraphPage extends StatelessWidget {
                                                   CrossAxisAlignment.end,
                                               children: [
                                                 Text(
-                                                  "${index + 1}",
+                                                  "${model.data.length - index}",
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold),

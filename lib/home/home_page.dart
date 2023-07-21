@@ -78,7 +78,9 @@ class HomePage extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => CameraPage()));
-                            model.getAverageData();
+                            notificationTimer?.cancel();
+                            await audioPlayer?.stop();
+                            await model.getAverageData();
                             //カメラページから戻った際に計測結果をダイアログで表示
                             if (value != null) {
                               await showDialog(
@@ -226,12 +228,26 @@ class HomePage extends StatelessWidget {
                                   });
                             }
                           },
-                          child: Text(
-                            "START",
-                            style: TextStyle(
-                              fontSize: 40,
-                              color: Colors.greenAccent.shade700,
-                            ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "START",
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  color: Colors.greenAccent.shade700,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                              Text(
+                                "MEASUREMENT",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.greenAccent.shade700,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                              ),
+                            ],
                           ),
                           style: ElevatedButton.styleFrom(
                             primary: Colors.white,
@@ -239,7 +255,7 @@ class HomePage extends StatelessWidget {
                             elevation: 0,
                             shape: CircleBorder(),
                             side: BorderSide(
-                              width: 5,
+                              width: 1,
                               color: Colors.greenAccent.shade700,
                             ),
                           ),
