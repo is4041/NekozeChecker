@@ -27,6 +27,9 @@ class HelpPage extends StatelessWidget {
             ),
           ),
           Question(
+              question: "計測中に画面がスリープするのですが？",
+              answer: "端末のスリープ機能がONになっていませんか？スリープ機能をOFFにしてみてください。"),
+          Question(
               question: "カメラ使用中に白点が正しく鼻の位置に表示されないのですが？",
               answer:
                   "逆光などでうまく顔の位置情報を取得できない場合があります。場所を変えたりカーテンを閉めるなどしてもう一度お試しください。"),
@@ -41,10 +44,6 @@ class HelpPage extends StatelessWidget {
           Question(
               question: "白点が上側のグリーンラインより上を越えた時間やその時に鳴った警告音の記録はどうなりますか？",
               answer: "時間は姿勢（良）として記録されますが、警告音は記録されません。"),
-          Question(
-              question: "このアプリを利用する際は端末の自動スリープ機能はOFFにした方がいいですか？",
-              answer: "はい。スリープ状態になると計測が中断されますのでOFFにすることを強くおすすめします。"),
-
           Divider(
             thickness: 5,
           ),

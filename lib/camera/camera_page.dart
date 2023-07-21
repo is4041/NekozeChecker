@@ -187,6 +187,8 @@ class CameraPage extends StatelessWidget {
                                       );
                                     });
                               }
+
+                              notificationTimer?.cancel();
                               await audioPlayer?.stop();
 
                               Navigator.of(context).pop([
