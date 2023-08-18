@@ -1,13 +1,16 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
 
 import 'camera_model.dart';
+import 'coordinates.dart';
 
 final AudioCache _cache = AudioCache();
 AudioPlayer? audioPlayer;
@@ -48,7 +51,6 @@ class CameraPage extends StatelessWidget {
                         ),
                         const Text(
                           "端末の設定からこのアプリ（Posture correction）の\nカメラへのアクセスを許可してください。",
-                          // style: TextStyle(fontSize: 25),
                         ),
                         const SizedBox(
                           height: 20,
@@ -80,22 +82,23 @@ class CameraPage extends StatelessWidget {
               }
               return Stack(
                 children: [
-                  CustomPaint(
-                    foregroundPainter: Painter(model.recognition, model),
-                    child: Stack(
-                      children: [
-                        CameraPreview(
-                          model.controller!,
-                        ),
-                        if (model.darkMode == true)
-                          Container(
-                            height: double.infinity,
-                            width: double.infinity,
-                            color: Colors.black,
-                          ),
-                      ],
-                    ),
-                  ),
+                  // CustomPaint(
+                  //   foregroundPainter: Painter(model.recognition, model),
+                  //   child: Stack(
+                  //     children: [
+                  //       CameraPreview(
+                  //         model.controller!,
+                  //       ),
+                  //       if (model.darkMode == true)
+                  //         Container(
+                  //           height: double.infinity,
+                  //           width: double.infinity,
+                  //           color: Colors.black,
+                  //         ),
+                  //     ],
+                  //   ),
+                  // ),
+                  CameraPreview(model.controller!, child: model.customPaint),
                   //計測終了ボタン
                   Align(
                     alignment: const Alignment(0, 0.9),
@@ -235,7 +238,7 @@ class CameraPage extends StatelessWidget {
                             FittedBox(
                               child: ElevatedButton.icon(
                                 onPressed: () {
-                                  _cache.play("sounds/notification.mp3");
+                                  // _cache.play("sounds/notification.mp3");
                                 },
                                 label: Text("音量チェック"),
                                 icon: Icon(Icons.volume_up),
@@ -443,7 +446,7 @@ class Painter extends CustomPainter {
 
       notificationTimer =
           Timer(Duration(seconds: Utils.timeToNotification), () async {
-        audioPlayer = await _cache.loop("sounds/notification.mp3");
+        // audioPlayer = await _cache.loop("sounds/notification.mp3");
         if (isCounting!) {
           model.counter();
         }
@@ -465,7 +468,7 @@ class Painter extends CustomPainter {
 
       notificationTimer =
           Timer(Duration(seconds: Utils.timeToNotification), () async {
-        audioPlayer = await _cache.loop("sounds/notification.mp3");
+        // audioPlayer = await _cache.loop("sounds/notification.mp3");
       });
     } else if (!beyond && soundLoop!) {
       soundLoop = false;
@@ -477,4 +480,153 @@ class Painter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+//todo 修正ver
+class PosePainter extends CustomPainter {
+  PosePainter(
+    this.poses,
+    this.imageSize,
+    this.rotation,
+    this.cameraLensDirection,
+    // this.model,
+  );
+
+  final List<Pose> poses;
+  final Size imageSize;
+  final InputImageRotation rotation;
+  final CameraLensDirection cameraLensDirection;
+  // final CameraModel model;
+  bool beyond = false;
+  double a = 20;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final aboveLineStart = Offset(0, size.height * Utils.greenLineRange);
+    final aboveLineEnd = Offset(size.width, size.height * Utils.greenLineRange);
+    final belowLineStart = Offset(0, size.height / 2);
+    final belowLineEnd = Offset(size.width, size.height / 2);
+    final paint = Paint()..color = Colors.white;
+
+    if (poses.isNotEmpty) {
+      if (isCounting! && !detection) {
+        detection = true;
+        // model.startTimer();
+        print("Timer Start");
+      }
+      for (final pose in poses) {
+        pose.landmarks.forEach((_, landmark) {
+          if (landmark.type.toString() == "PoseLandmarkType.nose") {
+            //noseの位置に白点を表示
+            canvas.drawCircle(
+                Offset(
+                  translateX(
+                    landmark.x,
+                    size,
+                    imageSize,
+                    rotation,
+                    cameraLensDirection,
+                  ),
+                  translateY(
+                    landmark.y,
+                    size,
+                    imageSize,
+                    rotation,
+                    cameraLensDirection,
+                  ),
+                ),
+                5,
+                paint);
+            //noseのlandmarkが下側の緑線以下にあるとき
+            if (landmark.y > imageSize.height / 2) {
+              paint.color = Colors.greenAccent;
+              paint.strokeWidth = 3;
+              canvas.drawLine(aboveLineStart, aboveLineEnd, paint);
+              paint.color = Colors.red;
+              paint.strokeWidth = 3;
+              canvas.drawLine(belowLineStart, belowLineEnd, paint);
+              beyond = true;
+              notificationSound(beyond);
+              //noseのlandmarkが上側の緑線以上にあるとき
+            } else if (landmark.y < (imageSize.height / 2) - a) {
+              paint.color = Colors.yellowAccent;
+              paint.strokeWidth = 3;
+              canvas.drawLine(aboveLineStart, aboveLineEnd, paint);
+              paint.color = Colors.greenAccent;
+              paint.strokeWidth = 3;
+              canvas.drawLine(belowLineStart, belowLineEnd, paint);
+              beyond = true;
+              notificationSound2(beyond);
+              //noseのlandmarkが2本の緑線の間にあるとき
+            } else {
+              paint.color = Colors.greenAccent;
+              paint.strokeWidth = 3;
+              canvas.drawLine(aboveLineStart, aboveLineEnd, paint);
+              paint.color = Colors.greenAccent;
+              paint.strokeWidth = 3;
+              canvas.drawLine(belowLineStart, belowLineEnd, paint);
+              notificationSound(beyond);
+            }
+          }
+        });
+      }
+    } else if (detection || isAdjusting!) {
+      notificationTimer?.cancel();
+      detection = false;
+      soundLoop = false;
+      // model.stopTimer();
+      // model.stopBadPostureTimer();
+      print("Timer Stop");
+      // await audioPlayer?.stop();
+    }
+  }
+
+  //時間経過で警告音を鳴らす（noseのkeypointsが下側の緑線より下にある時）
+  notificationSound(bool beyond) async {
+    if (beyond && !soundLoop!) {
+      soundLoop = true;
+      hiddenOkButton = true;
+      if (isCounting!) {
+        // model.startBadPostureTimer();
+      }
+      print("${Utils.timeToNotification}秒後警告");
+
+      notificationTimer =
+          Timer(Duration(seconds: Utils.timeToNotification), () async {
+        // audioPlayer = await _cache.loop("sounds/notification.mp3");
+        if (isCounting!) {
+          // model.counter();
+        }
+      });
+    } else if (!beyond && soundLoop!) {
+      soundLoop = false;
+      hiddenOkButton = false;
+      // model.stopBadPostureTimer();
+      notificationTimer?.cancel();
+      await audioPlayer?.stop();
+    }
+  }
+
+  //時間経過で警告音を鳴らす（noseのkeypointsが上側の緑線より上にある時）
+  notificationSound2(bool beyond) async {
+    if (beyond && !soundLoop!) {
+      soundLoop = true;
+      hiddenOkButton = true;
+
+      notificationTimer =
+          Timer(Duration(seconds: Utils.timeToNotification), () async {
+        // audioPlayer = await _cache.loop("sounds/notification.mp3");
+      });
+    } else if (!beyond && soundLoop!) {
+      soundLoop = false;
+      hiddenOkButton = false;
+      notificationTimer?.cancel();
+      await audioPlayer?.stop();
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant PosePainter oldDelegate) {
+    return oldDelegate.imageSize != imageSize || oldDelegate.poses != poses;
+  }
 }
