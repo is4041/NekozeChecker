@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:camera/camera.dart';
@@ -12,15 +11,13 @@ import 'package:provider/provider.dart';
 import 'camera_model.dart';
 import 'coordinates.dart';
 
-final AudioCache _cache = AudioCache();
-AudioPlayer? audioPlayer;
+final audioPlayer = AudioPlayer();
 bool? soundLoop;
-bool detection = false;
+bool? detection;
 bool? isCounting;
 bool? isAdjusting;
 bool? hiddenOkButton;
 Timer? notificationTimer;
-bool darkScreenMode = false;
 
 class CameraPage extends StatelessWidget {
   @override
@@ -28,7 +25,8 @@ class CameraPage extends StatelessWidget {
     soundLoop = false;
     isAdjusting = true;
     isCounting = false;
-    hiddenOkButton = true;
+    detection = false;
+    hiddenOkButton = false;
     return ChangeNotifierProvider<CameraModel>(
         create: (_) => CameraModel()..getCamera(),
         builder: (context, snapshot) {
@@ -63,7 +61,7 @@ class CameraPage extends StatelessWidget {
                               Navigator.of(context).pop();
                             },
                             style: ElevatedButton.styleFrom(
-                                primary: Colors.greenAccent.shade700,
+                                backgroundColor: Colors.greenAccent.shade700,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 )),
@@ -82,23 +80,20 @@ class CameraPage extends StatelessWidget {
               }
               return Stack(
                 children: [
-                  // CustomPaint(
-                  //   foregroundPainter: Painter(model.recognition, model),
-                  //   child: Stack(
-                  //     children: [
-                  //       CameraPreview(
-                  //         model.controller!,
-                  //       ),
-                  //       if (model.darkMode == true)
-                  //         Container(
-                  //           height: double.infinity,
-                  //           width: double.infinity,
-                  //           color: Colors.black,
-                  //         ),
-                  //     ],
-                  //   ),
-                  // ),
-                  CameraPreview(model.controller!, child: model.customPaint),
+                  CustomPaint(
+                    foregroundPainter: model.posePainter,
+                    child: Stack(
+                      children: [
+                        CameraPreview(model.controller!),
+                        if (model.darkMode == true)
+                          Container(
+                            height: double.infinity,
+                            width: double.infinity,
+                            color: Colors.black,
+                          ),
+                      ],
+                    ),
+                  ),
                   //計測終了ボタン
                   Align(
                     alignment: const Alignment(0, 0.9),
@@ -107,7 +102,7 @@ class CameraPage extends StatelessWidget {
                       onPressed: model.measuringSec > 0
                           ? () async {
                               notificationTimer?.cancel();
-                              await audioPlayer?.stop();
+                              await audioPlayer.stop();
                               isCounting = false;
                               model.stopTimer();
                               model.stopBadPostureTimer();
@@ -192,7 +187,7 @@ class CameraPage extends StatelessWidget {
                               }
 
                               notificationTimer?.cancel();
-                              await audioPlayer?.stop();
+                              await audioPlayer.stop();
 
                               Navigator.of(context).pop([
                                 //計測時間
@@ -238,13 +233,14 @@ class CameraPage extends StatelessWidget {
                             FittedBox(
                               child: ElevatedButton.icon(
                                 onPressed: () {
-                                  // _cache.play("sounds/notification.mp3");
+                                  audioPlayer.play(
+                                      AssetSource("sounds/notification.mp3"));
                                 },
                                 label: Text("音量チェック"),
                                 icon: Icon(Icons.volume_up),
                                 style: ElevatedButton.styleFrom(
                                   elevation: 0,
-                                  primary: Colors.red,
+                                  backgroundColor: Colors.red,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(50),
                                   ),
@@ -267,7 +263,7 @@ class CameraPage extends StatelessWidget {
                                   child: ElevatedButton(
                                       onPressed: () async {
                                         notificationTimer?.cancel();
-                                        await audioPlayer?.stop();
+                                        await audioPlayer.stop();
                                         Navigator.of(context).pop();
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -275,7 +271,8 @@ class CameraPage extends StatelessWidget {
                                           borderRadius:
                                               BorderRadius.circular(50),
                                         ),
-                                        primary: Colors.greenAccent.shade700,
+                                        backgroundColor:
+                                            Colors.greenAccent.shade700,
                                       ),
                                       child: Text(
                                         "戻る",
@@ -286,26 +283,27 @@ class CameraPage extends StatelessWidget {
                                   height: 60,
                                   width: 100,
                                   child: ElevatedButton(
-                                      onPressed: hiddenOkButton == false
-                                          ? () {
-                                              isAdjusting = false;
-                                              isCounting = true;
-                                            }
-                                          : () {},
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                        ),
-                                        primary: hiddenOkButton == false
-                                            ? Colors.greenAccent.shade700
-                                            : Colors.greenAccent.shade700
-                                                .withOpacity(0.3),
+                                    onPressed: hiddenOkButton == false
+                                        ? () {
+                                            isAdjusting = false;
+                                            isCounting = true;
+                                            audioPlayer.stop();
+                                          }
+                                        : () {},
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(50),
                                       ),
-                                      child: Text(
-                                        "OK",
-                                        style: TextStyle(fontSize: 20),
-                                      )),
+                                      backgroundColor: hiddenOkButton == false
+                                          ? Colors.greenAccent.shade700
+                                          : Colors.greenAccent.shade700
+                                              .withOpacity(0.3),
+                                    ),
+                                    child: Text(
+                                      "OK",
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                  ),
                                 ),
                               ],
                             )
@@ -314,7 +312,7 @@ class CameraPage extends StatelessWidget {
                       ),
                     ),
                   //姿勢情報を取得できない場合に表示（離席中など）
-                  if (isCounting! && !detection)
+                  if (isCounting! && !detection!)
                     Center(
                       child: Text(
                         "計測停止中",
@@ -331,7 +329,7 @@ class CameraPage extends StatelessWidget {
                         },
                         style: ElevatedButton.styleFrom(
                             elevation: 0,
-                            primary: model.darkMode == false
+                            backgroundColor: model.darkMode == false
                                 ? Colors.black
                                 : Colors.white,
                             shape: RoundedRectangleBorder(
@@ -355,153 +353,19 @@ class CameraPage extends StatelessWidget {
 }
 
 //画面に緑線・赤線・白点を表示
-class Painter extends CustomPainter {
-  List? params;
-  final CameraModel model;
-  bool beyond = false;
-  Painter(this.params, this.model);
-  @override
-  void paint(Canvas canvas, Size size) async {
-    final paint = Paint();
-    final aboveLineStart = Offset(0, size.height * Utils.greenLineRange);
-    final aboveLineEnd = Offset(size.width, size.height * Utils.greenLineRange);
-    final belowLineStart = Offset(0, size.height / 2);
-    final belowLineEnd = Offset(size.width, size.height / 2);
-    if (params!.isNotEmpty) {
-      //okボタン押下で計測を開始（ボタン押下前からの計測開始をを阻止する）
-      if (isCounting! && !detection) {
-        detection = true;
-        model.startTimer();
-        print("Timer Start");
-      }
-      for (var re in params!) {
-        //nose（鼻）の位置情報を取得する
-        re["keypoints"].values.forEach((k) {
-          if (k["part"] == "nose"
-              // ||
-              // k["part"] == "leftEye" ||
-              // k["part"] == "rightEye" ||
-              // k["part"] == "leftEar" ||
-              // k["part"] == "rightEar"
-              ) {
-            //noseの位置に白点を表示
-            paint.color = Colors.white;
-            canvas.drawCircle(
-                Offset(size.width * k["x"], size.height * k["y"]), 5, paint);
-            //noseのkeypointsが下側の緑線以下にあるとき
-            if (k["part"] == "nose" && k["y"] > 0.5) {
-              paint.color = Colors.greenAccent;
-              paint.strokeWidth = 3;
-              canvas.drawLine(aboveLineStart, aboveLineEnd, paint);
-              paint.color = Colors.red;
-              paint.strokeWidth = 3;
-              canvas.drawLine(belowLineStart, belowLineEnd, paint);
-              beyond = true;
-              notificationSound(beyond);
-              //noseのkeypointsが上側の緑線以上にあるとき
-            } else if (k["part"] == "nose" && k["y"] < Utils.greenLineRange) {
-              paint.color = Colors.yellowAccent;
-              paint.strokeWidth = 3;
-              canvas.drawLine(aboveLineStart, aboveLineEnd, paint);
-              paint.color = Colors.greenAccent;
-              paint.strokeWidth = 3;
-              canvas.drawLine(belowLineStart, belowLineEnd, paint);
-              beyond = true;
-              notificationSound2(beyond);
-              //noseのkeypointsが2本の緑線の間にあるとき
-            } else if (!beyond) {
-              hiddenOkButton = false;
-              paint.color = Colors.greenAccent;
-              paint.strokeWidth = 3;
-              canvas.drawLine(aboveLineStart, aboveLineEnd, paint);
-              paint.color = Colors.greenAccent;
-              paint.strokeWidth = 3;
-              canvas.drawLine(belowLineStart, belowLineEnd, paint);
-              notificationSound(beyond);
-            }
-          }
-        });
-      }
-      //顔認識できない場合の処理
-    } else if (detection || isAdjusting!) {
-      notificationTimer?.cancel();
-      detection = false;
-      soundLoop = false;
-      model.stopTimer();
-      model.stopBadPostureTimer();
-      print("Timer Stop");
-      await audioPlayer?.stop();
-    }
-  }
-
-  //時間経過で警告音を鳴らす（noseのkeypointsが下側の緑線より下にある時）
-  notificationSound(bool beyond) async {
-    if (beyond && !soundLoop!) {
-      soundLoop = true;
-      hiddenOkButton = true;
-      if (isCounting!) {
-        model.startBadPostureTimer();
-      }
-      print("${Utils.timeToNotification}秒後警告");
-
-      notificationTimer =
-          Timer(Duration(seconds: Utils.timeToNotification), () async {
-        // audioPlayer = await _cache.loop("sounds/notification.mp3");
-        if (isCounting!) {
-          model.counter();
-        }
-      });
-    } else if (!beyond && soundLoop!) {
-      soundLoop = false;
-      hiddenOkButton = false;
-      model.stopBadPostureTimer();
-      notificationTimer?.cancel();
-      await audioPlayer?.stop();
-    }
-  }
-
-  //時間経過で警告音を鳴らす（noseのkeypointsが上側の緑線より上にある時）
-  notificationSound2(bool beyond) async {
-    if (beyond && !soundLoop!) {
-      soundLoop = true;
-      hiddenOkButton = true;
-
-      notificationTimer =
-          Timer(Duration(seconds: Utils.timeToNotification), () async {
-        // audioPlayer = await _cache.loop("sounds/notification.mp3");
-      });
-    } else if (!beyond && soundLoop!) {
-      soundLoop = false;
-      hiddenOkButton = false;
-      notificationTimer?.cancel();
-      await audioPlayer?.stop();
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-}
-
-//todo 修正ver
 class PosePainter extends CustomPainter {
-  PosePainter(
-    this.poses,
-    this.imageSize,
-    this.rotation,
-    this.cameraLensDirection,
-    // this.model,
-  );
+  PosePainter(this.poses, this.imageSize, this.rotation,
+      this.cameraLensDirection, this.cameraModel);
 
   final List<Pose> poses;
   final Size imageSize;
   final InputImageRotation rotation;
   final CameraLensDirection cameraLensDirection;
-  // final CameraModel model;
+  final CameraModel cameraModel;
   bool beyond = false;
-  double a = 20;
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paint(Canvas canvas, Size size) async {
     final aboveLineStart = Offset(0, size.height * Utils.greenLineRange);
     final aboveLineEnd = Offset(size.width, size.height * Utils.greenLineRange);
     final belowLineStart = Offset(0, size.height / 2);
@@ -509,9 +373,9 @@ class PosePainter extends CustomPainter {
     final paint = Paint()..color = Colors.white;
 
     if (poses.isNotEmpty) {
-      if (isCounting! && !detection) {
+      if (isCounting! && !detection!) {
         detection = true;
-        // model.startTimer();
+        cameraModel.startTimer();
         print("Timer Start");
       }
       for (final pose in poses) {
@@ -537,7 +401,7 @@ class PosePainter extends CustomPainter {
                 ),
                 5,
                 paint);
-            //noseのlandmarkが下側の緑線以下にあるとき
+            //PoseLandmarkType.noseが下側の緑線以下にあるとき
             if (landmark.y > imageSize.height / 2) {
               paint.color = Colors.greenAccent;
               paint.strokeWidth = 3;
@@ -547,8 +411,8 @@ class PosePainter extends CustomPainter {
               canvas.drawLine(belowLineStart, belowLineEnd, paint);
               beyond = true;
               notificationSound(beyond);
-              //noseのlandmarkが上側の緑線以上にあるとき
-            } else if (landmark.y < (imageSize.height / 2) - a) {
+              //PoseLandmarkType.noseが上側の緑線以上にあるとき
+            } else if (landmark.y < imageSize.height * Utils.greenLineRange) {
               paint.color = Colors.yellowAccent;
               paint.strokeWidth = 3;
               canvas.drawLine(aboveLineStart, aboveLineEnd, paint);
@@ -557,7 +421,7 @@ class PosePainter extends CustomPainter {
               canvas.drawLine(belowLineStart, belowLineEnd, paint);
               beyond = true;
               notificationSound2(beyond);
-              //noseのlandmarkが2本の緑線の間にあるとき
+              //PoseLandmarkType.noseが2本の緑線の間にあるとき
             } else {
               paint.color = Colors.greenAccent;
               paint.strokeWidth = 3;
@@ -570,44 +434,45 @@ class PosePainter extends CustomPainter {
           }
         });
       }
-    } else if (detection || isAdjusting!) {
+    } else if (detection! || isAdjusting!) {
       notificationTimer?.cancel();
       detection = false;
       soundLoop = false;
-      // model.stopTimer();
-      // model.stopBadPostureTimer();
+      cameraModel.stopTimer();
+      cameraModel.stopBadPostureTimer();
       print("Timer Stop");
-      // await audioPlayer?.stop();
+      await audioPlayer.stop();
     }
   }
 
-  //時間経過で警告音を鳴らす（noseのkeypointsが下側の緑線より下にある時）
+  //時間経過で警告音を鳴らす（PoseLandmarkType.noseが下側の緑線より下にある時）
   notificationSound(bool beyond) async {
     if (beyond && !soundLoop!) {
       soundLoop = true;
       hiddenOkButton = true;
       if (isCounting!) {
-        // model.startBadPostureTimer();
+        cameraModel.startBadPostureTimer();
       }
       print("${Utils.timeToNotification}秒後警告");
 
       notificationTimer =
           Timer(Duration(seconds: Utils.timeToNotification), () async {
-        // audioPlayer = await _cache.loop("sounds/notification.mp3");
+        audioPlayer.play(AssetSource("sounds/notification.mp3"));
+        audioPlayer.setReleaseMode(ReleaseMode.loop);
         if (isCounting!) {
-          // model.counter();
+          cameraModel.counter();
         }
       });
     } else if (!beyond && soundLoop!) {
       soundLoop = false;
       hiddenOkButton = false;
-      // model.stopBadPostureTimer();
+      cameraModel.stopBadPostureTimer();
       notificationTimer?.cancel();
-      await audioPlayer?.stop();
+      await audioPlayer.stop();
     }
   }
 
-  //時間経過で警告音を鳴らす（noseのkeypointsが上側の緑線より上にある時）
+  //時間経過で警告音を鳴らす（PoseLandmarkType.noseが上側の緑線より上にある時）
   notificationSound2(bool beyond) async {
     if (beyond && !soundLoop!) {
       soundLoop = true;
@@ -615,13 +480,14 @@ class PosePainter extends CustomPainter {
 
       notificationTimer =
           Timer(Duration(seconds: Utils.timeToNotification), () async {
-        // audioPlayer = await _cache.loop("sounds/notification.mp3");
+        audioPlayer.play(AssetSource("sounds/notification.mp3"));
+        audioPlayer.setReleaseMode(ReleaseMode.loop);
       });
     } else if (!beyond && soundLoop!) {
       soundLoop = false;
       hiddenOkButton = false;
       notificationTimer?.cancel();
-      await audioPlayer?.stop();
+      await audioPlayer.stop();
     }
   }
 

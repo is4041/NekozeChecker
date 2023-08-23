@@ -668,7 +668,8 @@ class GraphPage extends StatelessWidget {
           sideTitles: SideTitles(
             showTitles: true,
             //xの値が小さい時の値の少数化を防ぐ
-            getTitlesWidget: model.num < 10 ? bottomTitleWidgets : null,
+            //todo
+            // getTitlesWidget: model.num < 10 ? bottomTitleWidgets : null,
             interval: model.num < 10 ? 1 : null,
             reservedSize: 30,
           ),
