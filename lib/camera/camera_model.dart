@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'dart:ui';
+import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/material.dart';
+import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
+import 'package:posture_correction/camera/camera_page.dart';
 import 'package:posture_correction/utils.dart';
-import 'package:tflite/tflite.dart';
 import 'package:flutter/foundation.dart';
 
 class CameraModel extends ChangeNotifier {
@@ -19,6 +23,15 @@ class CameraModel extends ChangeNotifier {
   int notificationCounter = 0;
   bool darkMode = false;
 
+  bool _canProcess = true;
+  bool _isBusy = false;
+  var _cameraLensDirection = CameraLensDirection.back;
+
+  final PoseDetector _poseDetector =
+      PoseDetector(options: PoseDetectorOptions());
+
+  PosePainter? posePainter;
+
   //カメラ起動
   Future getCamera() async {
     cam = await availableCameras();
@@ -27,28 +40,67 @@ class CameraModel extends ChangeNotifier {
         imageFormatGroup: ImageFormatGroup.bgra8888);
     await controller?.initialize();
 
-    controller?.startImageStream((CameraImage img) async {
-      if (!isDetecting) {
-        isDetecting = true;
-        recognition = await poseEstimation(img);
-        isDetecting = false;
-        notifyListeners();
-      }
-    });
+    await controller?.startImageStream(processCameraImage);
+
     notifyListeners();
   }
 
-  //姿勢推定
-  static Future<List> poseEstimation(CameraImage img) async {
-    final results = await Tflite.runPoseNetOnFrame(
-      bytesList: img.planes.map((plane) {
-        return plane.bytes;
-      }).toList(),
-      imageHeight: img.height,
-      imageWidth: img.width,
-      numResults: 1,
+  void processCameraImage(CameraImage image) {
+    final inputImage = inputImageFromCameraImage(image);
+    if (inputImage == null) return;
+    processImage(inputImage);
+  }
+
+  InputImage? inputImageFromCameraImage(CameraImage image) {
+    if (controller == null) return null;
+
+    final camera = cam[1];
+    final sensorOrientation = camera.sensorOrientation;
+
+    InputImageRotation? rotation;
+    rotation = InputImageRotationValue.fromRawValue(sensorOrientation);
+
+    if (rotation == null) return null;
+
+    final format = InputImageFormatValue.fromRawValue(image.format.raw);
+
+    if (format == null ||
+        (Platform.isAndroid && format != InputImageFormat.nv21) ||
+        (Platform.isIOS && format != InputImageFormat.bgra8888)) return null;
+
+    if (image.planes.length != 1) return null;
+    final plane = image.planes.first;
+
+    // compose InputImage using bytes
+    return InputImage.fromBytes(
+      bytes: plane.bytes,
+      metadata: InputImageMetadata(
+        size: Size(image.width.toDouble(), image.height.toDouble()),
+        rotation: rotation, // used only in Android
+        format: format, // used only in iOS
+        bytesPerRow: plane.bytesPerRow, // used only in iOS
+      ),
     );
-    return results!;
+  }
+
+  //ポーズ推定
+  Future<void> processImage(InputImage inputImage) async {
+    if (!_canProcess) return;
+    if (_isBusy) return;
+    _isBusy = true;
+    final poses = await _poseDetector.processImage(inputImage);
+    if (inputImage.metadata?.size != null &&
+        inputImage.metadata?.rotation != null) {
+      posePainter = PosePainter(
+        poses,
+        inputImage.metadata!.size,
+        inputImage.metadata!.rotation,
+        _cameraLensDirection,
+        this,
+      );
+    }
+    _isBusy = false;
+    notifyListeners();
   }
 
   //タイマー（計測時間を計る）
@@ -67,7 +119,7 @@ class CameraModel extends ChangeNotifier {
   startBadPostureTimer() {
     badPostureTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       measuringBadPostureSec++;
-      print("猫背検知中...${measuringBadPostureSec}秒");
+      print("姿勢不良検知中...${measuringBadPostureSec}秒");
     });
   }
 
