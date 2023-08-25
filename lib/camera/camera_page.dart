@@ -28,7 +28,9 @@ class CameraPage extends StatelessWidget {
     detection = false;
     hiddenOkButton = false;
     return ChangeNotifierProvider<CameraModel>(
-        create: (_) => CameraModel()..getCamera(),
+        create: (_) => CameraModel()
+          ..getCamera()
+          ..autoSleepWakeUp(true),
         builder: (context, snapshot) {
           return Scaffold(
             body: Consumer<CameraModel>(builder: (context, model, child) {
@@ -189,6 +191,8 @@ class CameraPage extends StatelessWidget {
                               notificationTimer?.cancel();
                               await audioPlayer.stop();
 
+                              await model.autoSleepWakeUp(false);
+
                               Navigator.of(context).pop([
                                 //計測時間
                                 model.measuringSec,
@@ -264,6 +268,7 @@ class CameraPage extends StatelessWidget {
                                       onPressed: () async {
                                         notificationTimer?.cancel();
                                         await audioPlayer.stop();
+                                        await model.autoSleepWakeUp(false);
                                         Navigator.of(context).pop();
                                       },
                                       style: ElevatedButton.styleFrom(

@@ -6,27 +6,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-// import 'package:tflite/tflite.dart';
 
 import '../utils.dart';
 
 class HomeModel extends ChangeNotifier {
   final getDate = Timestamp.now().toDate();
 
-  //Tfliteをロードする
-  Future loadModel(BuildContext context) async {
-    // Tflite.close();
-    // try {
-    //   String? res;
-    //   res = await Tflite.loadModel(
-    //     model: "assets/posenet_mv1_075_float_from_checkpoints.tflite",
-    //   );
-    //   print(res);
-    // } on PlatformException {
-    //   print("Failed to load model");
-    // }
-
+  Future getData(BuildContext context) async {
     //オンラインとオフラインで処理を分ける
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {

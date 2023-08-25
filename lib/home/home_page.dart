@@ -14,7 +14,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     return ChangeNotifierProvider<HomeModel>(
-        create: (_) => HomeModel()..loadModel(context),
+        create: (_) => HomeModel()..getData(context),
         builder: (context, snapshot) {
           return Scaffold(
             body: Consumer<HomeModel>(builder: (context, model, child) {

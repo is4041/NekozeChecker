@@ -51,12 +51,13 @@ dependencies:
   fl_chart: ^0.63.0
   connectivity_plus: ^2.3.8
   transparent_image: ^2.0.1
+  wakelock_plus: ^1.1.1
 
   google_mlkit_pose_detection:
     path: ../google_ml_kit_flutter/packages/google_mlkit_pose_detection
 
 
-dev_dependencies:mlkit
+dev_dependencies:
   flutter_test:
     sdk: flutter
 
