@@ -18,11 +18,9 @@ class GraphModel extends ChangeNotifier {
 
   List<FlSpot> spots1 = [];
   List<FlSpot> spots2 = [];
-  double num = 1;
+  double num = 0;
   double max = 0;
-  bool extendHeight = true;
   bool extendWidth = false;
-  bool switchHeightIcon = false;
   bool switchWidthIcon = false;
   bool show = false;
   bool dotSwitch = false;
@@ -36,7 +34,7 @@ class GraphModel extends ChangeNotifier {
     spots1 = [];
     spots2 = [];
     data = [];
-    num = 1;
+    num = 0;
     max = 0;
     final getMonth =
         DateTime(now.year, now.month + monthCounter).toString().substring(0, 7);
@@ -73,12 +71,12 @@ class GraphModel extends ChangeNotifier {
         final measuringBadPostureSec = await doc.get("measuringBadPostureSec");
         final measuringGoodPostureSec = measuringSec - measuringBadPostureSec;
 
-        //処理が重くなるため計測秒数を ×1/100 で表示（グラフの値を1/100で表示）
-        final measuringSecValue = double.parse(measuringSec.toString()) / 100;
-        final measuringBadPostureSecValue =
-            double.parse(measuringBadPostureSec.toString()) / 100;
-        final flSpot1 = FlSpot(num, measuringSecValue);
-        final flSpot2 = FlSpot(num, measuringBadPostureSecValue);
+        //グラフを表示する際の処理負荷軽減のため計測秒数を 1/60 （分）に変換
+        final measuringMin = double.parse(measuringSec.toString()) / 60;
+        final measuringBadPostureMin =
+            double.parse(measuringBadPostureSec.toString()) / 60;
+        final flSpot1 = FlSpot(num + 1, measuringMin);
+        final flSpot2 = FlSpot(num + 1, measuringBadPostureMin);
 
         num++;
         spots1.add(flSpot1);
@@ -96,7 +94,7 @@ class GraphModel extends ChangeNotifier {
 
     data = List.from(data.reversed);
 
-    //グラフのy軸の最大値（最も計測時間が長いデータ）を取得
+    //グラフのy軸の最大値（計測時間が最も長いデータ）を取得
     for (int i = 0; i < spots1.length; i++) {
       double v = spots1[i].y;
       if (v > max) {

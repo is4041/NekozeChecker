@@ -10,6 +10,7 @@ import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import 'package:posture_correction/camera/camera_page.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:flutter/foundation.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class CameraModel extends ChangeNotifier {
   CameraController? controller;
@@ -101,6 +102,11 @@ class CameraModel extends ChangeNotifier {
     }
     _isBusy = false;
     notifyListeners();
+  }
+
+  //スリープ機能をON/OFFにする
+  autoSleepWakeUp(enable) {
+    WakelockPlus.toggle(enable: enable);
   }
 
   //タイマー（計測時間を計る）

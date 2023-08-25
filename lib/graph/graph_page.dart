@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:posture_correction/graph/graph_model.dart';
+import 'package:posture_correction/graph/title_Widget.dart';
 import 'package:provider/provider.dart';
 
 import 'dart:math';
@@ -16,9 +17,10 @@ class GraphPage extends StatelessWidget {
         builder: (context, snapshot) {
           return Consumer<GraphModel>(builder: (context, model, child) {
             final height = screenSize.height * 0.5;
-            final width = model.extendWidth && model.num * 50 > screenSize.width
-                ? model.num * 50
-                : screenSize.width;
+            final width =
+                model.extendWidth && (model.num + 1) * 50 > screenSize.width
+                    ? (model.num + 1) * 50
+                    : screenSize.width;
             return Stack(
               children: [
                 Scaffold(
@@ -399,137 +401,6 @@ class GraphPage extends StatelessWidget {
         });
   }
 
-  //不要な数値非表示のためのウィジェット
-  Widget hiddenTitleWidgets(double value, TitleMeta meta) {
-    Widget text;
-    switch (value.toInt()) {
-      default:
-        text = const Text(
-          '',
-        );
-        break;
-    }
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      child: text,
-    );
-  }
-
-  //x軸の値が8以下の時に適用
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.black,
-      fontSize: 14,
-    );
-    String text;
-    switch (value.toInt()) {
-      case 1:
-        text = '1';
-        break;
-      case 2:
-        text = '2';
-        break;
-      case 3:
-        text = '3';
-        break;
-      case 4:
-        text = '4';
-        break;
-      case 5:
-        text = '5';
-        break;
-      case 6:
-        text = '6';
-        break;
-      case 7:
-        text = '7';
-        break;
-      case 8:
-        text = '8';
-        break;
-      default:
-        return Container();
-    }
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: Text(
-        text,
-        style: style,
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
-
-  //グラフのy軸の値
-  Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.black,
-      fontSize: 15,
-    );
-    String text;
-    switch (value.toInt()) {
-      //処理の負荷軽減のためグラフの値は計測秒数の1/100で表示
-      case 36:
-        text = '1';
-        break;
-      case 72:
-        text = '2';
-        break;
-      case 108:
-        text = '3';
-        break;
-      case 144:
-        text = '4';
-        break;
-      case 180:
-        text = '5';
-        break;
-      case 216:
-        text = '6';
-        break;
-      case 252:
-        text = '7';
-        break;
-      case 288:
-        text = '8';
-        break;
-      case 324:
-        text = '9';
-        break;
-      case 360:
-        text = '10';
-        break;
-      case 432:
-        text = '12';
-        break;
-      case 504:
-        text = '14';
-        break;
-      case 576:
-        text = '16';
-        break;
-      case 648:
-        text = '18';
-        break;
-      case 720:
-        text = '20';
-        break;
-      case 792:
-        text = '22';
-        break;
-      case 864:
-        text = '24';
-        break;
-      default:
-        return Container();
-    }
-    return Text(
-      text,
-      style: style,
-      textAlign: TextAlign.center,
-    );
-  }
-
   //グラフのy軸の値のみを表示（stackの下に位置）
   LineChartData yAxisData(model) {
     return LineChartData(
@@ -551,15 +422,14 @@ class GraphPage extends StatelessWidget {
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            //y軸のインターバル
-            //処理の負荷軽減のためグラフの値は計測秒数の1/100で表示
-            interval: model.max <= 108
-                ? 18
-                : model.max <= 216
-                    ? 36
-                    : 72,
+            //y軸のインターバル（単位：分）
+            interval: model.max <= 180
+                ? 30
+                : model.max <= 360
+                    ? 60
+                    : 120,
             getTitlesWidget:
-                model.num > 1 ? leftTitleWidgets : hiddenTitleWidgets,
+                model.num > 0 ? leftTitleWidgets : hiddenTitleWidgets,
             reservedSize: 45,
           ),
         ),
@@ -568,18 +438,19 @@ class GraphPage extends StatelessWidget {
       borderData: FlBorderData(
         show: false,
       ),
-      //処理の負荷軽減のためグラフの値は計測秒数の1/100で表示
-      maxY: model.max <= 108
-          ? 108
-          : model.max <= 216
-              ? 216
-              : model.max <= 432
-                  ? 432
-                  : 864,
+      minY: 0,
+      //y軸の最大値（単位：分）
+      maxY: model.max <= 180
+          ? 180
+          : model.max <= 360
+              ? 360
+              : model.max <= 720
+                  ? 720
+                  : 1440,
     );
   }
 
-  //グラフのy軸の数値以外のすべてを表示（stackの上に位置）
+  //グラフのy軸の値以外のすべてを表示（stackの上に位置）
   LineChartData mainData(model) {
     return LineChartData(
       lineTouchData: LineTouchData(
@@ -592,55 +463,54 @@ class GraphPage extends StatelessWidget {
         drawVerticalLine: true,
         horizontalInterval: 1,
         verticalInterval: 1,
-        getDrawingHorizontalLine: model.max <= 108
-            //処理の負荷軽減のためグラフの値は計測秒数の1/100で表示
-            //3時間以内
+        getDrawingHorizontalLine: model.max <= 180
+            //最長計測時間が3時間以内の場合
             ? (value) {
-                if (value == 18 ||
-                    value == 36 ||
-                    value == 54 ||
-                    value == 72 ||
+                if (value == 30 ||
+                    value == 60 ||
                     value == 90 ||
-                    value == 108) {
+                    value == 120 ||
+                    value == 150 ||
+                    value == 180) {
                   return FlLine(color: Colors.grey, strokeWidth: 0.5);
                 } else {
                   return FlLine(color: Colors.transparent);
                 }
               }
-            //6時間以内
-            : model.max <= 216
+            //最長計測時間が6時間以内の場合
+            : model.max <= 360
                 ? (value) {
-                    if (value == 36 ||
-                        value == 72 ||
-                        value == 108 ||
-                        value == 144 ||
+                    if (value == 60 ||
+                        value == 120 ||
                         value == 180 ||
-                        value == 216 ||
-                        value == 252 ||
-                        value == 288 ||
-                        value == 324 ||
+                        value == 240 ||
+                        value == 300 ||
                         value == 360 ||
-                        value == 396 ||
-                        value == 432) {
+                        value == 420 ||
+                        value == 480 ||
+                        value == 540 ||
+                        value == 600 ||
+                        value == 660 ||
+                        value == 720) {
                       return FlLine(color: Colors.grey, strokeWidth: 0.5);
                     } else {
                       return FlLine(color: Colors.transparent);
                     }
                   }
-                //12時間以上
+                //最長計測時間が12時間以上の場合
                 : (value) {
-                    if (value == 72 ||
-                        value == 144 ||
-                        value == 216 ||
-                        value == 288 ||
+                    if (value == 120 ||
+                        value == 240 ||
                         value == 360 ||
-                        value == 432 ||
-                        value == 504 ||
-                        value == 576 ||
-                        value == 648 ||
+                        value == 480 ||
+                        value == 600 ||
                         value == 720 ||
-                        value == 792 ||
-                        value == 864) {
+                        value == 840 ||
+                        value == 960 ||
+                        value == 1080 ||
+                        value == 1200 ||
+                        value == 1320 ||
+                        value == 1440) {
                       return FlLine(color: Colors.grey, strokeWidth: 0.5);
                     } else {
                       return FlLine(color: Colors.transparent);
@@ -667,23 +537,43 @@ class GraphPage extends StatelessWidget {
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            //xの値が小さい時の値の少数化を防ぐ
-            //todo
-            // getTitlesWidget: model.num < 10 ? bottomTitleWidgets : null,
-            interval: model.num < 10 ? 1 : null,
+            //model.numの数量によって数値の表示を変える
+            getTitlesWidget: model.extendWidth == false
+                ? (model.num <= 10
+                    ? bottomTitleWidgets
+                    : model.num <= 20
+                        ? bottomTitleWidgets2
+                        : model.num <= 30
+                            ? bottomTitleWidgets3
+                            : model.num <= 40
+                                ? bottomTitleWidgets4
+                                : model.num <= 50
+                                    ? bottomTitleWidgets5
+                                    : defaultGetTitle)
+                : model.num <= 10
+                    ? bottomTitleWidgets
+                    : defaultGetTitle,
+            interval: model.extendWidth == false
+                ? (model.num <= 10
+                    ? 1
+                    : model.num <= 20
+                        ? 2
+                        : model.num <= 30
+                            ? 3
+                            : model.num <= 40
+                                ? 4
+                                : model.num <= 50
+                                    ? 5
+                                    : null)
+                : model.num <= 10
+                    ? 1
+                    : null,
             reservedSize: 30,
           ),
         ),
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            //y軸のインターバル
-            //処理の負荷軽減のためグラフの値は計測秒数の1/100で表示
-            interval: model.max <= 108
-                ? 18
-                : model.max <= 216
-                    ? 36
-                    : 72,
             getTitlesWidget: hiddenTitleWidgets,
             reservedSize: 45,
           ),
@@ -698,16 +588,16 @@ class GraphPage extends StatelessWidget {
         ),
       ),
       minX: 1,
-      maxX: model.num - 1,
+      maxX: model.num,
       minY: 0,
-      //処理の負荷軽減のためグラフの値は計測秒数の1/100で表示
-      maxY: model.max <= 108
-          ? 108
-          : model.max <= 216
-              ? 216
-              : model.max <= 432
-                  ? 432
-                  : 864,
+      //y軸の最大値（単位：分）
+      maxY: model.max <= 180
+          ? 180
+          : model.max <= 360
+              ? 360
+              : model.max <= 720
+                  ? 720
+                  : 1440,
       lineBarsData: [
         // 計測時間（姿勢・良）
         LineChartBarData(
@@ -716,7 +606,7 @@ class GraphPage extends StatelessWidget {
           isCurved: true,
           color: Colors.greenAccent.shade700,
           barWidth: 3,
-          dotData: FlDotData(show: model.num > 2 ? model.dotSwitch : true
+          dotData: FlDotData(show: model.num > 1 ? model.dotSwitch : true
               // show: true
               ),
         ),
@@ -727,7 +617,7 @@ class GraphPage extends StatelessWidget {
           isCurved: true,
           color: Colors.deepOrange,
           barWidth: 3,
-          dotData: FlDotData(show: model.num > 2 ? model.dotSwitch : true
+          dotData: FlDotData(show: model.num > 1 ? model.dotSwitch : true
               // show: true
               ),
           belowBarData: BarAreaData(

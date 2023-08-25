@@ -27,9 +27,6 @@ class HelpPage extends StatelessWidget {
             ),
           ),
           Question(
-              question: "計測中に画面がスリープするのですが？",
-              answer: "端末のスリープ機能がONになっていませんか？スリープ機能をOFFにしてみてください。"),
-          Question(
               question: "カメラ使用中に白点が正しく鼻の位置に表示されないのですが？",
               answer:
                   "逆光などでうまく顔の位置情報を取得できない場合があります。場所を変えたりカーテンを閉めるなどしてもう一度お試しください。"),
