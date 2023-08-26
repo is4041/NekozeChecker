@@ -1,4 +1,3 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +63,7 @@ class HomePage extends StatelessWidget {
                                   width: 1, //太さ
                                 ),
                                 shape: CircleBorder(),
-                                primary: Colors.grey),
+                                backgroundColor: Colors.grey),
                           ),
                         ),
                       ),
@@ -78,11 +77,10 @@ class HomePage extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => CameraPage()));
-                            notificationTimer?.cancel();
-                            await audioPlayer.stop();
-                            await model.getAverageData();
+                            model.audioStop();
                             //カメラページから戻った際に計測結果をダイアログで表示
                             if (value != null) {
+                              await model.getAverageData();
                               await showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
@@ -250,8 +248,8 @@ class HomePage extends StatelessWidget {
                             ],
                           ),
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
-                            onPrimary: Colors.greenAccent.shade700,
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.greenAccent.shade700,
                             elevation: 0,
                             shape: CircleBorder(),
                             side: BorderSide(

@@ -14,27 +14,24 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 class CameraModel extends ChangeNotifier {
   CameraController? controller;
+  PosePainter? posePainter;
   List<CameraDescription> cam = [];
-  bool isDetecting = false;
-  List recognition = [];
   Timer? timer;
   Timer? badPostureTimer;
   num measuringSec = 0;
   num measuringBadPostureSec = 0;
   int notificationCounter = 0;
   bool darkMode = false;
-
   bool _canProcess = true;
   bool _isBusy = false;
+
   var _cameraLensDirection = CameraLensDirection.back;
 
   final PoseDetector _poseDetector =
       PoseDetector(options: PoseDetectorOptions());
 
-  PosePainter? posePainter;
-
   //カメラ起動
-  Future getCamera() async {
+  Future<void> getCamera() async {
     cam = await availableCameras();
     final lastCamera = cam.last;
     controller = CameraController(lastCamera, ResolutionPreset.high,
@@ -105,41 +102,41 @@ class CameraModel extends ChangeNotifier {
   }
 
   //スリープ機能をON/OFFにする
-  autoSleepWakeUp(enable) {
+  void autoSleepWakeUp(enable) {
     WakelockPlus.toggle(enable: enable);
   }
 
   //タイマー（計測時間を計る）
-  startTimer() {
+  void startTimer() {
     timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       measuringSec++;
       print("${measuringSec}秒");
     });
   }
 
-  stopTimer() {
+  void stopTimer() {
     timer?.cancel();
   }
 
   //タイマー（姿勢不良の間だけ作動）
-  startBadPostureTimer() {
+  void startBadPostureTimer() {
     badPostureTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       measuringBadPostureSec++;
       print("姿勢不良検知中...${measuringBadPostureSec}秒");
     });
   }
 
-  stopBadPostureTimer() {
+  void stopBadPostureTimer() {
     badPostureTimer?.cancel();
   }
 
   //警告音が鳴った回数をカウント
-  counter() {
+  void counter() {
     notificationCounter++;
   }
 
   //firebaseにデータを保存
-  addData() async {
+  Future<void> addData() async {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty) {
       throw ("通信状態をご確認ください");
@@ -159,11 +156,11 @@ class CameraModel extends ChangeNotifier {
       "timeToNotification": Utils.timeToNotification,
     });
 
-    await lastMeasuredOn();
+    lastMeasuredOn();
   }
 
   //最終計測日を更新
-  lastMeasuredOn() async {
+  void lastMeasuredOn() async {
     await FirebaseFirestore.instance
         .collection("users")
         .doc(Utils.userId)
@@ -173,7 +170,7 @@ class CameraModel extends ChangeNotifier {
   }
 
   //ダークモード切り替え
-  getScreenMode() async {
+  void getScreenMode() {
     if (darkMode == false) {
       darkMode = true;
     } else {

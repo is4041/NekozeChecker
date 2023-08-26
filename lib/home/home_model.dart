@@ -6,32 +6,32 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:posture_correction/camera/camera_page.dart';
 
 import '../utils.dart';
 
 class HomeModel extends ChangeNotifier {
   final getDate = Timestamp.now().toDate();
 
-  Future getData(BuildContext context) async {
+  Future<void> getData(BuildContext context) async {
     //オンラインとオフラインで処理を分ける
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
       await showConnectError(context);
     } else {
-      await getUserId();
       await getUserData();
       await getAverageData();
     }
   }
 
   //オフライン時に表示
-  showConnectError(context) async {
+  Future showConnectError(context) async {
     return await showDialog(
         context: context,
         builder: (BuildContext context) {
           return CupertinoAlertDialog(
             title: Text("エラー"),
-            content: Text("通信状態をご確認ください"),
+            content: Text("通信状態をご確認ください\n通信状態に問題がない場合はアプリを再起動してください"),
             actions: [
               TextButton(
                 child: const Text("OK"),
@@ -44,19 +44,17 @@ class HomeModel extends ChangeNotifier {
         });
   }
 
-  //userIdを取得する
-  getUserId() {
-    if (FirebaseAuth.instance.currentUser!.isAnonymous == false) {
+  //ユーザーデータを取得する
+  Future<void> getUserData() async {
+    final user = await FirebaseAuth.instance.currentUser!;
+    if (user.isAnonymous == false) {
       Utils.isAnonymous = false;
     } else {
       Utils.isAnonymous = true;
     }
-    Utils.userId = FirebaseAuth.instance.currentUser!.uid;
+    Utils.userId = user.uid;
     print("userId : ${Utils.userId}");
-  }
 
-  //ユーザーデータを取得する
-  getUserData() async {
     final document = await FirebaseFirestore.instance
         .collection("users")
         .doc(Utils.userId)
@@ -69,7 +67,7 @@ class HomeModel extends ChangeNotifier {
   }
 
   //平均データを計算する
-  getAverageData() async {
+  Future<void> getAverageData() async {
     //今日のデータリスト
     List dataListOfToday = [];
     List dataListOfTodayBadPosture = [];
@@ -132,7 +130,7 @@ class HomeModel extends ChangeNotifier {
   }
 
   //計測データを集計する
-  calculate({
+  void calculate({
     required String dateRange,
     required List dataList,
     required List dataListOfBadPosture,
@@ -166,5 +164,13 @@ class HomeModel extends ChangeNotifier {
       Utils.percentOfAllGoodPostureSec = percentOfGoodPostureSec;
       Utils.numberOfAllMeasurements = numberOfMeasurements;
     }
+  }
+
+  //画面遷移後に通知音がなるのを防ぐ
+  void audioStop() {
+    Future.delayed(Duration(seconds: 1), () {
+      notificationTimer?.cancel();
+      audioPlayer.stop();
+    });
   }
 }

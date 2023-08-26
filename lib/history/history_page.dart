@@ -127,8 +127,9 @@ class HistoryPage extends StatelessWidget {
                                                               .styleFrom(
                                                                   shape:
                                                                       CircleBorder(),
-                                                                  primary: Colors
-                                                                      .white),
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .white),
                                                         ),
                                                       ),
                                                     ),
@@ -232,9 +233,10 @@ class HistoryPage extends StatelessWidget {
                                                               style:
                                                                   ElevatedButton
                                                                       .styleFrom(
-                                                                primary: Colors
-                                                                    .greenAccent
-                                                                    .shade700,
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .greenAccent
+                                                                        .shade700,
                                                               ),
                                                               child:
                                                                   Text("保存")),

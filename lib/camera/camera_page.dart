@@ -104,7 +104,7 @@ class CameraPage extends StatelessWidget {
                       onPressed: model.measuringSec > 0
                           ? () async {
                               notificationTimer?.cancel();
-                              await audioPlayer.stop();
+                              audioPlayer.stop();
                               isCounting = false;
                               model.stopTimer();
                               model.stopBadPostureTimer();
@@ -189,9 +189,9 @@ class CameraPage extends StatelessWidget {
                               }
 
                               notificationTimer?.cancel();
-                              await audioPlayer.stop();
+                              audioPlayer.stop();
 
-                              await model.autoSleepWakeUp(false);
+                              model.autoSleepWakeUp(false);
 
                               Navigator.of(context).pop([
                                 //計測時間
@@ -265,10 +265,10 @@ class CameraPage extends StatelessWidget {
                                   height: 60,
                                   width: 100,
                                   child: ElevatedButton(
-                                      onPressed: () async {
+                                      onPressed: () {
                                         notificationTimer?.cancel();
-                                        await audioPlayer.stop();
-                                        await model.autoSleepWakeUp(false);
+                                        audioPlayer.stop();
+                                        model.autoSleepWakeUp(false);
                                         Navigator.of(context).pop();
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -370,7 +370,7 @@ class PosePainter extends CustomPainter {
   bool beyond = false;
 
   @override
-  void paint(Canvas canvas, Size size) async {
+  void paint(Canvas canvas, Size size) {
     final aboveLineStart = Offset(0, size.height * Utils.greenLineRange);
     final aboveLineEnd = Offset(size.width, size.height * Utils.greenLineRange);
     final belowLineStart = Offset(0, size.height / 2);
@@ -446,12 +446,12 @@ class PosePainter extends CustomPainter {
       cameraModel.stopTimer();
       cameraModel.stopBadPostureTimer();
       print("Timer Stop");
-      await audioPlayer.stop();
+      audioPlayer.stop();
     }
   }
 
   //時間経過で警告音を鳴らす（PoseLandmarkType.noseが下側の緑線より下にある時）
-  notificationSound(bool beyond) async {
+  notificationSound(bool beyond) {
     if (beyond && !soundLoop!) {
       soundLoop = true;
       hiddenOkButton = true;
@@ -461,7 +461,7 @@ class PosePainter extends CustomPainter {
       print("${Utils.timeToNotification}秒後警告");
 
       notificationTimer =
-          Timer(Duration(seconds: Utils.timeToNotification), () async {
+          Timer(Duration(seconds: Utils.timeToNotification), () {
         audioPlayer.play(AssetSource("sounds/notification.mp3"));
         audioPlayer.setReleaseMode(ReleaseMode.loop);
         if (isCounting!) {
@@ -473,18 +473,18 @@ class PosePainter extends CustomPainter {
       hiddenOkButton = false;
       cameraModel.stopBadPostureTimer();
       notificationTimer?.cancel();
-      await audioPlayer.stop();
+      audioPlayer.stop();
     }
   }
 
   //時間経過で警告音を鳴らす（PoseLandmarkType.noseが上側の緑線より上にある時）
-  notificationSound2(bool beyond) async {
+  notificationSound2(bool beyond) {
     if (beyond && !soundLoop!) {
       soundLoop = true;
       hiddenOkButton = true;
 
       notificationTimer =
-          Timer(Duration(seconds: Utils.timeToNotification), () async {
+          Timer(Duration(seconds: Utils.timeToNotification), () {
         audioPlayer.play(AssetSource("sounds/notification.mp3"));
         audioPlayer.setReleaseMode(ReleaseMode.loop);
       });
@@ -492,7 +492,7 @@ class PosePainter extends CustomPainter {
       soundLoop = false;
       hiddenOkButton = false;
       notificationTimer?.cancel();
-      await audioPlayer.stop();
+      audioPlayer.stop();
     }
   }
 

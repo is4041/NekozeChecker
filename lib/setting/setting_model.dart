@@ -34,8 +34,8 @@ class SettingModel extends ChangeNotifier {
   ];
 
   //白点がグリーンラインの枠外に出た時に警告するまでの時間を更新
-  upDateTimeToNotification() async {
-    await searchListIndex();
+  Future<void> upDateTimeToNotification() async {
+    searchListIndex();
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty) {
       return;
@@ -50,7 +50,7 @@ class SettingModel extends ChangeNotifier {
   }
 
   //設定している警告音が鳴るまでの秒数のインデックス番号を取得
-  searchListIndex() {
+  void searchListIndex() {
     secondsList.asMap().forEach((int i, int seconds) {
       if (seconds == Utils.timeToNotification) {
         secondsListIndex = i;
@@ -60,7 +60,7 @@ class SettingModel extends ChangeNotifier {
   }
 
   //グリーンラインの間隔の調整内容を更新する
-  changeGreenLineRange() async {
+  Future<void> changeGreenLineRange() async {
     notifyListeners();
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty) {
@@ -75,7 +75,7 @@ class SettingModel extends ChangeNotifier {
   }
 
   //匿名アカウントからgoogleアカウントへの更新
-  googleSignIn() async {
+  Future<void> googleSignIn() async {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
       throw ("通信状態をご確認ください");
@@ -101,7 +101,7 @@ class SettingModel extends ChangeNotifier {
   }
 
   //ログアウト（googleアカウントのみ）
-  logout() async {
+  Future<void> logout() async {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
       throw ("通信状態をご確認ください");
@@ -125,7 +125,7 @@ class SettingModel extends ChangeNotifier {
   }
 
   //全データ削除（初期化）
-  deleteUser() async {
+  Future<void> deleteUser() async {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
       throw ("通信状態をご確認ください");
