@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:posture_correction/graph/graph_model.dart';
-import 'package:posture_correction/graph/title_Widget.dart';
+import 'package:posture_correction/graph/title_widget.dart';
 import 'package:provider/provider.dart';
 
 import 'dart:math';
@@ -196,7 +196,8 @@ class GraphPage extends StatelessWidget {
                                     child: Icon(Icons.arrow_back_ios_outlined)),
                                 style: ElevatedButton.styleFrom(
                                     shape: CircleBorder(),
-                                    primary: Colors.greenAccent.shade700),
+                                    backgroundColor:
+                                        Colors.greenAccent.shade700),
                               ),
                             ),
                           ),

@@ -26,7 +26,7 @@ class GraphModel extends ChangeNotifier {
   bool dotSwitch = false;
 
   //当月の計測データをfirebaseから取得、配列化する
-  Future fetchGraphData() async {
+  Future<void> fetchGraphData() async {
     List arrayOfMonthMeasuringSec = [];
     List arrayOfMonthMeasuringBadSec = [];
     rateOfGoodPosture = 0;
@@ -106,19 +106,19 @@ class GraphModel extends ChangeNotifier {
   }
 
   //先月のデータを取得
-  void getLastMonthData() async {
+  void getLastMonthData() {
     monthCounter--;
     fetchGraphData();
   }
 
   //翌月のデータを取得（当月のデータ表示中は押下不可）
-  void getNextMonthData() async {
+  void getNextMonthData() {
     monthCounter++;
     fetchGraphData();
   }
 
   //グラフの表示変更
-  changes() {
+  void changes() {
     if (extendWidth == false) {
       extendWidth = true;
       switchWidthIcon = true;

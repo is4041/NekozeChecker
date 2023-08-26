@@ -7,15 +7,11 @@ import '../data.dart';
 
 class HistoryModel extends ChangeNotifier {
   bool isLoading = false;
-  bool showSwitch = false;
-  List<Map<String, String>> data5 = [];
   List<Data>? data = [];
   String memo = "";
-  dynamic totalAverage;
-  dynamic dailyAverage;
 
   //データ取得
-  Future fetchData() async {
+  Future<void> fetchData() async {
     isLoading = true;
     final QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('users')
@@ -32,7 +28,7 @@ class HistoryModel extends ChangeNotifier {
   }
 
   //メモをアップデート
-  Future updateTitle(Data data) async {
+  Future<void> updateTitle(Data data) async {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
       return;
@@ -52,7 +48,7 @@ class HistoryModel extends ChangeNotifier {
   }
 
   //計測データ消去
-  Future delete(Data data) async {
+  Future<void> delete(Data data) async {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
       throw ("通信状態をご確認ください");
