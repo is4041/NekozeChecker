@@ -360,20 +360,20 @@ class GraphPage extends StatelessWidget {
                                         ),
                                       ),
                                       //計測時間
-                                      TimeValue(
+                                      _TimeValue(
                                           hourValue: hourValue,
                                           minuteValue: minuteValue,
                                           secondValue: secondValue,
                                           color: Colors.black),
                                       //計測時間（姿勢・良）
-                                      TimeValue(
+                                      _TimeValue(
                                         hourValue: goodHourValue,
                                         minuteValue: goodMinuteValue,
                                         secondValue: goodSecondValue,
                                         color: Colors.greenAccent.shade700,
                                       ),
                                       //計測時間（姿勢・不良）
-                                      TimeValue(
+                                      _TimeValue(
                                           hourValue: badHourValue,
                                           minuteValue: badMinuteValue,
                                           secondValue: badSecondValue,
@@ -636,8 +636,8 @@ class GraphPage extends StatelessWidget {
   }
 }
 
-class TimeValue extends StatelessWidget {
-  TimeValue({
+class _TimeValue extends StatelessWidget {
+  _TimeValue({
     required this.hourValue,
     required this.minuteValue,
     required this.secondValue,

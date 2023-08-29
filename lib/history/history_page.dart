@@ -318,7 +318,7 @@ class HistoryPage extends StatelessWidget {
                                                             ),
                                                             Divider(),
                                                             //計測時間を表示
-                                                            TimeValue(
+                                                            _TimeValue(
                                                               posture: "",
                                                               hourValue:
                                                                   measuringHourValue,
@@ -333,7 +333,7 @@ class HistoryPage extends StatelessWidget {
                                                             ),
                                                             Divider(),
                                                             //計測時間（姿勢・良）を表示
-                                                            TimeValue(
+                                                            _TimeValue(
                                                               posture: "（姿勢・良）",
                                                               hourValue:
                                                                   goodHourValue,
@@ -350,7 +350,7 @@ class HistoryPage extends StatelessWidget {
                                                             ),
                                                             Divider(),
                                                             //計測時間（姿勢・不良）を表示
-                                                            TimeValue(
+                                                            _TimeValue(
                                                               posture:
                                                                   "（姿勢・不良）",
                                                               hourValue:
@@ -558,12 +558,18 @@ class HistoryPage extends StatelessWidget {
                                             ),
                                             Wrap(
                                               children: [
-                                                timeValue(measuringHourValue,
-                                                    "時間", Colors.black),
-                                                timeValue(measuringMinuteValue,
-                                                    "分", Colors.black),
-                                                timeValue(measuringSecondValue,
-                                                    "秒", Colors.black),
+                                                _TimeValue2(
+                                                    time: measuringHourValue,
+                                                    timeUnit: "時間",
+                                                    color: Colors.black),
+                                                _TimeValue2(
+                                                    time: measuringMinuteValue,
+                                                    timeUnit: "分",
+                                                    color: Colors.black),
+                                                _TimeValue2(
+                                                    time: measuringSecondValue,
+                                                    timeUnit: "秒",
+                                                    color: Colors.black),
                                               ],
                                             ),
                                           ],
@@ -596,20 +602,20 @@ class HistoryPage extends StatelessWidget {
                                             ),
                                             Wrap(
                                               children: [
-                                                timeValue(
-                                                    goodHourValue,
-                                                    "時間",
-                                                    Colors
+                                                _TimeValue2(
+                                                    time: goodHourValue,
+                                                    timeUnit: "時間",
+                                                    color: Colors
                                                         .greenAccent.shade700),
-                                                timeValue(
-                                                    goodMinuteValue,
-                                                    "分",
-                                                    Colors
+                                                _TimeValue2(
+                                                    time: goodMinuteValue,
+                                                    timeUnit: "分",
+                                                    color: Colors
                                                         .greenAccent.shade700),
-                                                timeValue(
-                                                    goodSecondValue,
-                                                    "秒",
-                                                    Colors
+                                                _TimeValue2(
+                                                    time: goodSecondValue,
+                                                    timeUnit: "秒",
+                                                    color: Colors
                                                         .greenAccent.shade700),
                                                 //無表示を防ぐ
                                                 Visibility(
@@ -741,8 +747,8 @@ class HistoryPage extends StatelessWidget {
 }
 
 //履歴詳細の時間の表示
-class TimeValue extends StatelessWidget {
-  TimeValue({
+class _TimeValue extends StatelessWidget {
+  _TimeValue({
     required this.posture,
     required this.hourValue,
     required this.minuteValue,
@@ -781,9 +787,21 @@ class TimeValue extends StatelessWidget {
 }
 
 //履歴の時間の表示
-Widget timeValue(time, timeUnit, color) {
-  return Text(
-    time > 0 ? "$time$timeUnit" : "",
-    style: TextStyle(fontSize: 14, color: color, fontWeight: FontWeight.w600),
-  );
+class _TimeValue2 extends StatelessWidget {
+  _TimeValue2({
+    required this.time,
+    required this.timeUnit,
+    required this.color,
+  });
+  final num time;
+  final String timeUnit;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      time > 0 ? "$time$timeUnit" : "",
+      style: TextStyle(fontSize: 14, color: color, fontWeight: FontWeight.w600),
+    );
+  }
 }

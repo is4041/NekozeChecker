@@ -26,14 +26,14 @@ class SignInPage extends StatelessWidget {
               //ログアウト時チュートリアルページ非表示（ログアウト後アプリ再起動時は表示）
               final List<Widget> pages = Utils.showTutorial == true
                   ? [
-                      PageOne(screenSize),
-                      PageTwo(screenSize),
-                      PageThree(screenSize),
-                      PageFour(screenSize),
-                      PageFive(model, screenSize),
+                      _PageOne(screenSize),
+                      _PageTwo(screenSize),
+                      _PageThree(screenSize),
+                      _PageFour(screenSize),
+                      _PageFive(model, screenSize),
                     ]
                   : [
-                      PageFive(model, screenSize),
+                      _PageFive(model, screenSize),
                     ];
               return Stack(children: [
                 StreamBuilder<User?>(
@@ -150,13 +150,14 @@ class SignInPage extends StatelessWidget {
 }
 
 //1ページ目
-class PageOne extends StatelessWidget {
-  dynamic screenSize;
-  PageOne(this.screenSize);
+class _PageOne extends StatelessWidget {
+  _PageOne(this.screenSize);
+
+  final screenSize;
 
   @override
   Widget build(BuildContext context) {
-    return PageContents(
+    return _PageContents(
       screenSize: screenSize,
       image: "images/IMG_0196.JPG",
       title: "Posture Correctionへようこそ",
@@ -176,13 +177,14 @@ class PageOne extends StatelessWidget {
 }
 
 //2ページ目
-class PageTwo extends StatelessWidget {
-  dynamic screenSize;
-  PageTwo(this.screenSize);
+class _PageTwo extends StatelessWidget {
+  _PageTwo(this.screenSize);
+
+  final screenSize;
 
   @override
   Widget build(BuildContext context) {
-    return PageContents(
+    return _PageContents(
       screenSize: screenSize,
       image: "images/IMG_0203.JPG",
       title: "スマートフォンをセットする",
@@ -206,13 +208,14 @@ class PageTwo extends StatelessWidget {
 }
 
 //3ページ目
-class PageThree extends StatelessWidget {
-  dynamic screenSize;
-  PageThree(this.screenSize);
+class _PageThree extends StatelessWidget {
+  _PageThree(this.screenSize);
+
+  final screenSize;
 
   @override
   Widget build(BuildContext context) {
-    return PageContents(
+    return _PageContents(
       screenSize: screenSize,
       image: "images/IMG_Unsplash.jpg",
       title: "白点の位置を調整する",
@@ -236,13 +239,14 @@ class PageThree extends StatelessWidget {
 }
 
 //4ページ目
-class PageFour extends StatelessWidget {
-  dynamic screenSize;
-  PageFour(this.screenSize);
+class _PageFour extends StatelessWidget {
+  _PageFour(this.screenSize);
+
+  final screenSize;
 
   @override
   Widget build(BuildContext context) {
-    return PageContents(
+    return _PageContents(
       screenSize: screenSize,
       image: "images/IMG_0215.jpg",
       title: " 使わなくなった端末を活用できます ",
@@ -259,11 +263,11 @@ class PageFour extends StatelessWidget {
 }
 
 //5ページ目
-class PageFive extends StatelessWidget {
+class _PageFive extends StatelessWidget {
+  _PageFive(this.model, this.screenSize);
+
   final SignInModel model;
-  // ignore: prefer_typing_uninitialized_variables
-  dynamic screenSize;
-  PageFive(this.model, this.screenSize);
+  final screenSize;
 
   @override
   Widget build(BuildContext context) {
@@ -347,7 +351,7 @@ class PageFive extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(
                 elevation: 5,
-                primary: Colors.greenAccent.shade700,
+                backgroundColor: Colors.greenAccent.shade700,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50),
                 )),
@@ -397,17 +401,18 @@ class PageFive extends StatelessWidget {
 }
 
 //ページの構成内容
-class PageContents extends StatelessWidget {
-  PageContents(
-      {required this.screenSize,
-      required this.image,
-      required this.title,
-      required this.description});
+class _PageContents extends StatelessWidget {
+  _PageContents({
+    required this.screenSize,
+    required this.image,
+    required this.title,
+    required this.description,
+  });
 
-  dynamic screenSize;
-  String image;
-  String title;
-  Widget description;
+  final screenSize;
+  final String image;
+  final String title;
+  final Widget description;
 
   @override
   Widget build(BuildContext context) {

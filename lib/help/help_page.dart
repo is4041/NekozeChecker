@@ -26,19 +26,19 @@ class HelpPage extends StatelessWidget {
               style: TextStyle(fontSize: 20),
             ),
           ),
-          Question(
+          _Question(
               question: "カメラ使用中に白点が正しく鼻の位置に表示されないのですが？",
               answer:
                   "逆光などでうまく顔の位置情報を取得できない場合があります。場所を変えたりカーテンを閉めるなどしてもう一度お試しください。"),
-          Question(
+          _Question(
               question: "カメラ使用中に離席できるのですか？その場合計測データにズレが生じませんか？",
               answer:
                   "離席できます。顔の位置情報が取得できていない時は『計測停止中』と表示され自動的にタイマーが停止するので計測データにズレが生じることはありません。"),
-          Question(
+          _Question(
               question: "離席中に『計測停止中』と表示されずに白点が誤作動を起こすのですが？",
               answer:
                   "画面に映っている荷物や衣服などを顔と誤認識する場合があります。荷物を退けるか、離席中だけ端末を違う方向に向けておくなど工夫してみてください。"),
-          Question(
+          _Question(
               question: "白点が上側のグリーンラインより上を越えた時間やその時に鳴った警告音の記録はどうなりますか？",
               answer: "時間は姿勢（良）として記録されますが、警告音は記録されません。"),
           Divider(
@@ -52,7 +52,7 @@ class HelpPage extends StatelessWidget {
             ),
           ),
           //チュートリアル
-          PageContents(
+          _PageContents(
             screenSize: screenSize,
             image: "images/IMG_0203.JPG",
             title: "1.スマートフォンをセットする",
@@ -75,7 +75,7 @@ class HelpPage extends StatelessWidget {
           Divider(
             thickness: 1,
           ),
-          PageContents(
+          _PageContents(
             screenSize: screenSize,
             image: "images/IMG_Unsplash.jpg",
             title: "2.白点の位置を調整する",
@@ -110,7 +110,7 @@ class HelpPage extends StatelessWidget {
               style: TextStyle(fontSize: 20),
             ),
           ),
-          PageContents(
+          _PageContents(
             screenSize: screenSize,
             image: "images/IMG_0215.jpg",
             title: " 使わなくなった端末を活用できます ",
@@ -129,8 +129,8 @@ class HelpPage extends StatelessWidget {
 }
 
 //Questionクラス
-class Question extends StatelessWidget {
-  Question({required this.question, required this.answer});
+class _Question extends StatelessWidget {
+  _Question({required this.question, required this.answer});
 
   final String question;
   final String answer;
@@ -193,17 +193,17 @@ class Question extends StatelessWidget {
 }
 
 //PageContentsクラス
-class PageContents extends StatelessWidget {
-  PageContents(
+class _PageContents extends StatelessWidget {
+  _PageContents(
       {required this.screenSize,
       required this.image,
       required this.title,
       required this.description});
 
-  dynamic screenSize;
-  String image;
-  String title;
-  Widget description;
+  final screenSize;
+  final String image;
+  final String title;
+  final Widget description;
 
   @override
   Widget build(BuildContext context) {
