@@ -146,7 +146,7 @@ class HomePage extends StatelessWidget {
                                                               centerSpaceRadius:
                                                                   40,
                                                               sections:
-                                                                  showingSections4(
+                                                                  _showingSectionsOnDialog(
                                                                       value),
                                                             ),
                                                           ),
@@ -286,7 +286,7 @@ class HomePage extends StatelessWidget {
                               child: Column(
                                 children: [
                                   //総合データ
-                                  PieGraph(
+                                  _PieGraph(
                                       dataOfDate: "総合データ",
                                       numberOfMeasurements:
                                           Utils.numberOfAllMeasurements,
@@ -295,12 +295,12 @@ class HomePage extends StatelessWidget {
                                       second: second,
                                       rateOfGoodPosture:
                                           Utils.percentOfAllGoodPostureSec,
-                                      showingRate: showingSections),
+                                      showingRate: _showingSections),
                                   SizedBox(
                                     height: 10,
                                   ),
                                   //今月のデータ
-                                  PieGraph(
+                                  _PieGraph(
                                       dataOfDate: "今月のデータ",
                                       numberOfMeasurements:
                                           Utils.numberOfMeasurementsThisMonth,
@@ -309,12 +309,12 @@ class HomePage extends StatelessWidget {
                                       second: second2,
                                       rateOfGoodPosture: Utils
                                           .percentOfThisMonthGoodPostureSec,
-                                      showingRate: showingSections),
+                                      showingRate: _showingSections),
                                   SizedBox(
                                     height: 10,
                                   ),
                                   //今日のデータ
-                                  PieGraph(
+                                  _PieGraph(
                                       dataOfDate: "今日のデータ",
                                       numberOfMeasurements:
                                           Utils.numberOfMeasurementsToday,
@@ -323,7 +323,7 @@ class HomePage extends StatelessWidget {
                                       second: second3,
                                       rateOfGoodPosture:
                                           Utils.percentOfTodayGoodPostureSec,
-                                      showingRate: showingSections),
+                                      showingRate: _showingSections),
                                 ],
                               ),
                             )
@@ -338,36 +338,63 @@ class HomePage extends StatelessWidget {
           );
         });
   }
-
-  //計測を終えた後アラートダイアログに結果を円グラフで表示
-  List<PieChartSectionData> showingSections4(value) {
-    return List.generate(2, (i) {
-      final radius = 15.0;
-      switch (i) {
-        case 0:
-          return PieChartSectionData(
-            color: Color(0xff00c904),
-            value: value[1].toDouble(),
-            radius: radius,
-            showTitle: false,
-          );
-        case 1:
-          return PieChartSectionData(
-            color: Color(0xffff1a1a),
-            value: value[2].toDouble(),
-            showTitle: false,
-            radius: radius,
-          );
-        default:
-          throw Error();
-      }
-    });
-  }
 }
 
-//計測データを表示（円グラフを除く）
-class PieGraph extends StatelessWidget {
-  PieGraph(
+//計測を終えた後アラートダイアログに結果を円グラフで表示
+List<PieChartSectionData> _showingSectionsOnDialog(value) {
+  return List.generate(2, (i) {
+    final radius = 15.0;
+    switch (i) {
+      case 0:
+        return PieChartSectionData(
+          color: Color(0xff00c904),
+          value: value[1].toDouble(),
+          radius: radius,
+          showTitle: false,
+        );
+      case 1:
+        return PieChartSectionData(
+          color: Color(0xffff1a1a),
+          value: value[2].toDouble(),
+          showTitle: false,
+          radius: radius,
+        );
+      default:
+        throw Error();
+    }
+  });
+}
+
+//計測データを表示（円グラフ）
+List<PieChartSectionData> _showingSections(
+    double rateOfGoodPosture, int numberOfMeasurements) {
+  return List.generate(2, (i) {
+    final radius = 10.0;
+    switch (i) {
+      case 0:
+        return PieChartSectionData(
+          color: Colors.greenAccent.shade700,
+          value: rateOfGoodPosture,
+          radius: radius,
+          showTitle: false,
+        );
+      case 1:
+        return PieChartSectionData(
+          color:
+              numberOfMeasurements < 1 ? Color(0xffd0d0d0) : Color(0xffff1a1a),
+          value: 100.toDouble() - rateOfGoodPosture,
+          showTitle: false,
+          radius: radius,
+        );
+      default:
+        throw Error();
+    }
+  });
+}
+
+//計測データを表示（計測回数・計測時間・姿勢(良・不良)率）
+class _PieGraph extends StatelessWidget {
+  _PieGraph(
       {required this.dataOfDate,
       required this.numberOfMeasurements,
       required this.hour,
@@ -508,31 +535,4 @@ class PieGraph extends StatelessWidget {
       ],
     );
   }
-}
-
-//計測データを表示（円グラフ）
-List<PieChartSectionData> showingSections(
-    rateOfGoodPosture, numberOfMeasurements) {
-  return List.generate(2, (i) {
-    final radius = 10.0;
-    switch (i) {
-      case 0:
-        return PieChartSectionData(
-          color: Colors.greenAccent.shade700,
-          value: rateOfGoodPosture,
-          radius: radius,
-          showTitle: false,
-        );
-      case 1:
-        return PieChartSectionData(
-          color:
-              numberOfMeasurements < 1 ? Color(0xffd0d0d0) : Color(0xffff1a1a),
-          value: 100.toDouble() - rateOfGoodPosture,
-          showTitle: false,
-          radius: radius,
-        );
-      default:
-        throw Error();
-    }
-  });
 }

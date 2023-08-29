@@ -25,7 +25,7 @@ class HomeModel extends ChangeNotifier {
   }
 
   //オフライン時に表示
-  Future showConnectError(context) async {
+  Future<void> showConnectError(context) async {
     return await showDialog(
         context: context,
         builder: (BuildContext context) {
