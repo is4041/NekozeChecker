@@ -16,7 +16,7 @@ class GraphPage extends StatelessWidget {
         create: (_) => GraphModel()..fetchGraphData(),
         builder: (context, snapshot) {
           return Consumer<GraphModel>(builder: (context, model, child) {
-            final height = screenSize.height * 0.5;
+            final height = screenSize.height * 0.45;
             final width =
                 model.extendWidth && (model.num + 1) * 50 > screenSize.width
                     ? (model.num + 1) * 50
@@ -603,7 +603,7 @@ class GraphPage extends StatelessWidget {
         // 計測時間（姿勢・良）
         LineChartBarData(
           show: model.show,
-          spots: model.spots1,
+          spots: model.show ? model.spots1 : [],
           isCurved: true,
           color: Colors.greenAccent.shade700,
           barWidth: 3,
@@ -614,7 +614,7 @@ class GraphPage extends StatelessWidget {
         // 計測時間（姿勢・不良）
         LineChartBarData(
           show: model.show,
-          spots: model.spots2,
+          spots: model.show ? model.spots2 : [],
           isCurved: true,
           color: Colors.deepOrange,
           barWidth: 3,
@@ -630,7 +630,7 @@ class GraphPage extends StatelessWidget {
           fromIndex: 0,
           toIndex: 1,
           color: Colors.greenAccent.shade700.withOpacity(0.2),
-        )
+        ),
       ],
     );
   }

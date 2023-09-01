@@ -80,7 +80,7 @@ class HomePage extends StatelessWidget {
                             model.audioStop();
                             //カメラページから戻った際に計測結果をダイアログで表示
                             if (value != null) {
-                              await model.getAverageData();
+                              model.getAverageData();
                               await showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
