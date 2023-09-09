@@ -15,7 +15,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 class CameraModel extends ChangeNotifier {
   CameraController? controller;
   PosePainter? posePainter;
-  List<CameraDescription> cam = [];
+  List<CameraDescription> _cam = [];
   Timer? timer;
   Timer? badPostureTimer;
   num measuringSec = 0;
@@ -25,16 +25,17 @@ class CameraModel extends ChangeNotifier {
   bool _canProcess = true;
   bool _isBusy = false;
 
-  var _cameraLensDirection = CameraLensDirection.back;
+  var _cameraLensDirection = CameraLensDirection.front;
+  int cameraDirectionNumber = 1;
 
   final PoseDetector _poseDetector =
       PoseDetector(options: PoseDetectorOptions());
 
   //カメラ起動
   Future<void> getCamera() async {
-    cam = await availableCameras();
-    final lastCamera = cam.last;
-    controller = CameraController(lastCamera, ResolutionPreset.high,
+    _cam = await availableCameras();
+    controller = CameraController(
+        _cam[cameraDirectionNumber], ResolutionPreset.high,
         imageFormatGroup: ImageFormatGroup.bgra8888);
     await controller?.initialize();
 
@@ -52,7 +53,7 @@ class CameraModel extends ChangeNotifier {
   InputImage? inputImageFromCameraImage(CameraImage image) {
     if (controller == null) return null;
 
-    final camera = cam[1];
+    final camera = _cam[1];
     final sensorOrientation = camera.sensorOrientation;
 
     InputImageRotation? rotation;
@@ -100,6 +101,19 @@ class CameraModel extends ChangeNotifier {
     _isBusy = false;
     notifyListeners();
   }
+
+  //カメラの切り替え
+  // changeCameraDirection() {
+  //   if (cameraDirectionNumber == 1) {
+  //     cameraDirectionNumber = 0;
+  //     getCamera();
+  //     print("!");
+  //     print(controller!.value.aspectRatio);
+  //   } else {
+  //     cameraDirectionNumber = 1;
+  //     getCamera();
+  //   }
+  // }
 
   //スリープ機能をON/OFFにする
   void autoSleepWakeUp(enable) {

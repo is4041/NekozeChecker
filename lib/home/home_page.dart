@@ -18,17 +18,17 @@ class HomePage extends StatelessWidget {
           return Scaffold(
             body: Consumer<HomeModel>(builder: (context, model, child) {
               //全体の計測時間を時・分・秒に変換
-              int hour = Utils.totalMeasurementTimeForAll ~/ 60 ~/ 60;
-              int minute = Utils.totalMeasurementTimeForAll ~/ 60 % 60;
-              int second = Utils.totalMeasurementTimeForAll % 60;
+              int _hour = Utils.totalMeasurementTimeForAll ~/ 60 ~/ 60;
+              int _minute = Utils.totalMeasurementTimeForAll ~/ 60 % 60;
+              int _second = Utils.totalMeasurementTimeForAll % 60;
               //当月の計測時間を時・分・秒に変換
-              int hour2 = Utils.totalMeasurementTimeForThisMonth ~/ 60 ~/ 60;
-              int minute2 = Utils.totalMeasurementTimeForThisMonth ~/ 60 % 60;
-              int second2 = Utils.totalMeasurementTimeForThisMonth % 60;
+              int _hour2 = Utils.totalMeasurementTimeForThisMonth ~/ 60 ~/ 60;
+              int _minute2 = Utils.totalMeasurementTimeForThisMonth ~/ 60 % 60;
+              int _second2 = Utils.totalMeasurementTimeForThisMonth % 60;
               //今日の計測時間を時・分・秒に変換
-              int hour3 = Utils.totalMeasurementTimeForTheDay ~/ 60 ~/ 60;
-              int minute3 = Utils.totalMeasurementTimeForTheDay ~/ 60 % 60;
-              int second3 = Utils.totalMeasurementTimeForTheDay % 60;
+              int _hour3 = Utils.totalMeasurementTimeForTheDay ~/ 60 ~/ 60;
+              int _minute3 = Utils.totalMeasurementTimeForTheDay ~/ 60 % 60;
+              int _second3 = Utils.totalMeasurementTimeForTheDay % 60;
               return Stack(children: [
                 SizedBox(
                   height: double.infinity,
@@ -56,14 +56,14 @@ class HomePage extends StatelessWidget {
                                   MaterialPageRoute(
                                       builder: (context) => HelpPage()));
                             },
-                            child: Text("?"),
+                            child: Icon(Icons.help),
                             style: ElevatedButton.styleFrom(
                                 side: BorderSide(
                                   color: Colors.white, //色
                                   width: 1, //太さ
                                 ),
                                 shape: CircleBorder(),
-                                backgroundColor: Colors.grey),
+                                backgroundColor: Colors.green),
                           ),
                         ),
                       ),
@@ -262,74 +262,44 @@ class HomePage extends StatelessWidget {
                       SizedBox(
                         height: 50,
                       ),
-                      //総合・今月・今日の平均データを表示
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Stack(
-                          children: [
-                            Container(
-                              height: 400,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.lightGreenAccent,
-                                    Color(0xff009904),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Column(
-                                children: [
-                                  //総合データ
-                                  _PieGraph(
-                                      dataOfDate: "総合データ",
-                                      numberOfMeasurements:
-                                          Utils.numberOfAllMeasurements,
-                                      hour: hour,
-                                      minute: minute,
-                                      second: second,
-                                      rateOfGoodPosture:
-                                          Utils.percentOfAllGoodPostureSec,
-                                      showingRate: _showingSections),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  //今月のデータ
-                                  _PieGraph(
-                                      dataOfDate: "今月のデータ",
-                                      numberOfMeasurements:
-                                          Utils.numberOfMeasurementsThisMonth,
-                                      hour: hour2,
-                                      minute: minute2,
-                                      second: second2,
-                                      rateOfGoodPosture: Utils
-                                          .percentOfThisMonthGoodPostureSec,
-                                      showingRate: _showingSections),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  //今日のデータ
-                                  _PieGraph(
-                                      dataOfDate: "今日のデータ",
-                                      numberOfMeasurements:
-                                          Utils.numberOfMeasurementsToday,
-                                      hour: hour3,
-                                      minute: minute3,
-                                      second: second3,
-                                      rateOfGoodPosture:
-                                          Utils.percentOfTodayGoodPostureSec,
-                                      showingRate: _showingSections),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
+                      _PieGraph(
+                        dataOfDate: "今日のデータ",
+                        numberOfMeasurements: Utils.numberOfMeasurementsToday,
+                        hour: _hour3,
+                        minute: _minute3,
+                        second: _second3,
+                        rateOfGoodPosture: Utils.percentOfTodayGoodPostureSec,
+                        showingRate: _showingSections,
+                        beginColor: Colors.lightGreenAccent,
+                        endColor: Color(0xff29fa2f),
                       ),
+                      _PieGraph(
+                        dataOfDate: "今月のデータ",
+                        numberOfMeasurements:
+                            Utils.numberOfMeasurementsThisMonth,
+                        hour: _hour2,
+                        minute: _minute2,
+                        second: _second2,
+                        rateOfGoodPosture:
+                            Utils.percentOfThisMonthGoodPostureSec,
+                        showingRate: _showingSections,
+                        beginColor: Color(0xff29fa2f),
+                        endColor: Color(0xff0ecd12),
+                      ),
+                      _PieGraph(
+                        dataOfDate: "総合データ",
+                        numberOfMeasurements: Utils.numberOfAllMeasurements,
+                        hour: _hour,
+                        minute: _minute,
+                        second: _second,
+                        rateOfGoodPosture: Utils.percentOfAllGoodPostureSec,
+                        showingRate: _showingSections,
+                        beginColor: Color(0xff0ecd12),
+                        endColor: Color(0xff01ad04),
+                      ),
+                      SizedBox(
+                        height: 30,
+                      )
                     ],
                   ),
                 ),
@@ -401,7 +371,9 @@ class _PieGraph extends StatelessWidget {
       required this.minute,
       required this.second,
       required this.rateOfGoodPosture,
-      required this.showingRate});
+      required this.showingRate,
+      required this.beginColor,
+      required this.endColor});
 
   final String dataOfDate;
   final int numberOfMeasurements;
@@ -410,129 +382,151 @@ class _PieGraph extends StatelessWidget {
   final int second;
   final double rateOfGoodPosture;
   final Function(double, int) showingRate;
+  final Color beginColor;
+  final Color endColor;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              height: 25,
-              width: 100,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: FittedBox(
-                child: Padding(
-                  padding: const EdgeInsets.all(3.0),
-                  child: Text(
-                    dataOfDate,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+    return Padding(
+      padding: const EdgeInsets.only(right: 10, bottom: 10, left: 10),
+      child: Container(
+        height: 140,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              beginColor,
+              endColor,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    height: 25,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: FittedBox(
+                      child: Padding(
+                        padding: const EdgeInsets.all(3.0),
+                        child: Text(
+                          dataOfDate,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Container(
-              height: 70,
-              width: 200,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: FittedBox(
-                child: Padding(
-                  padding: const EdgeInsets.all(3.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "計測回数：$numberOfMeasurements 回",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          // color: Color(0xff00c904),
-                        ),
-                      ),
-                      Text(
-                        "計測時間：$hour時間$minute分$second秒",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        "姿勢　(良)：$rateOfGoodPosture%",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.greenAccent.shade700,
-                        ),
-                      ),
-                      Text(
-                        "姿勢(不良)：${numberOfMeasurements > 0 ? (100 - rateOfGoodPosture).toStringAsFixed(1) : 0.0}%",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xffff1a1a),
-                        ),
-                      ),
-                    ],
+                  SizedBox(
+                    height: 5,
                   ),
-                ),
+                  Container(
+                    height: 70,
+                    width: 200,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: FittedBox(
+                      child: Padding(
+                        padding: const EdgeInsets.all(3.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "計測回数：$numberOfMeasurements 回",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                // color: Color(0xff00c904),
+                              ),
+                            ),
+                            Text(
+                              "計測時間：$hour時間$minute分$second秒",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              "姿勢　(良)：$rateOfGoodPosture%",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.greenAccent.shade700,
+                              ),
+                            ),
+                            Text(
+                              "姿勢(不良)：${numberOfMeasurements > 0 ? (100 - rateOfGoodPosture).toStringAsFixed(1) : 0.0}%",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xffff1a1a),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+              Stack(
+                children: [
+                  Container(
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: PieChart(
+                        PieChartData(
+                          borderData: FlBorderData(show: false),
+                          startDegreeOffset: 270,
+                          sectionsSpace: 0,
+                          centerSpaceRadius: 40,
+                          sections: showingRate(
+                              rateOfGoodPosture, numberOfMeasurements),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: 120,
+                    width: 120,
+                    child: Center(
+                      child: Text(
+                        "$rateOfGoodPosture%",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: rateOfGoodPosture > 0
+                              ? Colors.greenAccent.shade700
+                              : Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        Stack(
-          children: [
-            Container(
-              height: 120,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: PieChart(
-                  PieChartData(
-                    borderData: FlBorderData(show: false),
-                    startDegreeOffset: 270,
-                    sectionsSpace: 0,
-                    centerSpaceRadius: 40,
-                    sections:
-                        showingRate(rateOfGoodPosture, numberOfMeasurements),
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              height: 120,
-              width: 120,
-              child: Center(
-                child: Text(
-                  "$rateOfGoodPosture%",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: rateOfGoodPosture > 0
-                        ? Colors.greenAccent.shade700
-                        : Colors.grey,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
+      ),
     );
   }
 }

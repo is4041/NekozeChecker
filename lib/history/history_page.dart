@@ -35,36 +35,37 @@ class HistoryPage extends StatelessWidget {
                         itemCount: data!.length,
                         itemBuilder: (BuildContext context, int index) {
                           //日付を取得
-                          String createdAt = data[index].createdAt!;
+                          String _createdAt = data[index].createdAt!;
                           //計測時間を時・分・秒に変換
-                          num measuringSec = data[index].measuringSec!;
-                          num measuringHourValue = measuringSec ~/ 60 ~/ 60;
-                          num measuringMinuteValue = measuringSec ~/ 60 % 60;
-                          num measuringSecondValue = measuringSec % 60;
+                          num _measuringSec = data[index].measuringSec!;
+                          num _measuringHourValue = _measuringSec ~/ 60 ~/ 60;
+                          num _measuringMinuteValue = _measuringSec ~/ 60 % 60;
+                          num _measuringSecondValue = _measuringSec % 60;
                           //姿勢（不良）を時・分・秒に変換
-                          num measuringBadPostureSec =
+                          num _measuringBadPostureSec =
                               data[index].measuringBadPostureSec!;
-                          num badHourValue = measuringBadPostureSec ~/ 60 ~/ 60;
-                          num badMinuteValue =
-                              measuringBadPostureSec ~/ 60 % 60;
-                          num badSecondValue = measuringBadPostureSec % 60;
+                          num _badHourValue =
+                              _measuringBadPostureSec ~/ 60 ~/ 60;
+                          num _badMinuteValue =
+                              _measuringBadPostureSec ~/ 60 % 60;
+                          num _badSecondValue = _measuringBadPostureSec % 60;
                           //姿勢（良）を時・分・秒に変換
-                          num measuringGoodPostureSec =
-                              (measuringSec - measuringBadPostureSec);
-                          num goodHourValue =
-                              measuringGoodPostureSec ~/ 60 ~/ 60;
-                          num goodMinuteValue =
-                              measuringGoodPostureSec ~/ 60 % 60;
-                          num goodSecondValue = measuringGoodPostureSec % 60;
+                          num _measuringGoodPostureSec =
+                              (_measuringSec - _measuringBadPostureSec);
+                          num _goodHourValue =
+                              _measuringGoodPostureSec ~/ 60 ~/ 60;
+                          num _goodMinuteValue =
+                              _measuringGoodPostureSec ~/ 60 % 60;
+                          num _goodSecondValue = _measuringGoodPostureSec % 60;
                           //警告音カウント回数
-                          num notificationCounter =
+                          num _notificationCounter =
                               data[index].notificationCounter!;
                           //設定した警告音通知までの秒数
-                          int timeToNotification =
+                          int _timeToNotification =
                               data[index].timeToNotification!;
                           //姿勢（良）の割合を取得
-                          num rateOfGoodPosture = double.parse(
-                              ((measuringGoodPostureSec / measuringSec) * 100)
+                          num _rateOfGoodPosture = double.parse(
+                              ((_measuringGoodPostureSec / _measuringSec) * 100)
                                   .toStringAsFixed(1));
                           return Container(
                             decoration: BoxDecoration(
@@ -301,14 +302,14 @@ class HistoryPage extends StatelessWidget {
                                                                     style:
                                                                         style),
                                                                 Text(
-                                                                    createdAt.substring(
+                                                                    _createdAt.substring(
                                                                             0, 4) +
                                                                         "年" +
-                                                                        createdAt.substring(
+                                                                        _createdAt.substring(
                                                                             5,
                                                                             7) +
                                                                         "月" +
-                                                                        createdAt.substring(
+                                                                        _createdAt.substring(
                                                                             8,
                                                                             10) +
                                                                         "日",
@@ -321,11 +322,11 @@ class HistoryPage extends StatelessWidget {
                                                             _TimeValue(
                                                               posture: "",
                                                               hourValue:
-                                                                  measuringHourValue,
+                                                                  _measuringHourValue,
                                                               minuteValue:
-                                                                  measuringMinuteValue,
+                                                                  _measuringMinuteValue,
                                                               secondValue:
-                                                                  measuringSecondValue,
+                                                                  _measuringSecondValue,
                                                               style: TextStyle(
                                                                   fontSize: 17,
                                                                   color: Colors
@@ -336,11 +337,11 @@ class HistoryPage extends StatelessWidget {
                                                             _TimeValue(
                                                               posture: "（姿勢・良）",
                                                               hourValue:
-                                                                  goodHourValue,
+                                                                  _goodHourValue,
                                                               minuteValue:
-                                                                  goodMinuteValue,
+                                                                  _goodMinuteValue,
                                                               secondValue:
-                                                                  goodSecondValue,
+                                                                  _goodSecondValue,
                                                               style: TextStyle(
                                                                 fontSize: 17,
                                                                 color: Colors
@@ -354,11 +355,11 @@ class HistoryPage extends StatelessWidget {
                                                               posture:
                                                                   "（姿勢・不良）",
                                                               hourValue:
-                                                                  badHourValue,
+                                                                  _badHourValue,
                                                               minuteValue:
-                                                                  badMinuteValue,
+                                                                  _badMinuteValue,
                                                               secondValue:
-                                                                  badSecondValue,
+                                                                  _badSecondValue,
                                                               style: TextStyle(
                                                                 fontSize: 17,
                                                                 color:
@@ -373,15 +374,15 @@ class HistoryPage extends StatelessWidget {
                                                                       .spaceBetween,
                                                               children: [
                                                                 Text(
-                                                                  timeToNotification ~/
+                                                                  _timeToNotification ~/
                                                                               60 >
                                                                           0
-                                                                      ? "警告回数（設定：${(timeToNotification / 60).floor()}分）"
-                                                                      : "警告回数（設定：$timeToNotification秒）",
+                                                                      ? "警告回数（設定：${(_timeToNotification / 60).floor()}分）"
+                                                                      : "警告回数（設定：$_timeToNotification秒）",
                                                                   style: style,
                                                                 ),
                                                                 Text(
-                                                                  "$notificationCounter回",
+                                                                  "$_notificationCounter回",
                                                                   style: style,
                                                                 ),
                                                               ],
@@ -534,11 +535,11 @@ class HistoryPage extends StatelessWidget {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        createdAt.substring(0, 4) +
+                                        _createdAt.substring(0, 4) +
                                             "/ " +
-                                            createdAt.substring(5, 7) +
+                                            _createdAt.substring(5, 7) +
                                             "/ " +
-                                            createdAt.substring(8, 10),
+                                            _createdAt.substring(8, 10),
                                       ),
                                     ],
                                   ),
@@ -559,15 +560,15 @@ class HistoryPage extends StatelessWidget {
                                             Wrap(
                                               children: [
                                                 _TimeValue2(
-                                                    time: measuringHourValue,
+                                                    time: _measuringHourValue,
                                                     timeUnit: "時間",
                                                     color: Colors.black),
                                                 _TimeValue2(
-                                                    time: measuringMinuteValue,
+                                                    time: _measuringMinuteValue,
                                                     timeUnit: "分",
                                                     color: Colors.black),
                                                 _TimeValue2(
-                                                    time: measuringSecondValue,
+                                                    time: _measuringSecondValue,
                                                     timeUnit: "秒",
                                                     color: Colors.black),
                                               ],
@@ -603,24 +604,24 @@ class HistoryPage extends StatelessWidget {
                                             Wrap(
                                               children: [
                                                 _TimeValue2(
-                                                    time: goodHourValue,
+                                                    time: _goodHourValue,
                                                     timeUnit: "時間",
                                                     color: Colors
                                                         .greenAccent.shade700),
                                                 _TimeValue2(
-                                                    time: goodMinuteValue,
+                                                    time: _goodMinuteValue,
                                                     timeUnit: "分",
                                                     color: Colors
                                                         .greenAccent.shade700),
                                                 _TimeValue2(
-                                                    time: goodSecondValue,
+                                                    time: _goodSecondValue,
                                                     timeUnit: "秒",
                                                     color: Colors
                                                         .greenAccent.shade700),
                                                 //無表示を防ぐ
                                                 Visibility(
                                                   visible:
-                                                      measuringGoodPostureSec ==
+                                                      _measuringGoodPostureSec ==
                                                           0,
                                                   child: Text(
                                                     "0秒",
@@ -668,44 +669,45 @@ class HistoryPage extends StatelessWidget {
                                               ],
                                             ),
                                             Text(
-                                              "$rateOfGoodPosture％",
+                                              "$_rateOfGoodPosture％",
                                               style: TextStyle(
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold,
-                                                  color: rateOfGoodPosture >= 90
+                                                  color: _rateOfGoodPosture >=
+                                                          90
                                                       //90%以上
                                                       ? Colors
                                                           .greenAccent.shade700
-                                                      : rateOfGoodPosture >= 80
+                                                      : _rateOfGoodPosture >= 80
                                                           //80%以上
                                                           ? Color(0xFF2BD600)
-                                                          : rateOfGoodPosture >=
+                                                          : _rateOfGoodPosture >=
                                                                   70
                                                               //70%以上
                                                               ? Color(
                                                                   0xFF58DB00)
-                                                              : rateOfGoodPosture >=
+                                                              : _rateOfGoodPosture >=
                                                                       60
                                                                   //60%以上
                                                                   ? Color(
                                                                       0xFF88E200)
-                                                                  : rateOfGoodPosture >=
+                                                                  : _rateOfGoodPosture >=
                                                                           50
                                                                       //50%以上
                                                                       ? Color(
                                                                           0xFFBFE600)
-                                                                      : rateOfGoodPosture >=
+                                                                      : _rateOfGoodPosture >=
                                                                               40
                                                                           //40%以上
                                                                           ? Color(
                                                                               0xFFEBDB00)
-                                                                          : rateOfGoodPosture >= 30
+                                                                          : _rateOfGoodPosture >= 30
                                                                               //30%以上
                                                                               ? Color(0xFFF0A800)
-                                                                              : rateOfGoodPosture >= 20
+                                                                              : _rateOfGoodPosture >= 20
                                                                                   //20%以上
                                                                                   ? Color(0xFFF57200)
-                                                                                  : rateOfGoodPosture >= 10
+                                                                                  : _rateOfGoodPosture >= 10
                                                                                       //10%以上
                                                                                       ? Color(0xFFFA3A00)
                                                                                       //10%未満
