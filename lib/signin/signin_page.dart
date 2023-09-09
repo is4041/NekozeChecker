@@ -111,7 +111,8 @@ class SignInPage extends StatelessWidget {
                                               }
                                             : () {},
                                         style: ElevatedButton.styleFrom(
-                                            primary: model.activePage < 4
+                                            backgroundColor: model.activePage <
+                                                    4
                                                 ? Colors.greenAccent.shade700
                                                 : Colors.grey,
                                             shape: RoundedRectangleBorder(
@@ -164,7 +165,7 @@ class _PageOne extends StatelessWidget {
       description: Column(
         children: [
           Text(
-            "Posture Correctionはゲームやデスクワーク中の前傾姿勢を検知すると警告音でお知らせします。",
+            "Posture Correctionはゲームやデスクワーク中の前傾姿勢・居眠りを検知すると警告音でお知らせします。",
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(

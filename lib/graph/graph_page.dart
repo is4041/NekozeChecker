@@ -292,28 +292,29 @@ class GraphPage extends StatelessWidget {
                             itemCount: model.data.length,
                             itemBuilder: (context, index) {
                               //計測時間を時・分・秒に変換
-                              num measuringSec =
+                              num _measuringSec =
                                   model.data[index]["measuringSec"];
-                              num hourValue = measuringSec ~/ 60 ~/ 60;
-                              num minuteValue = measuringSec ~/ 60 % 60;
-                              num secondValue = measuringSec % 60;
+                              num _hourValue = _measuringSec ~/ 60 ~/ 60;
+                              num _minuteValue = _measuringSec ~/ 60 % 60;
+                              num _secondValue = _measuringSec % 60;
                               //姿勢（良）を時・分・秒に変換
-                              num measuringGoodPostureSec =
+                              num _measuringGoodPostureSec =
                                   model.data[index]["measuringGoodPostureSec"];
-                              num goodHourValue =
-                                  measuringGoodPostureSec ~/ 60 ~/ 60;
-                              num goodMinuteValue =
-                                  measuringGoodPostureSec ~/ 60 % 60;
-                              num goodSecondValue =
-                                  measuringGoodPostureSec % 60;
+                              num _goodHourValue =
+                                  _measuringGoodPostureSec ~/ 60 ~/ 60;
+                              num _goodMinuteValue =
+                                  _measuringGoodPostureSec ~/ 60 % 60;
+                              num _goodSecondValue =
+                                  _measuringGoodPostureSec % 60;
                               //姿勢（不良）を時・分・秒に変換
-                              num measuringBadPostureSec =
+                              num _measuringBadPostureSec =
                                   model.data[index]["measuringBadPostureSec"];
-                              num badHourValue =
-                                  measuringBadPostureSec ~/ 60 ~/ 60;
-                              num badMinuteValue =
-                                  measuringBadPostureSec ~/ 60 % 60;
-                              num badSecondValue = measuringBadPostureSec % 60;
+                              num _badHourValue =
+                                  _measuringBadPostureSec ~/ 60 ~/ 60;
+                              num _badMinuteValue =
+                                  _measuringBadPostureSec ~/ 60 % 60;
+                              num _badSecondValue =
+                                  _measuringBadPostureSec % 60;
                               return Container(
                                 decoration: BoxDecoration(
                                   border: Border(
@@ -361,22 +362,22 @@ class GraphPage extends StatelessWidget {
                                       ),
                                       //計測時間
                                       _TimeValue(
-                                          hourValue: hourValue,
-                                          minuteValue: minuteValue,
-                                          secondValue: secondValue,
+                                          hourValue: _hourValue,
+                                          minuteValue: _minuteValue,
+                                          secondValue: _secondValue,
                                           color: Colors.black),
                                       //計測時間（姿勢・良）
                                       _TimeValue(
-                                        hourValue: goodHourValue,
-                                        minuteValue: goodMinuteValue,
-                                        secondValue: goodSecondValue,
+                                        hourValue: _goodHourValue,
+                                        minuteValue: _goodMinuteValue,
+                                        secondValue: _goodSecondValue,
                                         color: Colors.greenAccent.shade700,
                                       ),
                                       //計測時間（姿勢・不良）
                                       _TimeValue(
-                                          hourValue: badHourValue,
-                                          minuteValue: badMinuteValue,
-                                          secondValue: badSecondValue,
+                                          hourValue: _badHourValue,
+                                          minuteValue: _badMinuteValue,
+                                          secondValue: _badSecondValue,
                                           color: Colors.red),
                                     ],
                                   ),

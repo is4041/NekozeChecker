@@ -11,13 +11,13 @@ import 'package:posture_correction/camera/camera_page.dart';
 import '../utils.dart';
 
 class HomeModel extends ChangeNotifier {
-  final getDate = Timestamp.now().toDate();
+  final _getDate = Timestamp.now().toDate();
 
   Future<void> getData(BuildContext context) async {
     //オンラインとオフラインで処理を分ける
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
-      await showConnectError(context);
+      showConnectError(context);
     } else {
       await getUserData();
       await getAverageData();
@@ -31,11 +31,12 @@ class HomeModel extends ChangeNotifier {
         builder: (BuildContext context) {
           return CupertinoAlertDialog(
             title: Text("エラー"),
-            content: Text("通信状態をご確認ください\n通信状態に問題がない場合はアプリを再起動してください"),
+            content: Text("通信状態をご確認ください\n通信状態に問題がない場合は再読み込みをしてください"),
             actions: [
               TextButton(
-                child: const Text("OK"),
+                child: const Text("再読み込み"),
                 onPressed: () {
+                  getData(context);
                   Navigator.of(context).pop();
                 },
               )
@@ -89,14 +90,14 @@ class HomeModel extends ChangeNotifier {
     for (var doc in snapshot.docs) {
       //今日の計測時間(秒)を取得してリストに追加
       if (doc.get("createdAt").toString().substring(0, 10) ==
-          getDate.toString().substring(0, 10)) {
+          _getDate.toString().substring(0, 10)) {
         dataListOfToday.add(doc.get("measuringSec"));
         dataListOfTodayBadPosture.add(doc.get("measuringBadPostureSec"));
       }
 
       //今月の計測時間(秒)を取得してリストに追加
       if (doc.get("createdAt").toString().substring(0, 7) ==
-          getDate.toString().substring(0, 7)) {
+          _getDate.toString().substring(0, 7)) {
         dataListOfThisMonth.add(doc.get("measuringSec"));
         dataListOfThisMonthBadPosture.add(doc.get("measuringBadPostureSec"));
       }
