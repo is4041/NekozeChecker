@@ -13,21 +13,24 @@ import 'coordinates.dart';
 
 final audioPlayer = AudioPlayer();
 bool? _soundLoop;
-bool? _detection;
-bool? _isCounting;
-bool? _isAdjusting;
+bool? detection;
+bool? isCounting;
+bool? isAdjusting;
 bool? _hiddenOkButton;
+bool? dataExist;
+bool? measuredOverOneSec;
 Timer? notificationTimer;
 
 class CameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
     _soundLoop = false;
-    _isAdjusting = true;
-    _isCounting = false;
-    _detection = false;
+    isAdjusting = true;
+    isCounting = false;
+    detection = false;
     _hiddenOkButton = false;
+    dataExist = false;
+    measuredOverOneSec = false;
     return ChangeNotifierProvider<CameraModel>(
         create: (_) => CameraModel()
           ..getCamera()
@@ -126,105 +129,12 @@ class CameraPage extends StatelessWidget {
                             ? () async {
                                 notificationTimer?.cancel();
                                 audioPlayer.stop();
-                                _isCounting = false;
+                                detection = false;
+                                isCounting = false;
+                                isAdjusting = true;
+                                dataExist = true;
                                 model.stopTimer();
                                 model.stopBadPostureTimer();
-                                if (model.measuringSec >= 300) {
-                                  try {
-                                    await model.addData();
-                                  } catch (e) {
-                                    await showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return CupertinoAlertDialog(
-                                            title: Text("エラー"),
-                                            content: Text(e.toString()),
-                                            actions: [
-                                              TextButton(
-                                                child: Text(
-                                                  "OK",
-                                                ),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        });
-                                  }
-                                  //計測時間が5分(300秒)未満で表示
-                                } else {
-                                  await showDialog(
-                                      context: context,
-                                      barrierDismissible: false,
-                                      builder: (BuildContext context) {
-                                        return CupertinoAlertDialog(
-                                          title:
-                                              Text("計測時間が5分未満ですが\nデータを保存しますか？"),
-                                          actions: [
-                                            TextButton(
-                                              child: Text(
-                                                "保存しない",
-                                                style: TextStyle(
-                                                    color: Colors.red),
-                                              ),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                            TextButton(
-                                              child: const Text("保存"),
-                                              onPressed: () async {
-                                                try {
-                                                  await model.addData();
-                                                } catch (e) {
-                                                  await showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return CupertinoAlertDialog(
-                                                          title: Text("エラー"),
-                                                          content: Text(
-                                                              e.toString()),
-                                                          actions: [
-                                                            TextButton(
-                                                              child: Text(
-                                                                "OK",
-                                                              ),
-                                                              onPressed: () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              },
-                                                            ),
-                                                          ],
-                                                        );
-                                                      });
-                                                }
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      });
-                                }
-
-                                notificationTimer?.cancel();
-                                audioPlayer.stop();
-
-                                model.autoSleepWakeUp(false);
-
-                                Navigator.of(context).pop([
-                                  //計測時間
-                                  model.measuringSec,
-                                  //姿勢(良)の時間
-                                  model.measuringSec -
-                                      model.measuringBadPostureSec,
-                                  //姿勢(不良)の時間
-                                  model.measuringBadPostureSec,
-                                  //猫背通知回数
-                                  model.notificationCounter.toString(),
-                                ]);
                               }
                             : () {},
                         child: const Icon(Icons.stop),
@@ -232,152 +142,206 @@ class CameraPage extends StatelessWidget {
                       ),
                     ),
                     //計測前の調整画面
-                    if (!_isCounting! && _isAdjusting!)
+                    if (!isCounting! && isAdjusting!)
                       Container(
                         width: double.infinity,
                         height: double.infinity,
                         color: Colors.grey.withOpacity(0.5),
-                        child: Column(
+                        child: Stack(
                           children: [
-                            //カメラ切り替え
-                            // Padding(
-                            //   padding: EdgeInsets.all(20),
-                            //   child: Align(
-                            //     alignment: Alignment.topRight,
-                            //     child: FloatingActionButton(
-                            //       heroTag: "hero2",
-                            //       onPressed: () {
-                            //         model.changeCameraDirection();
-                            //       },
-                            //       child: const Icon(Icons.flip_camera_ios),
-                            //     ),
-                            //   ),
-                            // ),
-                            SizedBox(
-                              height: screenSize.height * 0.2,
-                            ),
-                            Text(
-                              "姿勢を正し白点が緑線の枠内に収まるように端末の位置・音量を調整してください",
-                              style:
-                                  TextStyle(fontSize: 19, color: Colors.white),
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              "（OKを押すと計測が始まります）",
-                              style:
-                                  TextStyle(fontSize: 15, color: Colors.white),
-                            ),
-                            SizedBox(
-                              height: screenSize.height * 0.3,
-                            ),
-                            FittedBox(
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  audioPlayer.play(
-                                      AssetSource("sounds/notification.mp3"));
-                                },
-                                label: Text("音量チェック"),
-                                icon: Icon(Icons.volume_up),
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 0,
-                                  backgroundColor: Colors.red,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(50),
+                            Align(
+                              alignment: Alignment(0, -0.6),
+                              child: Wrap(
+                                alignment: WrapAlignment.center,
+                                children: [
+                                  Text(
+                                    dataExist!
+                                        ? "計測時間：${model.measuringSec ~/ 60 ~/ 60}時間${model.measuringSec ~/ 60 % 60}分${model.measuringSec % 60}秒"
+                                        : "姿勢を正し白点がグリーンラインの枠内に収まるように端末の位置・音量を調整してください",
+                                    style: dataExist!
+                                        ? TextStyle(
+                                            fontSize: 25, color: Colors.white)
+                                        : TextStyle(
+                                            fontSize: 19, color: Colors.white),
+                                    textAlign: TextAlign.center,
                                   ),
-                                ),
+                                  Text(
+                                    dataExist!
+                                        ? "（※再開ボタンは白点がグリーンラインの枠内に位置する時のみ押下できます）"
+                                        : "（※開始ボタンは白点がグリーンラインの枠内に位置する時のみ押下できます）",
+                                    style: TextStyle(
+                                        fontSize: 15, color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
                               ),
                             ),
-                            Text(
-                              "警告音設定秒数：${Utils.timeToNotification}秒",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            const SizedBox(
-                              height: 30,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                SizedBox(
-                                  height: 60,
-                                  width: 100,
-                                  child: ElevatedButton(
+                            Align(
+                              alignment: Alignment(0, 0.3),
+                              child: Wrap(
+                                direction: Axis.vertical,
+                                children: [
+                                  FittedBox(
+                                    child: ElevatedButton.icon(
                                       onPressed: () {
-                                        notificationTimer?.cancel();
-                                        audioPlayer.stop();
-                                        model.autoSleepWakeUp(false);
-                                        Navigator.of(context).pop();
+                                        audioPlayer.play(AssetSource(
+                                            "sounds/notification.mp3"));
                                       },
+                                      label: Text("音量チェック"),
+                                      icon: Icon(Icons.volume_up),
+                                      style: ElevatedButton.styleFrom(
+                                        elevation: 0,
+                                        backgroundColor: Colors.red,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    "警告音設定秒数：${Utils.timeToNotification}秒",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment(0, 0.6),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  SizedBox(
+                                    height: 60,
+                                    width: 100,
+                                    child: ElevatedButton(
+                                      onPressed: dataExist!
+                                          ? () async {
+                                              try {
+                                                await model.addData();
+                                              } catch (e) {
+                                                await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return CupertinoAlertDialog(
+                                                        title: Text("エラー"),
+                                                        content:
+                                                            Text("保存に失敗しました"),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                            child: Text("OK"),
+                                                          )
+                                                        ],
+                                                      );
+                                                    });
+                                              }
+
+                                              notificationTimer?.cancel();
+                                              audioPlayer.stop();
+                                              model.autoSleepWakeUp(false);
+
+                                              Navigator.of(context).pop([
+                                                //計測時間
+                                                model.measuringSec,
+                                                //姿勢(良)の時間
+                                                model.measuringSec -
+                                                    model
+                                                        .measuringBadPostureSec,
+                                                //姿勢(不良)の時間
+                                                model.measuringBadPostureSec,
+                                                //猫背通知回数
+                                                model.notificationCounter
+                                                    .toString(),
+                                              ]);
+                                            }
+                                          : () {
+                                              notificationTimer?.cancel();
+                                              audioPlayer.stop();
+                                              model.autoSleepWakeUp(false);
+
+                                              Navigator.of(context).pop();
+                                            },
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                        ),
+                                        backgroundColor: dataExist!
+                                            ? Colors.red
+                                            : Colors.greenAccent.shade700,
+                                      ),
+                                      child: Text(
+                                        dataExist! ? "終了" : "戻る",
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 60,
+                                    width: 100,
+                                    child: ElevatedButton(
+                                      onPressed: _hiddenOkButton == false
+                                          ? () {
+                                              isAdjusting = false;
+                                              isCounting = true;
+                                              audioPlayer.stop();
+                                            }
+                                          : () {},
                                       style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(50),
                                         ),
                                         backgroundColor:
-                                            Colors.greenAccent.shade700,
+                                            _hiddenOkButton == false
+                                                ? Colors.greenAccent.shade700
+                                                : Colors.greenAccent.shade700
+                                                    .withOpacity(0.3),
                                       ),
                                       child: Text(
-                                        "戻る",
+                                        dataExist! ? "再開" : "開始",
                                         style: TextStyle(fontSize: 20),
-                                      )),
-                                ),
-                                SizedBox(
-                                  height: 60,
-                                  width: 100,
-                                  child: ElevatedButton(
-                                    onPressed: _hiddenOkButton == false
-                                        ? () {
-                                            _isAdjusting = false;
-                                            _isCounting = true;
-                                            audioPlayer.stop();
-                                          }
-                                        : () {},
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(50),
                                       ),
-                                      backgroundColor: _hiddenOkButton == false
-                                          ? Colors.greenAccent.shade700
-                                          : Colors.greenAccent.shade700
-                                              .withOpacity(0.3),
-                                    ),
-                                    child: Text(
-                                      "開始",
-                                      style: TextStyle(fontSize: 20),
                                     ),
                                   ),
-                                ),
-                              ],
-                            )
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
                     //ダークモード切り替えボタン
                     Align(
                       alignment: const Alignment(0, -0.8),
-                      child: FittedBox(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            model.getScreenMode();
-                          },
-                          style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              backgroundColor: model.darkMode == false
-                                  ? Colors.black
-                                  : Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
-                              )),
-                          child: model.darkMode == false
-                              ? Text("ダークモード：OFF")
-                              : Text(
-                                  "ダークモード：ON ",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                        ),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          model.getScreenMode();
+                        },
+                        style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: model.darkMode == false
+                                ? Colors.black
+                                : Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            )),
+                        child: model.darkMode == false
+                            ? Text("ダークモード：OFF")
+                            : Text(
+                                "ダークモード：ON ",
+                                style: TextStyle(color: Colors.black),
+                              ),
                       ),
                     ),
                     //姿勢情報を取得できない場合に表示（離席中など）
-                    if (_isCounting! && !_detection!)
+                    if (isCounting! && !detection!)
                       Center(
                         child: Text(
                           "計測停止中",
@@ -414,8 +378,8 @@ class PosePainter extends CustomPainter {
     final paint = Paint()..color = Colors.white;
 
     if (poses.isNotEmpty) {
-      if (_isCounting! && !_detection!) {
-        _detection = true;
+      if (isCounting! && !detection!) {
+        detection = true;
         cameraModel.startTimer();
         print("Timer Start");
       }
@@ -475,9 +439,9 @@ class PosePainter extends CustomPainter {
           }
         });
       }
-    } else if (_detection! || _isAdjusting!) {
+    } else if (detection! || isAdjusting!) {
       notificationTimer?.cancel();
-      _detection = false;
+      detection = false;
       _soundLoop = false;
       cameraModel.stopTimer();
       cameraModel.stopBadPostureTimer();
@@ -491,7 +455,7 @@ class PosePainter extends CustomPainter {
     if (beyond && !_soundLoop!) {
       _soundLoop = true;
       _hiddenOkButton = true;
-      if (_isCounting!) {
+      if (isCounting!) {
         cameraModel.startBadPostureTimer();
       }
       print("${Utils.timeToNotification}秒後警告");
@@ -500,7 +464,7 @@ class PosePainter extends CustomPainter {
           Timer(Duration(seconds: Utils.timeToNotification), () {
         audioPlayer.play(AssetSource("sounds/notification.mp3"));
         audioPlayer.setReleaseMode(ReleaseMode.loop);
-        if (_isCounting!) {
+        if (isCounting!) {
           cameraModel.counter();
         }
       });

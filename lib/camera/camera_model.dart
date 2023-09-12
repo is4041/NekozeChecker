@@ -12,12 +12,13 @@ import 'package:posture_correction/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
+Timer? timer;
+Timer? badPostureTimer;
+
 class CameraModel extends ChangeNotifier {
   CameraController? controller;
   PosePainter? posePainter;
   List<CameraDescription> _cam = [];
-  Timer? timer;
-  Timer? badPostureTimer;
   num measuringSec = 0;
   num measuringBadPostureSec = 0;
   int notificationCounter = 0;
@@ -84,6 +85,9 @@ class CameraModel extends ChangeNotifier {
 
   //ポーズ推定
   Future<void> processImage(InputImage inputImage) async {
+    if (measuringSec > 0) {
+      measuredOverOneSec = true;
+    }
     if (!_canProcess) return;
     if (_isBusy) return;
     _isBusy = true;
@@ -101,19 +105,6 @@ class CameraModel extends ChangeNotifier {
     _isBusy = false;
     notifyListeners();
   }
-
-  //カメラの切り替え
-  // changeCameraDirection() {
-  //   if (cameraDirectionNumber == 1) {
-  //     cameraDirectionNumber = 0;
-  //     getCamera();
-  //     print("!");
-  //     print(controller!.value.aspectRatio);
-  //   } else {
-  //     cameraDirectionNumber = 1;
-  //     getCamera();
-  //   }
-  // }
 
   //スリープ機能をON/OFFにする
   void autoSleepWakeUp(enable) {
