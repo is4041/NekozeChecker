@@ -24,6 +24,7 @@ class GraphModel extends ChangeNotifier {
   bool switchWidthIcon = false;
   bool show = false;
   bool dotSwitch = false;
+  bool _processing = false;
 
   //当月の計測データをfirebaseから取得、配列化する
   Future<void> fetchGraphData() async {
@@ -106,15 +107,21 @@ class GraphModel extends ChangeNotifier {
   }
 
   //先月のデータを取得
-  void getLastMonthData() {
+  void getLastMonthData() async {
+    if (_processing) return;
+    _processing = true;
     monthCounter--;
-    fetchGraphData();
+    await fetchGraphData();
+    _processing = false;
   }
 
   //翌月のデータを取得（当月のデータ表示中は押下不可）
-  void getNextMonthData() {
+  void getNextMonthData() async {
+    if (_processing) return;
+    _processing = true;
     monthCounter++;
-    fetchGraphData();
+    await fetchGraphData();
+    _processing = false;
   }
 
   //グラフの表示変更

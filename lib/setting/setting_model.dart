@@ -106,7 +106,7 @@ class SettingModel extends ChangeNotifier {
     if (connectivityResult == ConnectivityResult.none) {
       throw ("通信状態をご確認ください");
     } else if (Utils.userId.isEmpty) {
-      throw ("ユーザー情報が取得できていません。一度ホームに戻ってから再度試してください");
+      throw ("ユーザー情報が取得できていません。一度アプリを再起動してください");
     }
     await FirebaseAuth.instance.signOut();
     Utils.userId = "";

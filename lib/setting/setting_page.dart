@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:posture_correction/setting/setting_model.dart';
+import 'package:posture_correction/single_touch_container.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
 
 class SettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    bool _processing = false;
     return ChangeNotifierProvider<SettingModel>(
         create: (_) => SettingModel()..searchListIndex(),
         builder: (context, snapshot) {
@@ -42,6 +44,7 @@ class SettingPage extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         showCupertinoModalPopup(
+                            barrierDismissible: false,
                             context: context,
                             builder: (context) {
                               return Container(
@@ -49,53 +52,59 @@ class SettingPage extends StatelessWidget {
                                 color: Colors.white,
                                 child: Column(
                                   children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        CupertinoButton(
-                                            child: const Text("保存️",
-                                                style: TextStyle(fontSize: 20)),
-                                            onPressed: () async {
-                                              try {
-                                                await model
-                                                    .upDateTimeToNotification();
-                                              } catch (e) {
-                                                await showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return CupertinoAlertDialog(
-                                                        title: Text("エラー"),
-                                                        content: Text(
-                                                            "通信状態をご確認ください"),
-                                                        actions: [
-                                                          TextButton(
-                                                            child: const Text(
-                                                                "OK"),
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                          )
-                                                        ],
-                                                      );
-                                                    });
-                                              }
-                                              Navigator.pop(context);
-                                            }),
-                                        CupertinoButton(
-                                            child: Text(
-                                              "×️",
-                                              style: TextStyle(
-                                                  fontSize: 30,
-                                                  color: Colors.red),
-                                            ),
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            }),
-                                      ],
+                                    SingleTouchContainer(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          CupertinoButton(
+                                              child: const Text("保存️",
+                                                  style:
+                                                      TextStyle(fontSize: 20)),
+                                              onPressed: () async {
+                                                if (_processing) return;
+                                                _processing = true;
+                                                try {
+                                                  await model
+                                                      .upDateTimeToNotification();
+                                                } catch (e) {
+                                                  await showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return CupertinoAlertDialog(
+                                                          title: Text("エラー"),
+                                                          content: Text(
+                                                              "通信状態をご確認ください"),
+                                                          actions: [
+                                                            TextButton(
+                                                              child: const Text(
+                                                                  "OK"),
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              },
+                                                            )
+                                                          ],
+                                                        );
+                                                      });
+                                                }
+                                                Navigator.pop(context);
+                                                _processing = false;
+                                              }),
+                                          CupertinoButton(
+                                              child: Text(
+                                                "閉じる",
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.red),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              }),
+                                        ],
+                                      ),
                                     ),
                                     Divider(
                                       thickness: 1,
@@ -310,7 +319,7 @@ class SettingPage extends StatelessWidget {
                                           return CupertinoAlertDialog(
                                             title: Text("エラー"),
                                             content: Text(
-                                                "このアカウントはすでに別のユーザーアカウントに関連付けられています。今お使いの端末でこのアカウントに提携するためには全データ削除（初期化）を行った後SignInWithGoogleボタンから提携してください"),
+                                                "このアカウントはすでに別のユーザーアカウントに関連付けられています。\n今お使いの端末でこのアカウントに提携するためには全データ削除（初期化）を行った後SignInWithGoogleボタンから提携してください"),
                                             actions: [
                                               TextButton(
                                                 child: const Text("OK"),
@@ -321,7 +330,9 @@ class SettingPage extends StatelessWidget {
                                             ],
                                           );
                                         });
-                                  } else {
+                                  } else if (e.toString() !=
+                                      "Null check operator used on a null value") {
+                                    print(e.toString());
                                     await showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
@@ -392,47 +403,52 @@ class SettingPage extends StatelessWidget {
                                 await showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
-                                      return CupertinoAlertDialog(
-                                        title: Text("ログアウトしますか？"),
-                                        actions: [
-                                          TextButton(
-                                            child: Text("OK"),
-                                            onPressed: () async {
-                                              try {
-                                                await model.logout();
-                                              } catch (e) {
-                                                await showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return CupertinoAlertDialog(
-                                                        title: Text("エラー"),
-                                                        content:
-                                                            Text(e.toString()),
-                                                        actions: [
-                                                          TextButton(
-                                                            child: const Text(
-                                                                "OK"),
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                          )
-                                                        ],
-                                                      );
-                                                    });
-                                              }
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                          TextButton(
-                                            child: Text("キャンセル"),
-                                            onPressed: () async {
-                                              Navigator.of(context).pop();
-                                            },
-                                          )
-                                        ],
+                                      return SingleTouchContainer(
+                                        child: CupertinoAlertDialog(
+                                          title: Text("ログアウトしますか？"),
+                                          actions: [
+                                            TextButton(
+                                              child: Text("はい"),
+                                              onPressed: () async {
+                                                if (_processing) return;
+                                                _processing = true;
+                                                try {
+                                                  await model.logout();
+                                                } catch (e) {
+                                                  await showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return CupertinoAlertDialog(
+                                                          title: Text("エラー"),
+                                                          content: Text(
+                                                              e.toString()),
+                                                          actions: [
+                                                            TextButton(
+                                                              child: const Text(
+                                                                  "OK"),
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              },
+                                                            )
+                                                          ],
+                                                        );
+                                                      });
+                                                }
+                                                Navigator.of(context).pop();
+                                                _processing = false;
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: Text("キャンセル"),
+                                              onPressed: () async {
+                                                Navigator.of(context).pop();
+                                              },
+                                            )
+                                          ],
+                                        ),
                                       );
                                     });
                               },
@@ -476,88 +492,99 @@ class SettingPage extends StatelessWidget {
                           await showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return CupertinoAlertDialog(
-                                  title: Text("全データ削除（初期化）"),
-                                  content: Text("全てのデータが削除されます。"),
-                                  actions: [
-                                    TextButton(
-                                      child: Text(
-                                        "削除",
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                      onPressed: () async {
-                                        await showDialog(
-                                            barrierColor: Colors.transparent,
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return CupertinoAlertDialog(
-                                                title: Text("再確認"),
-                                                content: Text("本当に削除しますか？"),
-                                                actions: [
-                                                  TextButton(
-                                                    child: Text(
-                                                      "削除",
-                                                      style: TextStyle(
-                                                          color: Colors.red),
-                                                    ),
-                                                    onPressed: () async {
-                                                      try {
-                                                        await model
-                                                            .deleteUser();
-                                                      } catch (e) {
-                                                        await showDialog(
-                                                            barrierColor: Colors
-                                                                .transparent,
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return CupertinoAlertDialog(
-                                                                title:
-                                                                    Text("エラー"),
-                                                                content: Text(e
-                                                                    .toString()),
-                                                                actions: [
-                                                                  TextButton(
-                                                                    child: Text(
-                                                                      "OK",
-                                                                    ),
-                                                                    onPressed:
-                                                                        () {
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop();
-                                                                    },
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            });
-                                                      }
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                  ),
-                                                  TextButton(
-                                                    child: Text("キャンセル"),
-                                                    onPressed: () async {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                  )
-                                                ],
-                                              );
-                                            });
+                                return SingleTouchContainer(
+                                  child: CupertinoAlertDialog(
+                                    title: Text("全データ削除（初期化）"),
+                                    content: Text("全てのデータが削除されます。"),
+                                    actions: [
+                                      TextButton(
+                                        child: Text(
+                                          "削除",
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                        onPressed: () async {
+                                          await showDialog(
+                                              barrierColor: Colors.transparent,
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return SingleTouchContainer(
+                                                  child: CupertinoAlertDialog(
+                                                    title: Text("再確認"),
+                                                    content: Text("本当に削除しますか？"),
+                                                    actions: [
+                                                      TextButton(
+                                                        child: Text(
+                                                          "削除",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.red),
+                                                        ),
+                                                        onPressed: () async {
+                                                          if (_processing)
+                                                            return;
+                                                          _processing = true;
+                                                          try {
+                                                            await model
+                                                                .deleteUser();
+                                                          } catch (e) {
+                                                            await showDialog(
+                                                                barrierColor: Colors
+                                                                    .transparent,
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (BuildContext
+                                                                        context) {
+                                                                  return CupertinoAlertDialog(
+                                                                    title: Text(
+                                                                        "エラー"),
+                                                                    content: Text(
+                                                                        e.toString()),
+                                                                    actions: [
+                                                                      TextButton(
+                                                                        child:
+                                                                            Text(
+                                                                          "OK",
+                                                                        ),
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.of(context)
+                                                                              .pop();
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                  );
+                                                                });
+                                                          }
 
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    TextButton(
-                                      child: Text("キャンセル"),
-                                      onPressed: () async {
-                                        Navigator.of(context).pop();
-                                      },
-                                    )
-                                  ],
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                          _processing = false;
+                                                        },
+                                                      ),
+                                                      TextButton(
+                                                        child: Text("キャンセル"),
+                                                        onPressed: () async {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      )
+                                                    ],
+                                                  ),
+                                                );
+                                              });
+
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text("キャンセル"),
+                                        onPressed: () async {
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  ),
                                 );
                               });
                         },
