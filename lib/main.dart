@@ -37,7 +37,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       audioPlayer.stop();
       timer?.cancel();
       badPostureTimer?.cancel();
-      detection = false;
+      isDetecting = false;
       isCounting = false;
       isAdjusting = true;
       if (measuredOverOneSec == false) return;
@@ -50,15 +50,3 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return MaterialApp(home: SignInPage());
   }
 }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({Key? key}) : super(key: key);
-//
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: SignInPage(),
-//     );
-//   }
-// }
