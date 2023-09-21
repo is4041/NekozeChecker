@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:posture_correction/home/home_model.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:volume_watcher/volume_watcher.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -36,70 +38,133 @@ class HomePage extends StatelessWidget {
                   child: FadeInImage.memoryNetwork(
                     placeholder: kTransparentImage,
                     image:
-                        "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fCVFNiU5QyVCQSUyMCVFMyU4MSU4QSVFMyU4MSU5NyVFMyU4MiU4MyVFMyU4MiU4Q3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+                        "https://images.unsplash.com/photo-1665491573094-72fec461b4de?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2940&q=80",
+                    // "https://images.unsplash.com/photo-1547960450-2ea08b931270?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2832&q=80",
+                    // "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fCVFNiU5QyVCQSUyMCVFMyU4MSU4QSVFMyU4MSU5NyVFMyU4MiU4MyVFMyU4MiU4Q3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
                     fit: BoxFit.cover,
                   ),
                 ),
                 SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      //ヘルプページへ遷移するボタン
-                      Container(
-                        alignment: Alignment.bottomRight,
-                        height: screenSize.height * 0.1,
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 20.0),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => HelpPage()));
-                            },
-                            child: Icon(Icons.help),
-                            style: ElevatedButton.styleFrom(
-                                side: BorderSide(
-                                  color: Colors.white, //色
-                                  width: 1, //太さ
-                                ),
-                                shape: CircleBorder(),
-                                backgroundColor: Colors.green),
-                          ),
-                        ),
-                      ),
-                      //カメラページへの遷移ボタン
-                      SizedBox(
-                        height: 200,
-                        width: 200,
+                  child: Column(children: [
+                    //ヘルプページへ遷移するボタン
+                    Container(
+                      alignment: Alignment.bottomRight,
+                      height: screenSize.height * 0.1,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 20.0),
                         child: ElevatedButton(
-                          onPressed: () async {
-                            final value = await Navigator.push(
+                          onPressed: () {
+                            Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => CameraPage()));
-                            model.audioStop();
-                            //カメラページから戻った際に計測結果をダイアログで表示
-                            if (value != null) {
-                              model.getAverageData();
-                              await showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text("計測結果"),
-                                      content: Container(
-                                        height: 240,
+                                    builder: (context) => HelpPage()));
+                          },
+                          child: Icon(Icons.help),
+                          style: ElevatedButton.styleFrom(
+                              side: BorderSide(
+                                color: Colors.white, //色
+                                width: 1, //太さ
+                              ),
+                              shape: CircleBorder(),
+                              backgroundColor: Colors.green),
+                        ),
+                      ),
+                    ),
+                    //カメラページへの遷移ボタン
+                    SizedBox(
+                      height: 200,
+                      width: 200,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final value = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CameraPage()));
+                          model.audioStop();
+                          //カメラページから戻った際に計測結果をダイアログで表示
+                          if (value != null) {
+                            model.getAverageData();
+                            await showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    insetPadding: EdgeInsets.all(10),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    title: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "計測評価は...",
+                                          style: TextStyle(fontSize: 25),
+                                        ),
+                                        Text(
+                                          "${((value[1] / value[0]) * 100).toStringAsFixed(1)}",
+                                          style: TextStyle(
+                                              fontSize: 30,
+                                              fontWeight: FontWeight.bold,
+                                              color:
+                                                  Colors.greenAccent.shade700),
+                                        ),
+                                        Text(
+                                          "点!!!",
+                                          style: TextStyle(fontSize: 25),
+                                        ),
+                                      ],
+                                    ),
+                                    content: Container(
+                                      height: 300,
+                                      width: 300,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.greenAccent.shade700,
+                                          width: 3,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
                                         child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                  "計測時間：${value[0] ~/ 60 ~/ 60}時間${value[0] ~/ 60 % 60}分${value[0] % 60}秒"),
                                               Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
-                                                  Text("姿勢"),
                                                   Text(
-                                                    "(良)：${value[1] ~/ 60 ~/ 60}時間${value[1] ~/ 60 % 60}分${value[1] % 60}秒",
+                                                    "計測時間",
+                                                    style:
+                                                        TextStyle(fontSize: 20),
+                                                  ),
+                                                  Text(
+                                                    "${value[0] ~/ 60 ~/ 60}時間${value[0] ~/ 60 % 60}分${value[0] % 60}秒",
+                                                    style:
+                                                        TextStyle(fontSize: 20),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "姿勢(良)",
                                                     style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors
+                                                            .greenAccent
+                                                            .shade700),
+                                                  ),
+                                                  Text(
+                                                    "${value[1] ~/ 60 ~/ 60}時間${value[1] ~/ 60 % 60}分${value[1] % 60}秒",
+                                                    style: TextStyle(
+                                                      fontSize: 20,
                                                       color: Colors
                                                           .greenAccent.shade700,
                                                     ),
@@ -107,23 +172,46 @@ class HomePage extends StatelessWidget {
                                                 ],
                                               ),
                                               Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
-                                                  Text("姿勢"),
                                                   Text(
-                                                    "(不良)：${value[2] ~/ 60 ~/ 60}時間${value[2] ~/ 60 % 60}分${value[2] % 60}秒",
+                                                    "姿勢(不良)",
                                                     style: TextStyle(
+                                                        fontSize: 20,
+                                                        color: Colors.red),
+                                                  ),
+                                                  Text(
+                                                    "${value[2] ~/ 60 ~/ 60}時間${value[2] ~/ 60 % 60}分${value[2] % 60}秒",
+                                                    style: TextStyle(
+                                                        fontSize: 20,
                                                         color:
                                                             Color(0xffff1a1a)),
                                                   ),
                                                 ],
                                               ),
-                                              Text("警告回数：${value[3]}回"),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "警告回数",
+                                                    style:
+                                                        TextStyle(fontSize: 20),
+                                                  ),
+                                                  Text(
+                                                    "${value[3]}回",
+                                                    style:
+                                                        TextStyle(fontSize: 20),
+                                                  ),
+                                                ],
+                                              ),
                                               SizedBox(
-                                                height: 10,
+                                                height: 20,
                                               ),
                                               Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
                                                 children: [
                                                   Expanded(
                                                     flex: 1,
@@ -156,7 +244,7 @@ class HomePage extends StatelessWidget {
                                                   ),
                                                   Expanded(
                                                     flex: 1,
-                                                    child: SizedBox(
+                                                    child: Container(
                                                       height: 120,
                                                       child: Column(
                                                         mainAxisAlignment:
@@ -169,7 +257,7 @@ class HomePage extends StatelessWidget {
                                                                 "●",
                                                                 style:
                                                                     TextStyle(
-                                                                  fontSize: 18,
+                                                                  fontSize: 23,
                                                                   color: Colors
                                                                       .greenAccent
                                                                       .shade700,
@@ -179,7 +267,7 @@ class HomePage extends StatelessWidget {
                                                                 "：${((value[1] / value[0]) * 100).toStringAsFixed(1)}％",
                                                                 style:
                                                                     TextStyle(
-                                                                  fontSize: 15,
+                                                                  fontSize: 20,
                                                                   color: Colors
                                                                       .greenAccent
                                                                       .shade700,
@@ -193,7 +281,7 @@ class HomePage extends StatelessWidget {
                                                                 "●",
                                                                 style: TextStyle(
                                                                     fontSize:
-                                                                        18,
+                                                                        23,
                                                                     color: Color(
                                                                         0xffff1a1a)),
                                                               ),
@@ -201,7 +289,7 @@ class HomePage extends StatelessWidget {
                                                                 "：${((value[2] / value[0]) * 100).toStringAsFixed(1)}％",
                                                                 style: TextStyle(
                                                                     fontSize:
-                                                                        15,
+                                                                        20,
                                                                     color: Color(
                                                                         0xffff1a1a)),
                                                               ),
@@ -215,93 +303,103 @@ class HomePage extends StatelessWidget {
                                               ),
                                             ]),
                                       ),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text("閉じる"))
-                                      ],
-                                    );
-                                  });
-                            }
-                          },
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                "START",
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  color: Colors.greenAccent.shade700,
-                                  fontWeight: FontWeight.w300,
-                                ),
+                                    ),
+                                    actions: [
+                                      Center(
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 30.0),
+                                            child: Text(
+                                              "OK",
+                                              style: TextStyle(
+                                                  fontSize: 25,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
+                                            backgroundColor:
+                                                Colors.greenAccent.shade700,
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                });
+                          }
+                        },
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "START",
+                              style: TextStyle(
+                                fontSize: 30,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
                               ),
-                              Text(
-                                "MEASUREMENT",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.greenAccent.shade700,
-                                  fontWeight: FontWeight.w300,
-                                ),
-                              ),
-                            ],
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.greenAccent.shade700,
-                            elevation: 0,
-                            shape: CircleBorder(),
-                            side: BorderSide(
-                              width: 1,
-                              color: Colors.greenAccent.shade700,
                             ),
+                          ],
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.greenAccent.shade700,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: CircleBorder(),
+                          side: BorderSide(
+                            width: 5,
+                            color: Colors.white,
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: 50,
-                      ),
-                      _PieGraph(
-                        dataOfDate: "今日のデータ",
-                        numberOfMeasurements: Utils.numberOfMeasurementsToday,
-                        hour: _hour3,
-                        minute: _minute3,
-                        second: _second3,
-                        rateOfGoodPosture: Utils.percentOfTodayGoodPostureSec,
-                        showingRate: _showingSections,
-                        beginColor: Colors.lightGreenAccent,
-                        endColor: Color(0xff29fa2f),
-                      ),
-                      _PieGraph(
-                        dataOfDate: "今月のデータ",
-                        numberOfMeasurements:
-                            Utils.numberOfMeasurementsThisMonth,
-                        hour: _hour2,
-                        minute: _minute2,
-                        second: _second2,
-                        rateOfGoodPosture:
-                            Utils.percentOfThisMonthGoodPostureSec,
-                        showingRate: _showingSections,
-                        beginColor: Color(0xff29fa2f),
-                        endColor: Color(0xff0ecd12),
-                      ),
-                      _PieGraph(
-                        dataOfDate: "総合データ",
-                        numberOfMeasurements: Utils.numberOfAllMeasurements,
-                        hour: _hour,
-                        minute: _minute,
-                        second: _second,
-                        rateOfGoodPosture: Utils.percentOfAllGoodPostureSec,
-                        showingRate: _showingSections,
-                        beginColor: Color(0xff0ecd12),
-                        endColor: Color(0xff01ad04),
-                      ),
-                      SizedBox(
-                        height: 30,
-                      )
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      height: 50,
+                    ),
+                    _PieGraph(
+                      dataOfDate: "今日のデータ",
+                      numberOfMeasurements: Utils.numberOfMeasurementsToday,
+                      hour: _hour3,
+                      minute: _minute3,
+                      second: _second3,
+                      rateOfGoodPosture: Utils.percentOfTodayGoodPostureSec,
+                      showingRate: _showingSections,
+                      beginColor: Colors.lightGreenAccent,
+                      endColor: Color(0xff29fa2f),
+                    ),
+                    _PieGraph(
+                      dataOfDate: "今月のデータ",
+                      numberOfMeasurements: Utils.numberOfMeasurementsThisMonth,
+                      hour: _hour2,
+                      minute: _minute2,
+                      second: _second2,
+                      rateOfGoodPosture: Utils.percentOfThisMonthGoodPostureSec,
+                      showingRate: _showingSections,
+                      beginColor: Color(0xff29fa2f),
+                      endColor: Color(0xff0ecd12),
+                    ),
+                    _PieGraph(
+                      dataOfDate: "総合データ",
+                      numberOfMeasurements: Utils.numberOfAllMeasurements,
+                      hour: _hour,
+                      minute: _minute,
+                      second: _second,
+                      rateOfGoodPosture: Utils.percentOfAllGoodPostureSec,
+                      showingRate: _showingSections,
+                      beginColor: Color(0xff0ecd12),
+                      endColor: Color(0xff01ad04),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                  ]),
                 ),
               ]);
             }),
@@ -396,8 +494,8 @@ class _PieGraph extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              beginColor,
-              endColor,
+              beginColor.withOpacity(0.9),
+              endColor.withOpacity(0.9),
             ],
           ),
           borderRadius: BorderRadius.circular(30),

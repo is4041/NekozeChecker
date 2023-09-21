@@ -15,7 +15,7 @@ class SettingPage extends StatelessWidget {
           return Scaffold(
             backgroundColor: Colors.grey[100],
             appBar: AppBar(
-              elevation: 0,
+              elevation: 1,
               backgroundColor: Colors.grey[100],
               title: Text(
                 "設  定",
@@ -36,8 +36,8 @@ class SettingPage extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0),
                       child: Text(
-                        "白点がグリーンラインの枠外に出た時に警告するまでの時間",
-                        style: TextStyle(fontSize: 13, color: Colors.grey),
+                        "警告音が鳴るまでの時間",
+                        style: TextStyle(fontSize: 13, color: Colors.black54),
                       ),
                     ),
                     //警告音が鳴るまでの秒数設定
@@ -101,6 +101,7 @@ class SettingPage extends StatelessWidget {
                                                     color: Colors.red),
                                               ),
                                               onPressed: () {
+                                                if (_processing) return;
                                                 Navigator.pop(context);
                                               }),
                                         ],
@@ -163,7 +164,7 @@ class SettingPage extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 10.0),
                       child: Text(
                         "グリーンラインの間隔",
-                        style: TextStyle(fontSize: 13, color: Colors.grey),
+                        style: TextStyle(fontSize: 13, color: Colors.black54),
                       ),
                     ),
                     //スライダーで範囲を調整
@@ -275,7 +276,7 @@ class SettingPage extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 10.0),
                       child: Text(
                         "アカウント提携",
-                        style: TextStyle(fontSize: 13, color: Colors.grey),
+                        style: TextStyle(fontSize: 13, color: Colors.black54),
                       ),
                     ),
                     //googleアカウント提携ボタン（匿名ログイン時のみ押下可）
@@ -381,7 +382,7 @@ class SettingPage extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 10.0),
                       child: Text(
                         "ログアウト",
-                        style: TextStyle(fontSize: 13, color: Colors.grey),
+                        style: TextStyle(fontSize: 13, color: Colors.black54),
                       ),
                     ),
                     //ログアウトボタン（googleログイン時のみ押下可）
@@ -444,6 +445,7 @@ class SettingPage extends StatelessWidget {
                                             TextButton(
                                               child: Text("キャンセル"),
                                               onPressed: () async {
+                                                if (_processing) return;
                                                 Navigator.of(context).pop();
                                               },
                                             )
@@ -473,7 +475,7 @@ class SettingPage extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 10.0),
                       child: Text(
                         "データ削除",
-                        style: TextStyle(fontSize: 13, color: Colors.grey),
+                        style: TextStyle(fontSize: 13, color: Colors.black54),
                       ),
                     ),
                     //全データ消去（初期化）ボタン
@@ -565,6 +567,8 @@ class SettingPage extends StatelessWidget {
                                                       TextButton(
                                                         child: Text("キャンセル"),
                                                         onPressed: () async {
+                                                          if (_processing)
+                                                            return;
                                                           Navigator.of(context)
                                                               .pop();
                                                         },

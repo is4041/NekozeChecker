@@ -43,7 +43,9 @@ class GraphPage extends StatelessWidget {
                             model.year! + " / " + model.month!,
                             style: TextStyle(
                               fontSize: 25.0,
-                              color: Colors.greenAccent.shade700,
+                              color: model.data.isNotEmpty
+                                  ? Colors.greenAccent.shade700
+                                  : Colors.grey,
                               // fontWeight: FontWeight.bold
                             ),
                           ),
@@ -122,64 +124,75 @@ class GraphPage extends StatelessWidget {
                             ),
                           ),
                           //表示されているデータの姿勢（良）と姿勢（不良）の割合
-                          Align(
-                            alignment: Alignment.topCenter,
-                            child: Container(
-                              height: 30,
-                              width: 250,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        height: 20,
-                                        width: 20,
-                                        decoration: BoxDecoration(
-                                          color: Colors.green.shade50,
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: Colors.greenAccent.shade700,
-                                          ),
+                          model.data.isNotEmpty
+                              ? Align(
+                                  alignment: Alignment.topCenter,
+                                  child: Container(
+                                    height: 30,
+                                    width: 250,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Container(
+                                              height: 20,
+                                              width: 20,
+                                              decoration: BoxDecoration(
+                                                color: Colors.green.shade50,
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: Colors
+                                                      .greenAccent.shade700,
+                                                ),
+                                              ),
+                                            ),
+                                            Text(
+                                              model.rateOfGoodPosture != 0
+                                                  ? "：${model.rateOfGoodPosture}％"
+                                                  : "：0％",
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors
+                                                      .greenAccent.shade700),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                      Text(
-                                        model.rateOfGoodPosture != 0
-                                            ? "：${model.rateOfGoodPosture}％"
-                                            : "：0％",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.greenAccent.shade700),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        height: 20,
-                                        width: 20,
-                                        decoration: BoxDecoration(
-                                          color: Colors.red.shade50,
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: Colors.red,
-                                          ),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              height: 20,
+                                              width: 20,
+                                              decoration: BoxDecoration(
+                                                color: Colors.red.shade50,
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: Colors.red,
+                                                ),
+                                              ),
+                                            ),
+                                            Text(
+                                              model.data.isNotEmpty
+                                                  ? "：${(100 - model.rateOfGoodPosture).toStringAsFixed(1)}％"
+                                                  : "：0％",
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.red),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                      Text(
-                                        model.data.isNotEmpty
-                                            ? "：${(100 - model.rateOfGoodPosture).toStringAsFixed(1)}％"
-                                            : "：0％",
-                                        style: TextStyle(
-                                            fontSize: 20, color: Colors.red),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
+                                )
+                              : Center(
+                                  child: Text(
+                                  "データなし",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                  ),
+                                )),
                           //グラフを延長表示するボタン
                           Align(
                             alignment: Alignment.topRight,
