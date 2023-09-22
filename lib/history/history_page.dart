@@ -368,7 +368,7 @@ class HistoryPage extends StatelessWidget {
                                                               //計測時間（姿勢・不良）を表示
                                                               _TimeValue(
                                                                 posture:
-                                                                    "（姿勢・不良）",
+                                                                    "（姿勢・猫背）",
                                                                 hourValue:
                                                                     _badHourValue,
                                                                 minuteValue:

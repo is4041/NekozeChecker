@@ -59,14 +59,17 @@ class HomePage extends StatelessWidget {
                                 MaterialPageRoute(
                                     builder: (context) => HelpPage()));
                           },
-                          child: Icon(Icons.help),
+                          child: Text(
+                            "?",
+                            style: TextStyle(fontSize: 30),
+                          ),
                           style: ElevatedButton.styleFrom(
                               side: BorderSide(
-                                color: Colors.white, //色
-                                width: 1, //太さ
+                                color: Colors.lightGreenAccent, //色
+                                width: 2, //太さ
                               ),
                               shape: CircleBorder(),
-                              backgroundColor: Colors.green),
+                              backgroundColor: Colors.greenAccent.shade700),
                         ),
                       ),
                     ),
@@ -98,7 +101,7 @@ class HomePage extends StatelessWidget {
                                       children: [
                                         Text(
                                           "計測評価は...",
-                                          style: TextStyle(fontSize: 25),
+                                          style: TextStyle(fontSize: 22),
                                         ),
                                         Text(
                                           "${((value[1] / value[0]) * 100).toStringAsFixed(1)}",
@@ -109,8 +112,17 @@ class HomePage extends StatelessWidget {
                                                   Colors.greenAccent.shade700),
                                         ),
                                         Text(
-                                          "点!!!",
-                                          style: TextStyle(fontSize: 25),
+                                          "点",
+                                          style: TextStyle(fontSize: 22),
+                                        ),
+                                        if (Utils.nekoMode)
+                                          Text(
+                                            "ニャ",
+                                            style: TextStyle(fontSize: 22),
+                                          ),
+                                        Text(
+                                          "!!!",
+                                          style: TextStyle(fontSize: 22),
                                         ),
                                       ],
                                     ),
@@ -177,7 +189,7 @@ class HomePage extends StatelessWidget {
                                                         .spaceBetween,
                                                 children: [
                                                   Text(
-                                                    "姿勢(不良)",
+                                                    "姿勢(猫背)",
                                                     style: TextStyle(
                                                         fontSize: 20,
                                                         color: Colors.red),
@@ -346,6 +358,11 @@ class HomePage extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
+                            if (Utils.nekoMode)
+                              Text(
+                                "ニャ！",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                           ],
                         ),
                         style: ElevatedButton.styleFrom(
@@ -354,8 +371,8 @@ class HomePage extends StatelessWidget {
                           elevation: 0,
                           shape: CircleBorder(),
                           side: BorderSide(
-                            width: 5,
-                            color: Colors.white,
+                            width: 10,
+                            color: Colors.lightGreenAccent,
                           ),
                         ),
                       ),
@@ -548,14 +565,14 @@ class _PieGraph extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "計測回数：$numberOfMeasurements 回",
+                              "計測回数   ：$numberOfMeasurements 回",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 // color: Color(0xff00c904),
                               ),
                             ),
                             Text(
-                              "計測時間：$hour時間$minute分$second秒",
+                              "計測時間   ：$hour時間$minute分$second秒",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -568,7 +585,7 @@ class _PieGraph extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              "姿勢(不良)：${numberOfMeasurements > 0 ? (100 - rateOfGoodPosture).toStringAsFixed(1) : 0.0}%",
+                              "姿勢(猫背)：${numberOfMeasurements > 0 ? (100 - rateOfGoodPosture).toStringAsFixed(1) : 0.0}%",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xffff1a1a),

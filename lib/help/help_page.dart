@@ -8,8 +8,8 @@ class HelpPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.black),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
+        elevation: 1,
+        backgroundColor: Colors.grey[50],
         title: Text(
           "ヘルプ",
           style: TextStyle(
@@ -20,7 +20,7 @@ class HelpPage extends StatelessWidget {
         children: [
           //Q & A
           Padding(
-            padding: const EdgeInsets.only(left: 10.0),
+            padding: const EdgeInsets.only(top: 10.0, left: 10.0),
             child: Text(
               "Q & A",
               style: TextStyle(fontSize: 20),
@@ -115,7 +115,7 @@ class HelpPage extends StatelessWidget {
             image: "images/IMG_0215.jpg",
             title: " 使わなくなった端末を活用できます ",
             description: Text(
-              "使わなくなった端末はありませんか？\nGoogleでサインインすると複数の端末の間でデータの同期ができます。\n同期をすることで今お使いの端末をデータ閲覧用、使わなくなった端末をカメラ計測用にするということもできます。",
+              "使わなくなった端末はありませんか？\nGoogle・Appleでサインインすると複数の端末の間でデータの同期ができます。\n同期をすることで今お使いの端末をデータ閲覧用、使わなくなった端末をカメラ計測用にするということもできます。",
               style: TextStyle(fontSize: 16),
             ),
           ),

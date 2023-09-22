@@ -61,7 +61,7 @@ class CameraPage extends StatelessWidget {
                             height: 20,
                           ),
                           const Text(
-                            "端末の設定からこのアプリ（Posture correction）の\nカメラ・マイクへのアクセスを許可してください。",
+                            "端末の設定からこのアプリ（猫背チェッカー）の\nカメラ・マイクへのアクセスを許可してください。",
                           ),
                           const SizedBox(
                             height: 20,
@@ -103,7 +103,9 @@ class CameraPage extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              title: Text("音量が0になっています！"),
+                              title: Text(Utils.nekoMode == true
+                                  ? "鳴き声が聞こえない状態ニャ！"
+                                  : "警告音が聞こえない状態です！"),
                               content: Container(
                                 height: 160,
                                 width: 200,
@@ -111,15 +113,18 @@ class CameraPage extends StatelessWidget {
                                   padding: const EdgeInsets.all(10.0),
                                   child: Column(
                                     children: [
-                                      Text(
-                                          "音量をあげてください。下のボタンを押下すると警告音のデモ再生ができます。"),
+                                      Text(Utils.nekoMode == true
+                                          ? "音量をあげてください。\n下のボタンを押下するとネコが試しに鳴きます。"
+                                          : "音量をあげてください。\n下のボタンを押下すると警告音のデモ再生ができます。"),
                                       SizedBox(
                                         height: 10,
                                       ),
                                       FloatingActionButton(
                                         onPressed: () {
                                           audioPlayer.play(AssetSource(
-                                              "sounds/notification.mp3"));
+                                              Utils.nekoMode == true
+                                                  ? "sounds/meow.mp3"
+                                                  : "sounds/notification.mp3"));
                                         },
                                         child: Icon(Icons.volume_up),
                                         backgroundColor: Colors.red,
@@ -430,7 +435,7 @@ class CameraPage extends StatelessWidget {
                         Align(
                           alignment: Alignment(0.9, -0.9),
                           child: Text(
-                            "計測中...",
+                            Utils.nekoMode == true ? "計測中ニャ..." : "計測中...",
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
@@ -554,7 +559,9 @@ class PosePainter extends CustomPainter {
         cameraModel.startBadPostureTimer();
         notificationTimer =
             Timer(Duration(seconds: Utils.timeToNotification), () {
-          audioPlayer.play(AssetSource("sounds/notification.mp3"));
+          audioPlayer.play(AssetSource(Utils.nekoMode == true
+              ? "sounds/meow.mp3"
+              : "sounds/notification.mp3"));
           audioPlayer.setReleaseMode(ReleaseMode.loop);
           cameraModel.counter();
           print("${Utils.timeToNotification}秒後警告");
@@ -563,9 +570,12 @@ class PosePainter extends CustomPainter {
     } else if (!beyond && _soundLoop!) {
       _soundLoop = false;
       _hiddenOkButton = false;
-      cameraModel.stopBadPostureTimer();
-      notificationTimer?.cancel();
-      audioPlayer.stop();
+
+      if (isCounting!) {
+        cameraModel.stopBadPostureTimer();
+        notificationTimer?.cancel();
+        audioPlayer.stop();
+      }
     }
   }
 
@@ -578,15 +588,20 @@ class PosePainter extends CustomPainter {
       if (isCounting!) {
         notificationTimer =
             Timer(Duration(seconds: Utils.timeToNotification), () {
-          audioPlayer.play(AssetSource("sounds/notification.mp3"));
+          audioPlayer.play(AssetSource(Utils.nekoMode == true
+              ? "sounds/meow.mp3"
+              : "sounds/notification.mp3"));
           audioPlayer.setReleaseMode(ReleaseMode.loop);
         });
       }
     } else if (!beyond && _soundLoop!) {
       _soundLoop = false;
       _hiddenOkButton = false;
-      notificationTimer?.cancel();
-      audioPlayer.stop();
+
+      if (isCounting!) {
+        notificationTimer?.cancel();
+        audioPlayer.stop();
+      }
     }
   }
 

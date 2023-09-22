@@ -48,6 +48,7 @@ class SignInModel extends ChangeNotifier {
       await FirebaseFirestore.instance.collection("users").doc(uid).set({
         "createdAt": Timestamp.now(),
         "greenLineRange": 0.45,
+        "nekoMode": false,
         "timeToNotification": 15,
         "userId": uid,
       });
@@ -58,9 +59,10 @@ class SignInModel extends ChangeNotifier {
   Future<void> signInWithAnonymousUser() async {
     await firebaseAuth.signInAnonymously();
     final uid = firebaseAuth.currentUser!.uid;
-    FirebaseFirestore.instance.collection("users").doc(uid).set({
+    await FirebaseFirestore.instance.collection("users").doc(uid).set({
       "createdAt": Timestamp.now(),
       "greenLineRange": 0.45,
+      "nekoMode": false,
       "timeToNotification": 15,
       "userId": uid,
     });

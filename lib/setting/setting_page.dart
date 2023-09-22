@@ -33,6 +33,56 @@ class SettingPage extends StatelessWidget {
                     SizedBox(
                       height: 50,
                     ),
+                    //緑線の間隔の設定
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Text(
+                        "ネコモード",
+                        style: TextStyle(fontSize: 13, color: Colors.black54),
+                      ),
+                    ),
+                    Container(
+                      height: 50,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(color: Colors.grey, width: 0.5),
+                            bottom: BorderSide(color: Colors.grey, width: 0.5),
+                          ),
+                          color: Colors.white),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "ネコモード",
+                              style: TextStyle(fontSize: 17),
+                            ),
+                            Switch(
+                                activeColor: Colors.greenAccent.shade700,
+                                value: Utils.nekoMode,
+                                onChanged: (bool? value) async {
+                                  if (value != null) {
+                                    Utils.nekoMode = value;
+                                    await model.isOnNekoMode();
+                                    print(Utils.nekoMode);
+                                  }
+                                }),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Text(
+                        "※ネコモードをオンにすると警告音がネコの鳴き声になります。その他、申し訳程度にネコ要素が追加されますのでどうぞ探してみてください。",
+                        style: TextStyle(fontSize: 13, color: Colors.black54),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 50,
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0),
                       child: Text(

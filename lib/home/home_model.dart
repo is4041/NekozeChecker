@@ -62,6 +62,7 @@ class HomeModel extends ChangeNotifier {
         .get();
 
     Utils.greenLineRange = document["greenLineRange"];
+    Utils.nekoMode = document["nekoMode"];
     Utils.timeToNotification = document["timeToNotification"];
 
     Utils.showTutorial = false;

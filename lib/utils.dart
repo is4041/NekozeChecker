@@ -2,6 +2,7 @@ class Utils {
   static String userId = "";
   static int timeToNotification = 15;
   static double greenLineRange = 0.45;
+  static bool nekoMode = false;
   static bool isAnonymous = false;
   static bool darkScreenMode = false;
   static bool showTutorial = true;
