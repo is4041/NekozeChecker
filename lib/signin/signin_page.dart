@@ -161,11 +161,11 @@ class _PageOne extends StatelessWidget {
     return _PageContents(
       screenSize: screenSize,
       image: "images/IMG_0196.JPG",
-      title: "Posture Correctionへようこそ",
+      title: "猫背チェッカーへようこそ",
       description: Column(
         children: [
           Text(
-            "Posture Correctionはゲームやデスクワーク中の前傾姿勢・居眠りを検知すると警告音でお知らせします。",
+            "猫背チェッカーはゲームやデスクワーク中の猫背・居眠りを検知すると警告音でお知らせするアプリです。",
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(
@@ -192,7 +192,7 @@ class _PageTwo extends StatelessWidget {
       description: Column(
         children: [
           Text(
-            "モニター付近にセットしたらstartボタンを押してカメラを起動しましょう。",
+            "椅子に座ったら上の画像のようにスマートフォンをセットし、startボタンを押してカメラを起動しましょう。",
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(
@@ -254,7 +254,7 @@ class _PageFour extends StatelessWidget {
       description: Column(
         children: [
           Text(
-            "Googleでサインインすると複数の端末の間でデータの同期ができます。\n同期をすることで今お使いの端末をデータ閲覧用、使わなくなった端末をカメラ計測用にするということもできます。",
+            "Google・Appleでサインインすると複数の端末の間でデータの同期ができます。同期をすることで今お使いの端末をデータ閲覧用、使わなくなった端末をカメラ計測用にするということもできます。",
             style: TextStyle(fontSize: 16),
           ),
         ],
@@ -299,14 +299,14 @@ class _PageFive extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        "Posture",
+                        "猫背",
                         style: TextStyle(
                             fontSize: 50,
                             fontWeight: FontWeight.bold,
                             color: Colors.greenAccent),
                       ),
                       Text(
-                        "Correction",
+                        "チェッカー",
                         style: TextStyle(
                             fontSize: 50,
                             fontWeight: FontWeight.bold,
@@ -358,9 +358,7 @@ class _PageFive extends StatelessWidget {
                 )),
             child: Text(
               "はじめる",
-              style: TextStyle(
-                fontSize: 18,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),
         ),

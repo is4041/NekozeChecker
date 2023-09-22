@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:posture_correction/graph/graph_model.dart';
 import 'package:posture_correction/graph/title_widget.dart';
+import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
 
 import 'dart:math';
@@ -188,7 +189,7 @@ class GraphPage extends StatelessWidget {
                                 )
                               : Center(
                                   child: Text(
-                                  "データなし",
+                                  Utils.nekoMode == true ? "データにゃし" : "データなし",
                                   style: TextStyle(
                                     fontSize: 20,
                                   ),
@@ -287,7 +288,7 @@ class GraphPage extends StatelessWidget {
                                     style: TextStyle(fontSize: 12),
                                   ),
                                   Text(
-                                    "(不良)",
+                                    "(猫背)",
                                     style: TextStyle(
                                         fontSize: 12, color: Colors.red),
                                   ),

@@ -74,6 +74,21 @@ class SettingModel extends ChangeNotifier {
     });
   }
 
+  //ネコモードのオンオフ
+  Future<void> isOnNekoMode() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty) {
+      return;
+    }
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(Utils.userId)
+        .update({
+      "nekoMode": Utils.nekoMode,
+    });
+    notifyListeners();
+  }
+
   //匿名アカウントからgoogleアカウントへの更新
   Future<void> googleSignIn() async {
     final connectivityResult = await Connectivity().checkConnectivity();
