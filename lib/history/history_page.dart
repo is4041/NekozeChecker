@@ -170,12 +170,18 @@ class HistoryPage extends StatelessWidget {
                                                         Align(
                                                           alignment: Alignment
                                                               .centerLeft,
-                                                          child: Text(
-                                                            " メモ",
-                                                            style: TextStyle(
-                                                                fontSize: 12,
-                                                                color: Colors
-                                                                    .black54),
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    left: 10),
+                                                            child: Text(
+                                                              "メモ",
+                                                              style: TextStyle(
+                                                                  fontSize: 12,
+                                                                  color: Colors
+                                                                      .black54),
+                                                            ),
                                                           ),
                                                         ),
                                                         Container(
@@ -250,7 +256,7 @@ class HistoryPage extends StatelessWidget {
                                                                           .shade700,
                                                                     ),
                                                                     child: Text(
-                                                                        "保存")),
+                                                                        "メモ保存")),
                                                           ),
                                                         ),
                                                         SizedBox(
@@ -259,12 +265,18 @@ class HistoryPage extends StatelessWidget {
                                                         Align(
                                                           alignment: Alignment
                                                               .centerLeft,
-                                                          child: Text(
-                                                            " 計測データ",
-                                                            style: TextStyle(
-                                                                fontSize: 12,
-                                                                color: Colors
-                                                                    .black54),
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    left: 10),
+                                                            child: Text(
+                                                              "計測データ",
+                                                              style: TextStyle(
+                                                                  fontSize: 12,
+                                                                  color: Colors
+                                                                      .black54),
+                                                            ),
                                                           ),
                                                         ),
                                                         Container(
@@ -339,11 +351,8 @@ class HistoryPage extends StatelessWidget {
                                                                     _measuringMinuteValue,
                                                                 secondValue:
                                                                     _measuringSecondValue,
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        17,
-                                                                    color: Colors
-                                                                        .black),
+                                                                color: Colors
+                                                                    .black,
                                                               ),
                                                               Divider(),
                                                               //計測時間（姿勢・良）を表示
@@ -356,13 +365,9 @@ class HistoryPage extends StatelessWidget {
                                                                     _goodMinuteValue,
                                                                 secondValue:
                                                                     _goodSecondValue,
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 17,
-                                                                  color: Colors
-                                                                      .greenAccent
-                                                                      .shade700,
-                                                                ),
+                                                                color: Colors
+                                                                    .greenAccent
+                                                                    .shade700,
                                                               ),
                                                               Divider(),
                                                               //計測時間（姿勢・不良）を表示
@@ -375,12 +380,8 @@ class HistoryPage extends StatelessWidget {
                                                                     _badMinuteValue,
                                                                 secondValue:
                                                                     _badSecondValue,
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 17,
-                                                                  color: Colors
-                                                                      .red,
-                                                                ),
+                                                                color:
+                                                                    Colors.red,
                                                               ),
                                                               Divider(),
                                                               //警告音が鳴った回数を表示
@@ -390,11 +391,7 @@ class HistoryPage extends StatelessWidget {
                                                                         .spaceBetween,
                                                                 children: [
                                                                   Text(
-                                                                    _timeToNotification ~/
-                                                                                60 >
-                                                                            0
-                                                                        ? "警告回数（設定：${(_timeToNotification / 60).floor()}分）"
-                                                                        : "警告回数（設定：$_timeToNotification秒）",
+                                                                    "警告回数（設定：$_timeToNotification秒）",
                                                                     style:
                                                                         style,
                                                                   ),
@@ -782,31 +779,33 @@ class _TimeValue extends StatelessWidget {
     required this.hourValue,
     required this.minuteValue,
     required this.secondValue,
-    required this.style,
+    required this.color,
   });
   final String posture;
   final num hourValue;
   final num minuteValue;
   final num secondValue;
-  final TextStyle style;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text("計測時間${(posture)}", style: style),
+        Text("計測時間${(posture)}", style: TextStyle(fontSize: 17, color: color)),
         Row(
           children: [
-            Text(hourValue > 0 ? "$hourValue時間" : "", style: style),
-            Text(minuteValue > 0 ? "$minuteValue分" : "", style: style),
+            Text(hourValue > 0 ? "$hourValue時間" : "",
+                style: TextStyle(fontSize: 17, color: color)),
+            Text(minuteValue > 0 ? "$minuteValue分" : "",
+                style: TextStyle(fontSize: 17, color: color)),
             Text(
               secondValue > 0 ? "$secondValue秒" : "",
-              style: style,
+              style: TextStyle(fontSize: 17, color: color),
             ),
             Visibility(
               visible: hourValue == 0 && minuteValue == 0 && secondValue == 0,
-              child: Text("0秒", style: style),
+              child: Text("0秒", style: TextStyle(fontSize: 17, color: color)),
             ),
           ],
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:posture_correction/help/help_page.dart';
 import 'package:posture_correction/history/history_page.dart';
 import 'package:posture_correction/home/home_page.dart';
 import 'package:posture_correction/setting/setting_page.dart';
@@ -18,6 +19,7 @@ class _State extends State<BottomNavigation> {
     HistoryPage(),
     GraphPage(),
     SettingPage(),
+    HelpPage(),
   ];
 
   void onTapItem(int index) {
@@ -40,6 +42,7 @@ class _State extends State<BottomNavigation> {
           BottomNavigationBarItem(icon: Icon(Icons.history), label: "履歴"),
           BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: "グラフ"),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: "設定"),
+          BottomNavigationBarItem(icon: Icon(Icons.help), label: "ヘルプ"),
         ],
         currentIndex: selectedIndex,
         onTap: onTapItem,

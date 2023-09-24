@@ -1,6 +1,6 @@
 class Utils {
   static String userId = "";
-  static int timeToNotification = 15;
+  static int timeToNotification = 10;
   static double greenLineRange = 0.45;
   static bool nekoMode = false;
   static bool isAnonymous = false;
