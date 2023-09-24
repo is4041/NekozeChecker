@@ -30,10 +30,11 @@ class SignInPage extends StatelessWidget {
                       _PageTwo(screenSize),
                       _PageThree(screenSize),
                       _PageFour(screenSize),
-                      _PageFive(model, screenSize),
+                      _PageFive(screenSize),
+                      _PageSix(model, screenSize),
                     ]
                   : [
-                      _PageFive(model, screenSize),
+                      _PageSix(model, screenSize),
                     ];
               return Stack(children: [
                 StreamBuilder<User?>(
@@ -102,7 +103,7 @@ class SignInPage extends StatelessWidget {
                                       height: 40,
                                       width: double.infinity,
                                       child: ElevatedButton(
-                                        onPressed: model.activePage < 4
+                                        onPressed: model.activePage < 5
                                             ? () {
                                                 pageController.nextPage(
                                                     duration: const Duration(
@@ -112,7 +113,7 @@ class SignInPage extends StatelessWidget {
                                             : () {},
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor: model.activePage <
-                                                    4
+                                                    5
                                                 ? Colors.greenAccent.shade700
                                                 : Colors.grey,
                                             shape: RoundedRectangleBorder(
@@ -192,7 +193,7 @@ class _PageTwo extends StatelessWidget {
       description: Column(
         children: [
           Text(
-            "椅子に座ったら上の画像のようにスマートフォンをセットし、startボタンを押してカメラを起動しましょう。",
+            "椅子に座ったら上の画像のようにスマートフォンをセットし、STARTボタンを押してカメラを起動しましょう。",
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(
@@ -223,16 +224,13 @@ class _PageThree extends StatelessWidget {
       description: Column(
         children: [
           Text(
-            "姿勢を正し、鼻の位置に表示される白点がグリーンラインの枠内に収まるように端末の位置を調整します。\n白点が枠内から出ないように姿勢を維持しましょう。",
+            "姿勢を正し、鼻の位置に表示される白点がグリーンラインの枠内に収まるように端末の位置を調整します。",
             style: TextStyle(fontSize: 16),
           ),
-          SizedBox(
-            height: 5,
-          ),
           Text(
-            "白点がグリーンラインの枠内から出たまま一定時間経つと警告音が鳴ります。",
-            style: TextStyle(fontSize: 12),
-          ),
+            "白点が枠内から出ないように姿勢を維持しましょう",
+            style: TextStyle(fontSize: 16),
+          )
         ],
       ),
     );
@@ -242,6 +240,71 @@ class _PageThree extends StatelessWidget {
 //4ページ目
 class _PageFour extends StatelessWidget {
   _PageFour(this.screenSize);
+
+  final screenSize;
+  @override
+  Widget build(BuildContext context) {
+    return _PageContents(
+      screenSize: screenSize,
+      image: "images/IMG_0295.JPG",
+      title: "白点とラインカラーの関係",
+      description: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          RichText(
+              text: TextSpan(
+                  style: DefaultTextStyle.of(context).style,
+                  children: [
+                TextSpan(
+                    text: "黄色",
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.yellow)),
+                TextSpan(
+                    text: "・・・猫背とは判定されませんが警告音はなります。",
+                    style: TextStyle(fontSize: 16)),
+              ])),
+          SizedBox(
+            height: 10,
+          ),
+          RichText(
+              text: TextSpan(
+                  style: DefaultTextStyle.of(context).style,
+                  children: [
+                TextSpan(
+                    text: "緑色",
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.greenAccent.shade700)),
+                TextSpan(text: "・・・姿勢良好です。", style: TextStyle(fontSize: 16)),
+              ])),
+          SizedBox(
+            height: 10,
+          ),
+          RichText(
+              text: TextSpan(
+                  style: DefaultTextStyle.of(context).style,
+                  children: [
+                TextSpan(
+                    text: "赤色",
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.redAccent)),
+                TextSpan(
+                    text: "・・・猫背です。警告音がなります。", style: TextStyle(fontSize: 16)),
+              ])),
+        ],
+      ),
+    );
+  }
+}
+
+//5ページ目
+class _PageFive extends StatelessWidget {
+  _PageFive(this.screenSize);
 
   final screenSize;
 
@@ -254,7 +317,7 @@ class _PageFour extends StatelessWidget {
       description: Column(
         children: [
           Text(
-            "Google・Appleでサインインすると複数の端末の間でデータの同期ができます。同期をすることで今お使いの端末をデータ閲覧用、使わなくなった端末をカメラ計測用にするということもできます。",
+            "GoogleやAppleでサインインすると複数の端末の間でデータの同期ができます。同期をすることで今お使いの端末をデータ閲覧用、使わなくなった端末をカメラ計測用にするということもできます。",
             style: TextStyle(fontSize: 16),
           ),
         ],
@@ -263,9 +326,9 @@ class _PageFour extends StatelessWidget {
   }
 }
 
-//5ページ目
-class _PageFive extends StatelessWidget {
-  _PageFive(this.model, this.screenSize);
+//6ページ目
+class _PageSix extends StatelessWidget {
+  _PageSix(this.model, this.screenSize);
 
   final SignInModel model;
   final screenSize;
@@ -299,14 +362,14 @@ class _PageFive extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        "猫背",
+                        "ねこぜ",
                         style: TextStyle(
                             fontSize: 50,
                             fontWeight: FontWeight.bold,
                             color: Colors.greenAccent),
                       ),
                       Text(
-                        "チェッカー",
+                        "ちぇっかー",
                         style: TextStyle(
                             fontSize: 50,
                             fontWeight: FontWeight.bold,

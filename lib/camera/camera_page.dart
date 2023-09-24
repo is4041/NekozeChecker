@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
+import 'package:posture_correction/setting/setting_page.dart';
 import 'package:posture_correction/single_touch_container.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
@@ -26,13 +27,14 @@ Timer? notificationTimer;
 class CameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    isAdjusting = true;
     _soundLoop = false;
     isDetecting = false;
     isCounting = false;
-    isAdjusting = true;
     _hiddenOkButton = false;
     dataExist = false;
     measuredOverOneSec = false;
+    bool _configurable = true;
     bool _processing = false;
     return ChangeNotifierProvider<CameraModel>(
         create: (_) => CameraModel()
@@ -197,6 +199,7 @@ class CameraPage extends StatelessWidget {
                       Align(
                         alignment: const Alignment(0, 0.9),
                         child: FloatingActionButton(
+                          heroTag: "hero1",
                           //計測時間0秒を回避する
                           onPressed: model.measuringSec > 0
                               ? () async {
@@ -267,7 +270,10 @@ class CameraPage extends StatelessWidget {
                                             fontSize: 30,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white)),
-                                    Text("秒間猫背で警告します",
+                                    Text(
+                                        Utils.nekoMode == true
+                                            ? "秒間猫背でニャーと鳴ります"
+                                            : "秒間猫背で警告音が鳴ります",
                                         style: TextStyle(
                                             fontSize: 20, color: Colors.white)),
                                   ],
@@ -377,6 +383,7 @@ class CameraPage extends StatelessWidget {
                                               ? () {
                                                   isAdjusting = false;
                                                   isCounting = true;
+                                                  _configurable = false;
                                                   audioPlayer.stop();
                                                 }
                                               : () {},
@@ -403,6 +410,24 @@ class CameraPage extends StatelessWidget {
                                       ),
                                     ],
                                   ),
+                                ),
+                              ),
+                              //設定ページへの遷移ボタン
+                              Align(
+                                alignment: Alignment(0.9, 0.9),
+                                child: FloatingActionButton(
+                                  heroTag: "hero2",
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => SettingPage(
+                                                  fromCameraPage: true,
+                                                  configurable: _configurable,
+                                                )));
+                                  },
+                                  child: Icon(Icons.settings),
+                                  backgroundColor: Colors.grey,
                                 ),
                               ),
                             ],
