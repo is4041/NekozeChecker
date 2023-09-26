@@ -127,7 +127,8 @@ class SettingModel extends ChangeNotifier {
     Utils.userId = "";
     Utils.timeToNotification = 15;
     Utils.greenLineRange = 0.45;
-    Utils.isAnonymous = false;
+    Utils.providerId = "";
+    ;
     Utils.percentOfAllGoodPostureSec = 0;
     Utils.percentOfTodayGoodPostureSec = 0;
     Utils.percentOfThisMonthGoodPostureSec = 0;
@@ -157,12 +158,14 @@ class SettingModel extends ChangeNotifier {
         .collection("users")
         .doc(Utils.userId)
         .delete();
+    //先に上記の要素を削除しないとcurrentUserは削除不可になる
     await FirebaseAuth.instance.currentUser!.delete();
     await FirebaseAuth.instance.signOut();
     Utils.userId = "";
     Utils.timeToNotification = 15;
     Utils.greenLineRange = 0.45;
-    Utils.isAnonymous = false;
+    Utils.providerId = "";
+    ;
     Utils.percentOfAllGoodPostureSec = 0;
     Utils.percentOfTodayGoodPostureSec = 0;
     Utils.percentOfThisMonthGoodPostureSec = 0;

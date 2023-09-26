@@ -915,6 +915,8 @@ PODS:
     - FlutterMacOS
   - PromisesObjC (2.3.1)
   - ReachabilitySwift (5.0.0)
+  - sign_in_with_apple (0.0.1):
+    - Flutter
   - volume_watcher (0.0.1):
     - Flutter
   - wakelock_plus (0.0.1):
@@ -935,6 +937,7 @@ DEPENDENCIES:
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
   - volume_watcher (from `.symlinks/plugins/volume_watcher/ios`)
   - wakelock_plus (from `.symlinks/plugins/wakelock_plus/ios`)
 
@@ -1003,6 +1006,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  sign_in_with_apple:
+    :path: ".symlinks/plugins/sign_in_with_apple/ios"
   volume_watcher:
     :path: ".symlinks/plugins/volume_watcher/ios"
   wakelock_plus:
@@ -1056,6 +1061,7 @@ SPEC CHECKSUMS:
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
+  sign_in_with_apple: f3bf75217ea4c2c8b91823f225d70230119b8440
   volume_watcher: 6271ae8f78dfafa401c8dac4d117c35576568693
   wakelock_plus: 8b09852c8876491e4b6d179e17dfe2a0b5f60d47
 

@@ -45,6 +45,7 @@ dependencies:
   firebase_auth: ^4.7.2
   firebase_analytics: ^10.4.4
   google_sign_in: ^6.1.4
+  sign_in_with_apple: ^5.0.0
   sign_button: ^2.0.3
   flutter_signin_button: ^2.0.0
   flutter_slidable: ^3.0.0

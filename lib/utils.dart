@@ -3,7 +3,7 @@ class Utils {
   static int timeToNotification = 10;
   static double greenLineRange = 0.45;
   static bool nekoMode = false;
-  static bool isAnonymous = false;
+  static String providerId = "";
   static bool darkScreenMode = false;
   static bool showTutorial = true;
   static int totalMeasurementTimeForTheDay = 0;

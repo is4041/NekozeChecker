@@ -364,216 +364,229 @@ class SettingPage extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: Text(
-                              "アカウント提携",
-                              style: TextStyle(
-                                  fontSize: 13, color: Colors.black54),
-                            ),
-                          ),
-                          //googleアカウント提携ボタン（匿名ログイン時のみ押下可）
-                          Ink(
-                            decoration: BoxDecoration(
-                                border: Border(
-                                  top: BorderSide(
-                                      color: Colors.grey, width: 0.5),
-                                  bottom: BorderSide(
-                                      color: Colors.grey, width: 0.5),
-                                ),
-                                color: Colors.white),
-                            height: 50,
-                            width: double.infinity,
-                            //匿名ログイン時
-                            child: Utils.isAnonymous == true
-                                ? InkWell(
-                                    highlightColor: Colors.grey[400],
-                                    onTap: () async {
-                                      try {
-                                        await model.googleSignIn();
-                                        await showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return CupertinoAlertDialog(
-                                                title: Text("アカウント提携が完了しました"),
-                                                actions: [
-                                                  TextButton(
-                                                    child: const Text("OK"),
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                  )
-                                                ],
-                                              );
-                                            });
-                                      } catch (e) {
-                                        if (e.toString() ==
-                                            "[firebase_auth/credential-already-in-use] This credential is already associated with a different user account.") {
-                                          await showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return CupertinoAlertDialog(
-                                                  title: Text("エラー"),
-                                                  content: Text(
-                                                      "このアカウントはすでに別のユーザーアカウントに関連付けられています。\n今お使いの端末でこのアカウントに提携するためには全データ削除（初期化）を行った後SignInWithGoogleボタンから提携してください"),
-                                                  actions: [
-                                                    TextButton(
-                                                      child: const Text("OK"),
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                    )
-                                                  ],
-                                                );
-                                              });
-                                        } else if (e.toString() !=
-                                            "Null check operator used on a null value") {
-                                          print(e.toString());
-                                          await showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return CupertinoAlertDialog(
-                                                  title: Text("エラー"),
-                                                  content: Text(e.toString()),
-                                                  actions: [
-                                                    TextButton(
-                                                      child: const Text("OK"),
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                    )
-                                                  ],
-                                                );
-                                              });
-                                        }
-                                      }
-                                    },
-                                    child: Center(
-                                      child: Text(
-                                        "Googleアカウント提携",
-                                        style: TextStyle(fontSize: 17),
-                                      ),
-                                    ),
-                                  )
-                                //googleログイン時
-                                : Padding(
-                                    padding: const EdgeInsets.only(left: 10.0),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        Utils.isAnonymous == false
-                                            ? "Googleアカウント提携済"
-                                            : "Googleアカウント提携",
-                                        style: TextStyle(
-                                            fontSize: 17, color: Colors.grey),
-                                      ),
-                                    ),
+                          //googleアカウント提携ボタン（匿名ログイン時のみ押下可）appleでログイン時は非表示
+                          Visibility(
+                            visible: Utils.providerId != "apple.com",
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10.0),
+                                  child: Text(
+                                    "アカウント提携",
+                                    style: TextStyle(
+                                        fontSize: 13, color: Colors.black54),
                                   ),
+                                ),
+                                Ink(
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                        top: BorderSide(
+                                            color: Colors.grey, width: 0.5),
+                                        bottom: BorderSide(
+                                            color: Colors.grey, width: 0.5),
+                                      ),
+                                      color: Colors.white),
+                                  height: 50,
+                                  width: double.infinity,
+                                  //匿名ログイン時
+                                  child: Utils.providerId == ""
+                                      ? InkWell(
+                                          highlightColor: Colors.grey[400],
+                                          onTap: () async {
+                                            try {
+                                              await model.googleSignIn();
+                                              await showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return CupertinoAlertDialog(
+                                                      title: Text(
+                                                          "アカウント提携が完了しました"),
+                                                      actions: [
+                                                        TextButton(
+                                                          child:
+                                                              const Text("OK"),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        )
+                                                      ],
+                                                    );
+                                                  });
+                                            } catch (e) {
+                                              if (e.toString() ==
+                                                  "[firebase_auth/credential-already-in-use] This credential is already associated with a different user account.") {
+                                                await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return CupertinoAlertDialog(
+                                                        title: Text("エラー"),
+                                                        content: Text(
+                                                            "このアカウントはすでに別のユーザーアカウントに関連付けられています。\n今お使いの端末でこのアカウントに提携するためには全データ削除（初期化）を行った後SignInWithGoogleボタンから提携してください。"),
+                                                        actions: [
+                                                          TextButton(
+                                                            child: const Text(
+                                                                "OK"),
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          )
+                                                        ],
+                                                      );
+                                                    });
+                                              } else if (e.toString() !=
+                                                  "Null check operator used on a null value") {
+                                                print(e.toString());
+                                                await showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return CupertinoAlertDialog(
+                                                        title: Text("エラー"),
+                                                        content:
+                                                            Text(e.toString()),
+                                                        actions: [
+                                                          TextButton(
+                                                            child: const Text(
+                                                                "OK"),
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          )
+                                                        ],
+                                                      );
+                                                    });
+                                              }
+                                            }
+                                          },
+                                          child: Center(
+                                            child: Text(
+                                              "Googleアカウント提携",
+                                              style: TextStyle(fontSize: 17),
+                                            ),
+                                          ),
+                                        )
+                                      //googleログイン時
+                                      : Center(
+                                          child: Text(
+                                            "Googleアカウント提携済",
+                                            style: TextStyle(
+                                                fontSize: 17,
+                                                color: Colors.grey),
+                                          ),
+                                        ),
+                                ),
+                              ],
+                            ),
                           ),
                           SizedBox(
                             height: 50,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: Text(
-                              "ログアウト",
-                              style: TextStyle(
-                                  fontSize: 13, color: Colors.black54),
-                            ),
-                          ),
-                          //ログアウトボタン（googleログイン時のみ押下可）
-                          Ink(
-                            decoration: BoxDecoration(
-                                border: Border(
-                                  top: BorderSide(
-                                      color: Colors.grey, width: 0.5),
-                                  bottom: BorderSide(
-                                      color: Colors.grey, width: 0.5),
-                                ),
-                                color: Colors.white),
-                            height: 50,
-                            width: double.infinity,
-                            //googleログイン時
-                            child: Utils.isAnonymous == false &&
-                                    Utils.userId.isNotEmpty
-                                ? InkWell(
-                                    highlightColor: Colors.grey[400],
-                                    onTap: () async {
-                                      await showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return SingleTouchContainer(
-                                              child: CupertinoAlertDialog(
-                                                title: Text("ログアウトしますか？"),
-                                                actions: [
-                                                  TextButton(
-                                                    child: Text("はい"),
-                                                    onPressed: () async {
-                                                      if (_processing) return;
-                                                      _processing = true;
-                                                      try {
-                                                        await model.logout();
-                                                      } catch (e) {
-                                                        await showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return CupertinoAlertDialog(
-                                                                title:
-                                                                    Text("エラー"),
-                                                                content: Text(e
-                                                                    .toString()),
-                                                                actions: [
-                                                                  TextButton(
-                                                                    child:
-                                                                        const Text(
-                                                                            "OK"),
-                                                                    onPressed:
-                                                                        () {
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop();
-                                                                    },
-                                                                  )
-                                                                ],
-                                                              );
-                                                            });
-                                                      }
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                      _processing = false;
-                                                    },
-                                                  ),
-                                                  TextButton(
-                                                    child: Text("キャンセル"),
-                                                    onPressed: () async {
-                                                      if (_processing) return;
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                  )
-                                                ],
-                                              ),
-                                            );
-                                          });
-                                    },
-                                    child: const Center(
-                                      child: Text(
-                                        "ログアウト",
-                                      ),
-                                    ),
-                                  )
-                                //匿名ログイン時
-                                : Center(
-                                    child: Text(
-                                      "ログアウト",
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
+                          //ログアウトボタン（google,appleログイン時のみ表示）
+                          Visibility(
+                            visible: (Utils.providerId == "google.com" ||
+                                    Utils.providerId == "apple.com") &&
+                                Utils.userId.isNotEmpty,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10.0),
+                                  child: Text(
+                                    "ログアウト",
+                                    style: TextStyle(
+                                        fontSize: 13, color: Colors.black54),
                                   ),
+                                ),
+                                Ink(
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                          top: BorderSide(
+                                              color: Colors.grey, width: 0.5),
+                                          bottom: BorderSide(
+                                              color: Colors.grey, width: 0.5),
+                                        ),
+                                        color: Colors.white),
+                                    height: 50,
+                                    width: double.infinity,
+                                    //google,appleでログイン時
+                                    child: InkWell(
+                                      highlightColor: Colors.grey[400],
+                                      onTap: () async {
+                                        await showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return SingleTouchContainer(
+                                                child: CupertinoAlertDialog(
+                                                  title: Text("ログアウトしますか？"),
+                                                  actions: [
+                                                    TextButton(
+                                                      child: Text("はい"),
+                                                      onPressed: () async {
+                                                        if (_processing) return;
+                                                        _processing = true;
+                                                        try {
+                                                          await model.logout();
+                                                        } catch (e) {
+                                                          await showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return CupertinoAlertDialog(
+                                                                  title: Text(
+                                                                      "エラー"),
+                                                                  content: Text(
+                                                                      e.toString()),
+                                                                  actions: [
+                                                                    TextButton(
+                                                                      child: const Text(
+                                                                          "OK"),
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                      },
+                                                                    )
+                                                                  ],
+                                                                );
+                                                              });
+                                                        }
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        _processing = false;
+                                                      },
+                                                    ),
+                                                    TextButton(
+                                                      child: Text("キャンセル"),
+                                                      onPressed: () async {
+                                                        if (_processing) return;
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            });
+                                      },
+                                      child: const Center(
+                                        child: Text(
+                                          "ログアウト",
+                                          style: TextStyle(fontSize: 17),
+                                        ),
+                                      ),
+                                    )),
+                              ],
+                            ),
                           ),
                           SizedBox(
                             height: 250,
@@ -715,7 +728,8 @@ class SettingPage extends StatelessWidget {
                               child: const Center(
                                 child: Text(
                                   "全データ削除（初期化）",
-                                  style: TextStyle(color: Colors.red),
+                                  style: TextStyle(
+                                      fontSize: 17, color: Colors.red),
                                 ),
                               ),
                             ),

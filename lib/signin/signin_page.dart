@@ -383,11 +383,11 @@ class _PageSix extends StatelessWidget {
           ],
         ),
         SizedBox(
-          height: screenSize.height * 0.1,
+          height: 30,
         ),
         SizedBox(
-          height: 45,
-          width: 280,
+          height: 40,
+          width: 300,
           child: ElevatedButton(
             onPressed: () async {
               model.startLoading();
@@ -425,11 +425,11 @@ class _PageSix extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 30),
+        SizedBox(height: 20),
         //Googleでサインイン
         SignInButton(
             buttonType: ButtonType.google,
-            buttonSize: ButtonSize.large,
+            // buttonSize: ButtonSize.large,
             onPressed: () async {
               model.startLoading();
               try {
@@ -437,6 +437,38 @@ class _PageSix extends StatelessWidget {
               } catch (e) {
                 if (e.toString() !=
                     "Null check operator used on a null value") {
+                  await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("エラー"),
+                          content: Text(e.toString()),
+                          actions: [
+                            TextButton(
+                              child: const Text("OK"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
+                        );
+                      });
+                }
+              }
+              model.endLoading();
+            }),
+        SizedBox(height: 20),
+        SignInButton(
+            buttonType: ButtonType.apple,
+            // buttonSize: ButtonSize.large,
+            onPressed: () async {
+              model.startLoading();
+              try {
+                await model.signInWithApple();
+              } catch (e) {
+                if (e.toString() !=
+                    "SignInWithAppleAuthorizationError(AuthorizationErrorCode.canceled, The operation couldn’t be completed. (com.apple.AuthenticationServices.AuthorizationError error 1001.))") {
+                  print(e);
                   await showDialog(
                       context: context,
                       builder: (BuildContext context) {
