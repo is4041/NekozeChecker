@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>1050262055904-ssp0mafrtsr9auqk3r6r9ir9ivp5qi2c.apps.googleusercontent.com</string>
+	<string>1050262055904-h7prg9cnlujb0um9svf49vurdn34npsc.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1050262055904-ssp0mafrtsr9auqk3r6r9ir9ivp5qi2c</string>
+	<string>com.googleusercontent.apps.1050262055904-h7prg9cnlujb0um9svf49vurdn34npsc</string>
 	<key>API_KEY</key>
 	<string>AIzaSyB9NMC6XgiEb40HuHKfD0HfE609PNWlp_k</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.postureCorrection</string>
+	<string>com.example.posture-correction</string>
 	<key>PROJECT_ID</key>
 	<string>posture-correction-22872</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1050262055904:ios:c1cc57632450d6cc2c1985</string>
+	<string>1:1050262055904:ios:dd8ef8716bf9b94b2c1985</string>
 </dict>
 </plist>

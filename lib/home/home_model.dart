@@ -47,13 +47,19 @@ class HomeModel extends ChangeNotifier {
 
   //ユーザーデータを取得する
   Future<void> getUserData() async {
+    await FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user!.providerData.isEmpty) {
+        Utils.providerId == "";
+      } else if (user.providerData[0].providerId == "google.com") {
+        Utils.providerId = "google.com";
+      } else if (user.providerData[0].providerId == "apple.com")
+        Utils.providerId = "apple.com";
+    });
+
     final user = await FirebaseAuth.instance.currentUser!;
-    if (user.isAnonymous == false) {
-      Utils.isAnonymous = false;
-    } else {
-      Utils.isAnonymous = true;
-    }
     Utils.userId = user.uid;
+
+    print("providerId : ${Utils.providerId}");
     print("userId : ${Utils.userId}");
 
     final document = await FirebaseFirestore.instance
