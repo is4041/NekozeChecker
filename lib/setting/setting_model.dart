@@ -95,7 +95,7 @@ class SettingModel extends ChangeNotifier {
     if (connectivityResult == ConnectivityResult.none) {
       throw ("通信状態をご確認ください");
     } else if (Utils.userId.isEmpty) {
-      throw ("ユーザー情報が取得できていません。一度ホームに戻ってから再度試してください");
+      throw ("ユーザー情報が取得できていません。ホーム画面に戻るとユーザー情報が取得されます。");
     }
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
     // Obtain the auth details from the request
@@ -121,14 +121,13 @@ class SettingModel extends ChangeNotifier {
     if (connectivityResult == ConnectivityResult.none) {
       throw ("通信状態をご確認ください");
     } else if (Utils.userId.isEmpty) {
-      throw ("ユーザー情報が取得できていません。一度アプリを再起動してください");
+      throw ("ユーザー情報が取得できていません。ホーム画面に戻るとユーザー情報が取得されます。");
     }
     await FirebaseAuth.instance.signOut();
     Utils.userId = "";
     Utils.timeToNotification = 15;
-    Utils.greenLineRange = 0.45;
+    Utils.greenLineRange = 15;
     Utils.providerId = "";
-    ;
     Utils.percentOfAllGoodPostureSec = 0;
     Utils.percentOfTodayGoodPostureSec = 0;
     Utils.percentOfThisMonthGoodPostureSec = 0;
@@ -146,7 +145,7 @@ class SettingModel extends ChangeNotifier {
     if (connectivityResult == ConnectivityResult.none) {
       throw ("通信状態をご確認ください");
     } else if (Utils.userId.isEmpty) {
-      throw ("ユーザー情報が取得できていません。一度ホームに戻ってから再度試してください");
+      throw ("ユーザー情報が取得できていません。ホーム画面に戻るとユーザー情報が取得されます。");
     }
     await FirebaseFirestore.instance
         .collection('users')
@@ -163,9 +162,8 @@ class SettingModel extends ChangeNotifier {
     await FirebaseAuth.instance.signOut();
     Utils.userId = "";
     Utils.timeToNotification = 15;
-    Utils.greenLineRange = 0.45;
+    Utils.greenLineRange = 15;
     Utils.providerId = "";
-    ;
     Utils.percentOfAllGoodPostureSec = 0;
     Utils.percentOfTodayGoodPostureSec = 0;
     Utils.percentOfThisMonthGoodPostureSec = 0;

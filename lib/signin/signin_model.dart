@@ -35,7 +35,7 @@ class SignInModel extends ChangeNotifier {
     final uid = firebaseAuth.currentUser!.uid;
     await FirebaseFirestore.instance.collection("users").doc(uid).set({
       "createdAt": Timestamp.now(),
-      "greenLineRange": 0.45,
+      "greenLineRange": 15,
       "nekoMode": false,
       "timeToNotification": 15,
       "userId": uid,
@@ -61,7 +61,7 @@ class SignInModel extends ChangeNotifier {
     if (exists == false) {
       await FirebaseFirestore.instance.collection("users").doc(uid).set({
         "createdAt": Timestamp.now(),
-        "greenLineRange": 0.45,
+        "greenLineRange": 15,
         "nekoMode": false,
         "timeToNotification": 15,
         "userId": uid,
@@ -93,7 +93,7 @@ class SignInModel extends ChangeNotifier {
     if (exists == false) {
       await FirebaseFirestore.instance.collection("users").doc(uid).set({
         "createdAt": Timestamp.now(),
-        "greenLineRange": 0.45,
+        "greenLineRange": 15,
         "nekoMode": false,
         "timeToNotification": 15,
         "userId": uid,

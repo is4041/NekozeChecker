@@ -200,7 +200,7 @@ class _PageTwo extends StatelessWidget {
             height: 10,
           ),
           Text(
-            "※スマートフォン用スタンド（100均などで購入できます）を使うことをおすすめしますが立てかけられる物なら何でもOKです。例：コップ",
+            "※スマートフォンを立て掛けられればOKです。",
             style: TextStyle(fontSize: 12),
           ),
         ],
@@ -220,17 +220,48 @@ class _PageThree extends StatelessWidget {
     return _PageContents(
       screenSize: screenSize,
       image: "images/IMG_Unsplash.jpg",
-      title: "白点の位置を調整する",
+      title: "画面内に顔が映るようにする",
       description: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "姿勢を正し、鼻の位置に表示される白点がグリーンラインの枠内に収まるように端末の位置を調整します。",
-            style: TextStyle(fontSize: 16),
+          RichText(
+            text:
+                TextSpan(style: DefaultTextStyle.of(context).style, children: [
+              TextSpan(
+                  text: "1. ",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              TextSpan(
+                  text: "画面内に顔が映るように端末の位置を調整する。",
+                  style: TextStyle(fontSize: 16)),
+              TextSpan(
+                  text: "（白点とグリーンラインは自動調整されます。）",
+                  style: TextStyle(
+                    fontSize: 12,
+                  )),
+            ]),
           ),
-          Text(
-            "白点が枠内から出ないように姿勢を維持しましょう",
-            style: TextStyle(fontSize: 16),
-          )
+          SizedBox(height: 10),
+          RichText(
+            text:
+                TextSpan(style: DefaultTextStyle.of(context).style, children: [
+              TextSpan(
+                  text: "2. ",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              TextSpan(text: "姿勢を正す。", style: TextStyle(fontSize: 16))
+            ]),
+          ),
+          SizedBox(height: 10),
+          RichText(
+            text:
+                TextSpan(style: DefaultTextStyle.of(context).style, children: [
+              TextSpan(
+                  text: "3. ",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              TextSpan(
+                  text: "計測スタート！白点が枠内から出ないように姿勢を保ち続けましょう。",
+                  style: TextStyle(fontSize: 16))
+            ]),
+          ),
         ],
       ),
     );
@@ -317,8 +348,15 @@ class _PageFive extends StatelessWidget {
       description: Column(
         children: [
           Text(
-            "GoogleやAppleでサインインすると複数の端末の間でデータの同期ができます。同期をすることで今お使いの端末をデータ閲覧用、使わなくなった端末をカメラ計測用にするということもできます。",
-            style: TextStyle(fontSize: 16),
+            "GoogleやAppleでサインインすると複数の端末の間でデータの同期ができます。",
+            style: TextStyle(fontSize: 15),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            "同期をすることで今お使いの端末をデータ閲覧用、使わなくなった端末をカメラ計測用にするということもできます。",
+            style: TextStyle(fontSize: 15),
           ),
         ],
       ),
@@ -429,7 +467,6 @@ class _PageSix extends StatelessWidget {
         //Googleでサインイン
         SignInButton(
             buttonType: ButtonType.google,
-            // buttonSize: ButtonSize.large,
             onPressed: () async {
               model.startLoading();
               try {
@@ -458,9 +495,9 @@ class _PageSix extends StatelessWidget {
               model.endLoading();
             }),
         SizedBox(height: 20),
+        //Appleでサインイン
         SignInButton(
             buttonType: ButtonType.apple,
-            // buttonSize: ButtonSize.large,
             onPressed: () async {
               model.startLoading();
               try {

@@ -32,15 +32,14 @@ class HelpPage extends StatelessWidget {
                 answer:
                     "逆光などでうまく顔の位置情報を取得できない場合があります。場所を変えたりカーテンを閉めるなどしてもう一度お試しください。"),
             _Question(
-                question: "カメラ使用中に離席できるのですか？その場合計測データにズレが生じませんか？",
-                answer:
-                    "離席できます。顔の位置情報が取得できていない時は『計測停止中』と表示され自動的にタイマーが停止するので計測データにズレが生じることはありません。"),
+                question: "停止ボタンを押さずに離席してしまった場合、計測データはどうなりますか？",
+                answer: "停止ボタンを押さなくても顔が画面外に出ると自動敵にタイマーが停止するので計測データに影響はありません。"),
             _Question(
                 question: "離席中に『計測停止中』と表示されずに白点が誤作動を起こすのですが？",
                 answer:
                     "画面に映っている荷物や衣服などを顔と誤認識する場合があります。荷物を退けるか、離席中だけ端末を違う方向に向けておくなど工夫してみてください。"),
             _Question(
-                question: "白点が上側のグリーンラインより上を越えた時間やその時に鳴った警告音の記録はどうなりますか？",
+                question: "ラインカラーが黄色だったときの時間やその時に鳴った警告音の記録はどうなりますか？",
                 answer: "時間は姿勢（良）として記録されますが、警告音は記録されません。"),
             Divider(
               thickness: 5,
@@ -79,20 +78,54 @@ class HelpPage extends StatelessWidget {
             _PageContents(
               screenSize: screenSize,
               image: "images/IMG_Unsplash.jpg",
-              title: "2.白点の位置を調整する",
+              title: "2.画面内に顔が映るようにする",
               description: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "姿勢を正し、鼻の位置に表示される白点がグリーンラインの枠内に収まるように端末の位置を調整します。",
-                    style: TextStyle(fontSize: 16),
+                  RichText(
+                    text: TextSpan(
+                        style: DefaultTextStyle.of(context).style,
+                        children: [
+                          TextSpan(
+                              text: "1. ",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                          TextSpan(
+                              text: "画面内に顔が映るように端末の位置を調整する。",
+                              style: TextStyle(fontSize: 16)),
+                          TextSpan(
+                              text: "（白点とグリーンラインは自動調整されます。）",
+                              style: TextStyle(
+                                fontSize: 12,
+                              )),
+                        ]),
                   ),
-                  Text(
-                    "白点が枠内から出ないように姿勢を保ち続けましょう。",
-                    style: TextStyle(fontSize: 16),
+                  SizedBox(height: 10),
+                  RichText(
+                    text: TextSpan(
+                        style: DefaultTextStyle.of(context).style,
+                        children: [
+                          TextSpan(
+                              text: "2. ",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                          TextSpan(
+                              text: "姿勢を正す。", style: TextStyle(fontSize: 16))
+                        ]),
                   ),
-                  SizedBox(
-                    height: 10,
+                  SizedBox(height: 10),
+                  RichText(
+                    text: TextSpan(
+                        style: DefaultTextStyle.of(context).style,
+                        children: [
+                          TextSpan(
+                              text: "3. ",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                          TextSpan(
+                              text: "計測スタート！白点が枠内から出ないように姿勢を保ち続けましょう。",
+                              style: TextStyle(fontSize: 16))
+                        ]),
                   ),
                 ],
               ),
@@ -172,9 +205,20 @@ class HelpPage extends StatelessWidget {
               screenSize: screenSize,
               image: "images/IMG_0215.jpg",
               title: " 使わなくなった端末を活用できます ",
-              description: Text(
-                "使わなくなった端末はありませんか？\nGoogleやAppleでサインインすると複数の端末の間でデータの同期ができます。\n同期をすることで今お使いの端末をデータ閲覧用、使わなくなった端末をカメラ計測用にするということもできます。",
-                style: TextStyle(fontSize: 16),
+              description: Column(
+                children: [
+                  Text(
+                    "GoogleやAppleでサインインすると複数の端末の間でデータの同期ができます。",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "同期をすることで今お使いの端末をデータ閲覧用、使わなくなった端末をカメラ計測用にするということもできます。",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                ],
               ),
             ),
             SizedBox(
