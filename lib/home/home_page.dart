@@ -46,33 +46,6 @@ class HomePage extends StatelessWidget {
                 ),
                 SingleChildScrollView(
                   child: Column(children: [
-                    //ヘルプページへ遷移するボタン
-                    // Container(
-                    //   alignment: Alignment.bottomRight,
-                    //   height: screenSize.height * 0.1,
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.only(right: 20.0),
-                    //     child: ElevatedButton(
-                    //       onPressed: () {
-                    //         Navigator.push(
-                    //             context,
-                    //             MaterialPageRoute(
-                    //                 builder: (context) => HelpPage()));
-                    //       },
-                    //       child: Text(
-                    //         "?",
-                    //         style: TextStyle(fontSize: 30),
-                    //       ),
-                    //       style: ElevatedButton.styleFrom(
-                    //           side: BorderSide(
-                    //             color: Colors.lightGreenAccent, //色
-                    //             width: 2, //太さ
-                    //           ),
-                    //           shape: CircleBorder(),
-                    //           backgroundColor: Colors.greenAccent.shade700),
-                    //     ),
-                    //   ),
-                    // ),
                     SizedBox(height: screenSize.height * 0.1),
                     //カメラページへの遷移ボタン
                     SizedBox(
@@ -221,7 +194,7 @@ class HomePage extends StatelessWidget {
                                                             fontSize: 20),
                                                       ),
                                                       Text(
-                                                        "(設定：${60}秒)",
+                                                        "(設定：${Utils.timeToNotification}秒)",
                                                         style: TextStyle(
                                                             fontSize: 15),
                                                       ),

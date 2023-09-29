@@ -19,7 +19,8 @@ bool? _soundLoop;
 bool? isDetecting;
 bool? isCounting;
 bool? isAdjusting;
-bool? _hiddenOkButton;
+bool? isLockingGreenLine;
+bool? _hiddenStartButton;
 bool? dataExist;
 bool? measuredOverOneSec;
 Timer? notificationTimer;
@@ -28,10 +29,11 @@ class CameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     isAdjusting = true;
+    isLockingGreenLine = false;
     _soundLoop = false;
     isDetecting = false;
     isCounting = false;
-    _hiddenOkButton = false;
+    _hiddenStartButton = false;
     dataExist = false;
     measuredOverOneSec = false;
     bool _configurable = true;
@@ -106,7 +108,7 @@ class CameraPage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               title: Text(Utils.nekoMode == true
-                                  ? "鳴き声が聞こえない状態ニャ！"
+                                  ? "警告音が聞こえない状態ニャ！"
                                   : "警告音が聞こえない状態です！"),
                               content: Container(
                                 height: 160,
@@ -209,6 +211,7 @@ class CameraPage extends StatelessWidget {
                                   isCounting = false;
                                   isAdjusting = true;
                                   dataExist = true;
+                                  isLockingGreenLine = false;
                                   model.stopTimer();
                                   model.stopBadPostureTimer();
                                 }
@@ -235,24 +238,16 @@ class CameraPage extends StatelessWidget {
                                     Text(
                                       dataExist!
                                           ? "計測時間：${model.measuringSec ~/ 60 ~/ 60}時間${model.measuringSec ~/ 60 % 60}分${model.measuringSec % 60}秒"
-                                          : "姿勢を正し白点がグリーンラインの枠内に収まるように端末の位置を調整した後に開始ボタンを押してください",
+                                          : "姿勢を正してから開始ボタンを押してください。\nボタン押下でグリーンラインが固定されます。",
                                       style: dataExist!
                                           ? TextStyle(
                                               fontSize: 25,
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold)
                                           : TextStyle(
-                                              fontSize: 19,
+                                              fontSize: 15,
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Text(
-                                      dataExist!
-                                          ? "（※再開ボタンは白点がグリーンラインの枠内に位置する時のみ押下できます）"
-                                          : "（※開始ボタンは白点がグリーンラインの枠内に位置する時のみ押下できます）",
-                                      style: TextStyle(
-                                          fontSize: 15, color: Colors.white),
                                       textAlign: TextAlign.center,
                                     ),
                                   ],
@@ -379,11 +374,12 @@ class CameraPage extends StatelessWidget {
                                         height: 60,
                                         width: 100,
                                         child: ElevatedButton(
-                                          onPressed: _hiddenOkButton == false
+                                          onPressed: _hiddenStartButton == false
                                               ? () {
                                                   isAdjusting = false;
                                                   isCounting = true;
                                                   _configurable = false;
+                                                  isLockingGreenLine = true;
                                                   audioPlayer.stop();
                                                 }
                                               : () {},
@@ -394,11 +390,13 @@ class CameraPage extends StatelessWidget {
                                               borderRadius:
                                                   BorderRadius.circular(50),
                                             ),
-                                            backgroundColor: _hiddenOkButton ==
-                                                    false
-                                                ? Colors.greenAccent.shade700
-                                                : Colors.greenAccent.shade700
-                                                    .withOpacity(0.3),
+                                            backgroundColor:
+                                                _hiddenStartButton == false
+                                                    ? Colors
+                                                        .greenAccent.shade700
+                                                    : Colors
+                                                        .greenAccent.shade700
+                                                        .withOpacity(0.3),
                                           ),
                                           child: Text(
                                             dataExist! ? "再開" : "開始",
@@ -482,6 +480,9 @@ class CameraPage extends StatelessWidget {
   }
 }
 
+double? landmarkY;
+double? fineTuneBeyondLine;
+
 //画面に緑線・赤線・白点を表示
 class PosePainter extends CustomPainter {
   PosePainter(this.poses, this.imageSize, this.rotation,
@@ -494,14 +495,13 @@ class PosePainter extends CustomPainter {
   final CameraModel cameraModel;
   bool beyond = false;
 
+  var aboveLineStart;
+  var aboveLineEnd;
+  var belowLineStart;
+  var belowLineEnd;
+
   @override
   void paint(Canvas canvas, Size size) {
-    final aboveLineStart = Offset(0, size.height * Utils.greenLineRange);
-    final aboveLineEnd = Offset(size.width, size.height * Utils.greenLineRange);
-    final belowLineStart = Offset(0, size.height / 2);
-    final belowLineEnd = Offset(size.width, size.height / 2);
-    final paint = Paint()..color = Colors.white;
-
     if (poses.isNotEmpty) {
       if (isCounting! && !isDetecting!) {
         isDetecting = true;
@@ -511,7 +511,27 @@ class PosePainter extends CustomPainter {
       for (final pose in poses) {
         pose.landmarks.forEach((_, landmark) {
           if (landmark.type.toString() == "PoseLandmarkType.nose") {
-            //noseの位置に白点を表示
+            if (isLockingGreenLine == false) {
+              landmarkY = landmark.y;
+              fineTuneBeyondLine = imageSize.height * 0.004;
+            }
+            aboveLineStart = Offset(
+                0,
+                ((landmarkY! / imageSize.height) * size.height +
+                    Utils.greenLineRange));
+            aboveLineEnd = Offset(
+                size.width,
+                ((landmarkY! / imageSize.height) * size.height +
+                    Utils.greenLineRange));
+            belowLineStart = Offset(
+                0,
+                ((landmarkY! / imageSize.height) * size.height -
+                    Utils.greenLineRange));
+            belowLineEnd = Offset(
+                size.width,
+                ((landmarkY! / imageSize.height) * size.height -
+                    Utils.greenLineRange));
+            final paint = Paint()..color = Colors.white;
             canvas.drawCircle(
                 Offset(
                   translateX(
@@ -532,33 +552,36 @@ class PosePainter extends CustomPainter {
                 5,
                 paint);
             //PoseLandmarkType.noseが下側の緑線以下にあるとき
-            if (landmark.y > imageSize.height / 2) {
-              paint.color = Colors.greenAccent;
+            if (landmark.y >
+                landmarkY! + (Utils.greenLineRange * 2) - fineTuneBeyondLine!) {
+              paint.color = Colors.red;
               paint.strokeWidth = 3;
               canvas.drawLine(aboveLineStart, aboveLineEnd, paint);
-              paint.color = Colors.red;
+              paint.color = Colors.greenAccent.shade700;
               paint.strokeWidth = 3;
               canvas.drawLine(belowLineStart, belowLineEnd, paint);
               beyond = true;
               notificationSound(beyond);
               //PoseLandmarkType.noseが上側の緑線以上にあるとき
-            } else if (landmark.y < imageSize.height * Utils.greenLineRange) {
+            } else if (landmark.y <
+                landmarkY! - (Utils.greenLineRange * 2) + fineTuneBeyondLine!) {
               paint.color = Colors.yellowAccent;
               paint.strokeWidth = 3;
-              canvas.drawLine(aboveLineStart, aboveLineEnd, paint);
-              paint.color = Colors.greenAccent;
-              paint.strokeWidth = 3;
               canvas.drawLine(belowLineStart, belowLineEnd, paint);
+              paint.color = Colors.greenAccent.shade700;
+              paint.strokeWidth = 3;
+              canvas.drawLine(aboveLineStart, aboveLineEnd, paint);
               beyond = true;
               notificationSound2(beyond);
               //PoseLandmarkType.noseが2本の緑線の間にあるとき
             } else {
-              paint.color = Colors.greenAccent;
+              paint.color = Colors.greenAccent.shade700;
               paint.strokeWidth = 3;
               canvas.drawLine(aboveLineStart, aboveLineEnd, paint);
-              paint.color = Colors.greenAccent;
+              paint.color = Colors.greenAccent.shade700;
               paint.strokeWidth = 3;
               canvas.drawLine(belowLineStart, belowLineEnd, paint);
+              _hiddenStartButton = false;
               notificationSound(beyond);
             }
           }
@@ -571,15 +594,15 @@ class PosePainter extends CustomPainter {
       cameraModel.stopTimer();
       cameraModel.stopBadPostureTimer();
       print("Timer Stop");
+      _hiddenStartButton = true;
       audioPlayer.stop();
     }
   }
 
-  //時間経過で警告音を鳴らす（PoseLandmarkType.noseが下側の緑線より下にある時）
+//時間経過で警告音を鳴らす（PoseLandmarkType.noseが下側の緑線より下にある時）
   notificationSound(bool beyond) {
     if (beyond && !_soundLoop!) {
       _soundLoop = true;
-      _hiddenOkButton = true;
       if (isCounting!) {
         cameraModel.startBadPostureTimer();
         notificationTimer =
@@ -594,8 +617,6 @@ class PosePainter extends CustomPainter {
       }
     } else if (!beyond && _soundLoop!) {
       _soundLoop = false;
-      _hiddenOkButton = false;
-
       if (isCounting!) {
         cameraModel.stopBadPostureTimer();
         notificationTimer?.cancel();
@@ -604,12 +625,10 @@ class PosePainter extends CustomPainter {
     }
   }
 
-  //時間経過で警告音を鳴らす（PoseLandmarkType.noseが上側の緑線より上にある時）
+//時間経過で警告音を鳴らす（PoseLandmarkType.noseが上側の緑線より上にある時）
   notificationSound2(bool beyond) {
     if (beyond && !_soundLoop!) {
       _soundLoop = true;
-      _hiddenOkButton = true;
-
       if (isCounting!) {
         notificationTimer =
             Timer(Duration(seconds: Utils.timeToNotification), () {
@@ -621,8 +640,6 @@ class PosePainter extends CustomPainter {
       }
     } else if (!beyond && _soundLoop!) {
       _soundLoop = false;
-      _hiddenOkButton = false;
-
       if (isCounting!) {
         notificationTimer?.cancel();
         audioPlayer.stop();

@@ -40,6 +40,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       isDetecting = false;
       isCounting = false;
       isAdjusting = true;
+      isLockingGreenLine = false;
       if (measuredOverOneSec == false) return;
       dataExist = true;
     }

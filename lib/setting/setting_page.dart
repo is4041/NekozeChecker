@@ -268,58 +268,6 @@ class SettingPage extends StatelessWidget {
                             Expanded(
                               flex: 1,
                               child: Container(
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(
-                                        color: Colors.greenAccent.shade700,
-                                        width: 2),
-                                    bottom: BorderSide(
-                                        color: Colors.greenAccent.shade700,
-                                        width: 2),
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.arrow_upward,
-                                        size: 16,
-                                      ),
-                                      Icon(
-                                        Icons.arrow_downward,
-                                        size: 16,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 10,
-                              child: Slider(
-                                activeColor: configurable
-                                    ? Colors.greenAccent.shade700
-                                    : Colors.grey,
-                                inactiveColor: Colors.grey.withOpacity(0.3),
-                                value: Utils.greenLineRange,
-                                max: 0.47,
-                                min: 0.43,
-                                divisions: 4,
-                                //一度計測を始めると変更不可にする（カメラページからの遷移時限定）
-                                onChanged: configurable
-                                    ? (double value) {
-                                        Utils.greenLineRange = double.parse(
-                                            value.toStringAsFixed(2));
-                                        model.changeGreenLineRange();
-                                      }
-                                    : (double value) {},
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Container(
                                 height: 50,
                                 child: Center(
                                   child: Column(
@@ -346,6 +294,58 @@ class SettingPage extends StatelessWidget {
                                       ),
                                       Icon(
                                         Icons.arrow_upward,
+                                        size: 16,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 10,
+                              child: Slider(
+                                activeColor: configurable
+                                    ? Colors.greenAccent.shade700
+                                    : Colors.grey,
+                                inactiveColor: Colors.grey.withOpacity(0.3),
+                                value: Utils.greenLineRange,
+                                max: 20,
+                                min: 10,
+                                divisions: 4,
+                                //一度計測を始めると変更不可にする（カメラページからの遷移時限定）
+                                onChanged: configurable
+                                    ? (double value) {
+                                        Utils.greenLineRange = double.parse(
+                                            value.toStringAsFixed(2));
+                                        model.changeGreenLineRange();
+                                      }
+                                    : (double value) {},
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    top: BorderSide(
+                                        color: Colors.greenAccent.shade700,
+                                        width: 2),
+                                    bottom: BorderSide(
+                                        color: Colors.greenAccent.shade700,
+                                        width: 2),
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.arrow_upward,
+                                        size: 16,
+                                      ),
+                                      Icon(
+                                        Icons.arrow_downward,
                                         size: 16,
                                       ),
                                     ],
