@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 class HelpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double size =
+        screenWidth < screenHeight / 2 ? screenWidth : screenHeight / 2;
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.black),
@@ -53,7 +56,7 @@ class HelpPage extends StatelessWidget {
             ),
             //チュートリアル
             _PageContents(
-              screenSize: screenSize,
+              size: size,
               image: "images/IMG_0203.JPG",
               title: "1.スマートフォンをセットする",
               description: Column(
@@ -76,7 +79,7 @@ class HelpPage extends StatelessWidget {
               thickness: 1,
             ),
             _PageContents(
-              screenSize: screenSize,
+              size: size,
               image: "images/IMG_Unsplash.jpg",
               title: "2.画面内に顔が映るようにする",
               description: Column(
@@ -134,7 +137,7 @@ class HelpPage extends StatelessWidget {
               thickness: 1,
             ),
             _PageContents(
-              screenSize: screenSize,
+              size: size,
               image: "images/IMG_0295.JPG",
               title: "白点とラインカラーの関係",
               description: Column(
@@ -202,7 +205,7 @@ class HelpPage extends StatelessWidget {
               ),
             ),
             _PageContents(
-              screenSize: screenSize,
+              size: size,
               image: "images/IMG_0215.jpg",
               title: " 使わなくなった端末を活用できます ",
               description: Column(
@@ -298,12 +301,12 @@ class _Question extends StatelessWidget {
 //PageContentsクラス
 class _PageContents extends StatelessWidget {
   _PageContents(
-      {required this.screenSize,
+      {required this.size,
       required this.image,
       required this.title,
       required this.description});
 
-  final screenSize;
+  final size;
   final String image;
   final String title;
   final Widget description;
@@ -313,7 +316,7 @@ class _PageContents extends StatelessWidget {
     return Column(
       children: [
         SizedBox(
-          height: screenSize.height * 0.1,
+          height: size * 0.1,
           width: double.infinity,
           child: Center(
             child: FittedBox(
@@ -328,11 +331,20 @@ class _PageContents extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: screenSize.height * 0.5,
-          width: double.infinity,
-          child: Image.asset(
-            image,
-            fit: BoxFit.cover,
+          height: 10,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: SizedBox(
+            height: size,
+            width: size,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(45),
+              child: Image.asset(
+                image,
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
         ),
         Padding(

@@ -14,7 +14,10 @@ import '../bottomnavigation.dart';
 class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double size =
+        screenWidth < screenHeight / 2 ? screenWidth : screenHeight / 2;
     return ChangeNotifierProvider<SignInModel>(
         create: (_) => SignInModel(),
         builder: (context, snapshot) {
@@ -26,15 +29,15 @@ class SignInPage extends StatelessWidget {
               //ログアウト時チュートリアルページ非表示（ログアウト後アプリ再起動時は表示）
               final List<Widget> pages = Utils.showTutorial == true
                   ? [
-                      _PageOne(screenSize),
-                      _PageTwo(screenSize),
-                      _PageThree(screenSize),
-                      _PageFour(screenSize),
-                      _PageFive(screenSize),
-                      _PageSix(model, screenSize),
+                      _PageOne(size),
+                      _PageTwo(size),
+                      _PageThree(size),
+                      _PageFour(size),
+                      _PageFive(size),
+                      _PageSix(model, size),
                     ]
                   : [
-                      _PageSix(model, screenSize),
+                      _PageSix(model, size),
                     ];
               return Stack(children: [
                 StreamBuilder<User?>(
@@ -60,7 +63,7 @@ class SignInPage extends StatelessWidget {
                           Visibility(
                             visible: Utils.showTutorial == true,
                             child: Positioned(
-                              height: screenSize.height * 0.15,
+                              height: size * 0.3,
                               right: 0,
                               bottom: 0,
                               left: 0,
@@ -153,20 +156,20 @@ class SignInPage extends StatelessWidget {
 
 //1ページ目
 class _PageOne extends StatelessWidget {
-  _PageOne(this.screenSize);
+  _PageOne(this.size);
 
-  final screenSize;
+  final size;
 
   @override
   Widget build(BuildContext context) {
     return _PageContents(
-      screenSize: screenSize,
+      size: size,
       image: "images/IMG_0196.JPG",
       title: "猫背チェッカーへようこそ",
       description: Column(
         children: [
           Text(
-            "猫背チェッカーはゲームやデスクワーク中の猫背・居眠りを検知すると警告音でお知らせするアプリです。",
+            "猫背チェッカーはゲームやデスクワーク中の猫背や居眠りを検知すると警告音でお知らせするアプリです。",
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(
@@ -180,14 +183,14 @@ class _PageOne extends StatelessWidget {
 
 //2ページ目
 class _PageTwo extends StatelessWidget {
-  _PageTwo(this.screenSize);
+  _PageTwo(this.size);
 
-  final screenSize;
+  final size;
 
   @override
   Widget build(BuildContext context) {
     return _PageContents(
-      screenSize: screenSize,
+      size: size,
       image: "images/IMG_0203.JPG",
       title: "スマートフォンをセットする",
       description: Column(
@@ -211,14 +214,14 @@ class _PageTwo extends StatelessWidget {
 
 //3ページ目
 class _PageThree extends StatelessWidget {
-  _PageThree(this.screenSize);
+  _PageThree(this.size);
 
-  final screenSize;
+  final size;
 
   @override
   Widget build(BuildContext context) {
     return _PageContents(
-      screenSize: screenSize,
+      size: size,
       image: "images/IMG_Unsplash.jpg",
       title: "画面内に顔が映るようにする",
       description: Column(
@@ -276,7 +279,7 @@ class _PageFour extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _PageContents(
-      screenSize: screenSize,
+      size: screenSize,
       image: "images/IMG_0295.JPG",
       title: "白点とラインカラーの関係",
       description: Column(
@@ -342,7 +345,7 @@ class _PageFive extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _PageContents(
-      screenSize: screenSize,
+      size: screenSize,
       image: "images/IMG_0215.jpg",
       title: " 使わなくなった端末を活用できます ",
       description: Column(
@@ -366,10 +369,10 @@ class _PageFive extends StatelessWidget {
 
 //6ページ目
 class _PageSix extends StatelessWidget {
-  _PageSix(this.model, this.screenSize);
+  _PageSix(this.model, this.size);
 
   final SignInModel model;
-  final screenSize;
+  final size;
 
   @override
   Widget build(BuildContext context) {
@@ -378,14 +381,14 @@ class _PageSix extends StatelessWidget {
         Stack(
           children: [
             SizedBox(
-              height: screenSize.height * 0.5,
+              height: size,
               width: double.infinity,
               child: Opacity(
                 opacity: 0.8,
                 child: FadeInImage.memoryNetwork(
                   placeholder: kTransparentImage,
                   image:
-                      "https://images.unsplash.com/photo-1549082984-1323b94df9a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+                      "https://images.unsplash.com/photo-1547960450-2ea08b931270?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2832&q=80",
                   fit: BoxFit.cover,
                 ),
               ),
@@ -393,7 +396,7 @@ class _PageSix extends StatelessWidget {
             BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
               child: Container(
-                height: screenSize.height * 0.5,
+                height: size,
                 width: double.infinity,
                 child: Center(
                   child: Column(
@@ -404,7 +407,7 @@ class _PageSix extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 50,
                             fontWeight: FontWeight.bold,
-                            color: Colors.greenAccent),
+                            color: Colors.greenAccent.shade700),
                       ),
                       Text(
                         "ちぇっかー",
@@ -421,11 +424,11 @@ class _PageSix extends StatelessWidget {
           ],
         ),
         SizedBox(
-          height: 30,
+          height: size * 0.1,
         ),
         SizedBox(
           height: 40,
-          width: 300,
+          width: 240,
           child: ElevatedButton(
             onPressed: () async {
               model.startLoading();
@@ -534,13 +537,13 @@ class _PageSix extends StatelessWidget {
 //ページの構成内容
 class _PageContents extends StatelessWidget {
   _PageContents({
-    required this.screenSize,
+    required this.size,
     required this.image,
     required this.title,
     required this.description,
   });
 
-  final screenSize;
+  final size;
   final String image;
   final String title;
   final Widget description;
@@ -552,8 +555,8 @@ class _PageContents extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 5.0, right: 5.0, left: 5.0),
           child: Container(
-            height: screenSize.height * 0.5,
-            width: double.infinity,
+            height: size,
+            width: size,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(45),
               child: Image.asset(
@@ -563,8 +566,8 @@ class _PageContents extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(
-          height: screenSize.height * 0.1,
+        Container(
+          height: size * 0.2,
           width: double.infinity,
           child: Center(
             child: FittedBox(
@@ -578,12 +581,9 @@ class _PageContents extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(
-          height: screenSize.height * 0.25,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50.0),
-            child: description,
-          ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 50.0),
+          child: description,
         ),
       ],
     );

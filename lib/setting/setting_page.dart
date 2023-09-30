@@ -72,7 +72,6 @@ class SettingPage extends StatelessWidget {
                                   if (value != null) {
                                     Utils.nekoMode = value;
                                     await model.isOnNekoMode();
-                                    print(Utils.nekoMode);
                                   }
                                 }),
                           ],
@@ -366,7 +365,8 @@ class SettingPage extends StatelessWidget {
                         children: [
                           //googleアカウント提携ボタン（匿名ログイン時のみ押下可）appleでログイン時は非表示
                           Visibility(
-                            visible: Utils.providerId != "apple.com",
+                            visible: Utils.providerId != "apple.com" &&
+                                Utils.userId.isNotEmpty,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -492,9 +492,8 @@ class SettingPage extends StatelessWidget {
                           ),
                           //ログアウトボタン（google,appleログイン時のみ表示）
                           Visibility(
-                            visible: (Utils.providerId == "google.com" ||
-                                    Utils.providerId == "apple.com") &&
-                                Utils.userId.isNotEmpty,
+                            visible: Utils.providerId == "google.com" ||
+                                Utils.providerId == "apple.com",
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

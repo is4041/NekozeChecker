@@ -37,9 +37,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       audioPlayer.stop();
       timer?.cancel();
       badPostureTimer?.cancel();
-      isDetecting = false;
-      isCounting = false;
-      isAdjusting = true;
+      isCountingTime = false;
+      isMeasuring = false;
       isLockingGreenLine = false;
       if (measuredOverOneSec == false) return;
       dataExist = true;

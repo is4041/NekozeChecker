@@ -69,36 +69,39 @@ class HomePage extends StatelessWidget {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                    title: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "計測評価は...",
-                                          style: TextStyle(fontSize: 22),
-                                        ),
-                                        Text(
-                                          "${((value[1] / value[0]) * 100).toStringAsFixed(1)}",
-                                          style: TextStyle(
-                                              fontSize: 30,
-                                              fontWeight: FontWeight.bold,
-                                              color:
-                                                  Colors.greenAccent.shade700),
-                                        ),
-                                        Text(
-                                          "点",
-                                          style: TextStyle(fontSize: 22),
-                                        ),
-                                        if (Utils.nekoMode)
-                                          Text(
-                                            "ニャ",
-                                            style: TextStyle(fontSize: 22),
-                                          ),
-                                        Text(
-                                          "!!!",
-                                          style: TextStyle(fontSize: 22),
-                                        ),
-                                      ],
+                                    title: RichText(
+                                      text: TextSpan(
+                                          style: DefaultTextStyle.of(context)
+                                              .style,
+                                          children: [
+                                            TextSpan(
+                                                text: "計測評価は...",
+                                                style: TextStyle(fontSize: 22)),
+                                            TextSpan(
+                                                text:
+                                                    "${((value[1] / value[0]) * 100).toStringAsFixed(1)}",
+                                                style: TextStyle(
+                                                    fontSize: 30,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors
+                                                        .greenAccent.shade700)),
+                                            TextSpan(
+                                                text: "点",
+                                                style: TextStyle(
+                                                  fontSize: 22,
+                                                )),
+                                            if (Utils.nekoMode)
+                                              TextSpan(
+                                                  text: "ニャ",
+                                                  style: TextStyle(
+                                                    fontSize: 22,
+                                                  )),
+                                            TextSpan(
+                                                text: "!!!",
+                                                style: TextStyle(
+                                                  fontSize: 22,
+                                                )),
+                                          ]),
                                     ),
                                     content: Container(
                                       height: 300,
