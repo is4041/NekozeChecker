@@ -43,9 +43,8 @@ class SignInModel extends ChangeNotifier {
   }
 
   //Googleでサインイン
-  Future<void> signInWithGoogle() async {
+  Future<UserCredential> signInWithGoogle() async {
     final user = await googleSignIn.signIn();
-
     final auth = await user!.authentication;
     final credential = GoogleAuthProvider.credential(
       accessToken: auth.accessToken,
@@ -67,10 +66,11 @@ class SignInModel extends ChangeNotifier {
         "userId": uid,
       });
     }
+    return userCredential;
   }
 
   //Appleでサインイン
-  Future<void> signInWithApple() async {
+  Future<UserCredential> signInWithApple() async {
     final rawNonce = generateNonce();
     final appleCredential = await SignInWithApple.getAppleIDCredential(
       scopes: [
@@ -78,7 +78,6 @@ class SignInModel extends ChangeNotifier {
         AppleIDAuthorizationScopes.fullName,
       ],
     );
-
     final oauthCredential = OAuthProvider("apple.com").credential(
       idToken: appleCredential.identityToken,
       rawNonce: rawNonce,
@@ -99,5 +98,6 @@ class SignInModel extends ChangeNotifier {
         "userId": uid,
       });
     }
+    return userCredential;
   }
 }
