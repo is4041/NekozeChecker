@@ -318,6 +318,28 @@ class CameraPage extends StatelessWidget {
                                                   audioPlayer.stop();
                                                   model.autoSleepWakeUp(false);
 
+                                                  String _range = "";
+                                                  if (Utils.greenLineRange ==
+                                                      10) {
+                                                    _range = "狭い";
+                                                  } else if (Utils
+                                                          .greenLineRange ==
+                                                      12.5) {
+                                                    _range = "やや狭い";
+                                                  } else if (Utils
+                                                          .greenLineRange ==
+                                                      15) {
+                                                    _range = "普通";
+                                                  } else if (Utils
+                                                          .greenLineRange ==
+                                                      17.5) {
+                                                    _range = "やや広い";
+                                                  } else if (Utils
+                                                          .greenLineRange ==
+                                                      20) {
+                                                    _range = "広い";
+                                                  }
+
                                                   Navigator.of(context).pop([
                                                     //計測時間
                                                     model.measuringSec,
@@ -331,6 +353,8 @@ class CameraPage extends StatelessWidget {
                                                     //猫背通知回数
                                                     model.notificationCounter
                                                         .toString(),
+                                                    //グリーンラインの幅
+                                                    _range,
                                                   ]);
                                                   _processing = false;
                                                 }

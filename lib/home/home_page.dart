@@ -210,6 +210,25 @@ class HomePage extends StatelessWidget {
                                                   ),
                                                 ],
                                               ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "グリーンラインの幅",
+                                                    style:
+                                                        TextStyle(fontSize: 15),
+                                                  ),
+                                                  Text(
+                                                    Utils.nekoMode == true
+                                                        ? "${value[4]}ニャ"
+                                                        : value[4],
+                                                    style:
+                                                        TextStyle(fontSize: 15),
+                                                  ),
+                                                ],
+                                              ),
                                               SizedBox(
                                                 height: 20,
                                               ),
@@ -221,7 +240,7 @@ class HomePage extends StatelessWidget {
                                                       alignment:
                                                           Alignment.center,
                                                       child: Container(
-                                                        height: 120,
+                                                        height: 100,
                                                         child: AspectRatio(
                                                           aspectRatio: 1,
                                                           child: PieChart(
@@ -247,7 +266,7 @@ class HomePage extends StatelessWidget {
                                                   Expanded(
                                                     flex: 1,
                                                     child: Container(
-                                                      height: 120,
+                                                      height: 100,
                                                       child: Column(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment

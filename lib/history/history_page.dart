@@ -6,6 +6,7 @@ import 'package:posture_correction/single_touch_container.dart';
 import 'package:provider/provider.dart';
 
 import '../data.dart';
+import '../utils.dart';
 
 class HistoryPage extends StatelessWidget {
   @override
@@ -39,13 +40,30 @@ class HistoryPage extends StatelessWidget {
                           itemBuilder: (BuildContext context, int index) {
                             //日付を取得
                             String _createdAt = data[index].createdAt!;
+
+                            //グリーンラインの幅を取得
+                            num _greenLineRange = data[index].greenLineRange!;
+                            String _range = "";
+                            if (_greenLineRange == 10) {
+                              _range = "狭い";
+                            } else if (_greenLineRange == 12.5) {
+                              _range = "やや狭い";
+                            } else if (_greenLineRange == 15) {
+                              _range = "普通";
+                            } else if (_greenLineRange == 17.5) {
+                              _range = "やや広い";
+                            } else if (_greenLineRange == 20) {
+                              _range = "広い";
+                            }
+
                             //計測時間を時・分・秒に変換
                             num _measuringSec = data[index].measuringSec!;
                             num _measuringHourValue = _measuringSec ~/ 60 ~/ 60;
                             num _measuringMinuteValue =
                                 _measuringSec ~/ 60 % 60;
                             num _measuringSecondValue = _measuringSec % 60;
-                            //姿勢（不良）を時・分・秒に変換
+
+                            //姿勢（猫背）を時・分・秒に変換
                             num _measuringBadPostureSec =
                                 data[index].measuringBadPostureSec!;
                             num _badHourValue =
@@ -53,6 +71,7 @@ class HistoryPage extends StatelessWidget {
                             num _badMinuteValue =
                                 _measuringBadPostureSec ~/ 60 % 60;
                             num _badSecondValue = _measuringBadPostureSec % 60;
+
                             //姿勢（良）を時・分・秒に変換
                             num _measuringGoodPostureSec =
                                 (_measuringSec - _measuringBadPostureSec);
@@ -62,12 +81,15 @@ class HistoryPage extends StatelessWidget {
                                 _measuringGoodPostureSec ~/ 60 % 60;
                             num _goodSecondValue =
                                 _measuringGoodPostureSec % 60;
+
                             //警告音カウント回数
                             num _notificationCounter =
                                 data[index].notificationCounter!;
+
                             //設定した警告音通知までの秒数
                             int _timeToNotification =
                                 data[index].timeToNotification!;
+
                             //姿勢（良）の割合を取得
                             num _rateOfGoodPosture = double.parse(
                                 ((_measuringGoodPostureSec / _measuringSec) *
@@ -397,6 +419,27 @@ class HistoryPage extends StatelessWidget {
                                                                   ),
                                                                   Text(
                                                                     "$_notificationCounter回",
+                                                                    style:
+                                                                        style,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Divider(),
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                children: [
+                                                                  Text(
+                                                                    "グリーンラインの幅",
+                                                                    style:
+                                                                        style,
+                                                                  ),
+                                                                  Text(
+                                                                    Utils.nekoMode ==
+                                                                            true
+                                                                        ? "${_range}ニャ"
+                                                                        : _range,
                                                                     style:
                                                                         style,
                                                                   ),

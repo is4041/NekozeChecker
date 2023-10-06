@@ -154,6 +154,7 @@ class CameraModel extends ChangeNotifier {
         .collection("measurements")
         .add({
       "createdAt": createdAt,
+      "greenLineRange": Utils.greenLineRange,
       "measuringBadPostureSec": measuringBadPostureSec,
       "measuringSec": measuringSec,
       "memo": "",
