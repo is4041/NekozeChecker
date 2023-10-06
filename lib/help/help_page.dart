@@ -27,9 +27,13 @@ class HelpPage extends StatelessWidget {
               padding: const EdgeInsets.only(top: 10.0, left: 10.0),
               child: Text(
                 "Q & A",
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
+            _Question(
+                question: "グリーンラインの位置は画面内であればどこに固定してもかまいませんか？",
+                answer:
+                    "画面内に2本表示されていれば好きな位置に固定していただいて大丈夫ですが、画面ギリギリに固定するとうまく計測できないことがあるので基本的には画面中央をおすすめします。"),
             _Question(
                 question: "カメラ使用中に白点が正しく鼻の位置に表示されないのですが？",
                 answer:
@@ -38,9 +42,12 @@ class HelpPage extends StatelessWidget {
                 question: "停止ボタンを押さずに離席してしまった場合、計測データはどうなりますか？",
                 answer: "停止ボタンを押さなくても顔が画面外に出ると自動敵にタイマーが停止するので計測データに影響はありません。"),
             _Question(
-                question: "離席中に『計測停止中』と表示されずに白点が誤作動を起こすのですが？",
+                question: "離席中(停止ボタン押さず)に『計測停止中』と表示されずに白点が誤作動を起こすのですが？",
                 answer:
                     "画面に映っている荷物や衣服などを顔と誤認識する場合があります。荷物を退けるか、離席中だけ端末を違う方向に向けておくなど工夫してみてください。"),
+            _Question(
+                question: "一度計測を始めたら終えるまで再度設定を変更できないのはなぜですか？",
+                answer: "途中で設定を変更できてしまうと正確なデータを得ることが出来ないためです。"),
             _Question(
                 question: "ラインカラーが黄色だったときの時間やその時に鳴った警告音の記録はどうなりますか？",
                 answer: "時間は姿勢（良）として記録されますが、警告音は記録されません。"),
@@ -51,18 +58,25 @@ class HelpPage extends StatelessWidget {
               padding: const EdgeInsets.all(10.0),
               child: Text(
                 "使い方",
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             //チュートリアル
             _PageContents(
               size: size,
-              image: "images/IMG_0203.JPG",
-              title: "1.スマートフォンをセットする",
+              image: "images/IMG_0345.JPG",
+              title: "1. スマートフォンをセットする",
               description: Column(
                 children: [
                   Text(
-                    "椅子に座ったら上の画像のようにスマートフォンをセットし、STARTボタンを押してカメラを起動しましょう。",
+                    "上の画像のようにスマートフォンをセットし、STARTボタンを押してカメラを起動します。",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "◎カメラに顔が映る範囲であればどこにセットしても大丈夫ですが緑の点線内がより正確に猫背を検知できます。",
                     style: TextStyle(fontSize: 16),
                   ),
                   SizedBox(
@@ -81,7 +95,7 @@ class HelpPage extends StatelessWidget {
             _PageContents(
               size: size,
               image: "images/IMG_Unsplash.jpg",
-              title: "2.画面内に顔が映るようにする",
+              title: "2. カメラに顔が映るようにする",
               description: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -94,10 +108,10 @@ class HelpPage extends StatelessWidget {
                               style: TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold)),
                           TextSpan(
-                              text: "画面内に顔が映るように端末の位置を調整する。",
+                              text: "画面にグリーンラインが表示されたら姿勢を正します。",
                               style: TextStyle(fontSize: 16)),
                           TextSpan(
-                              text: "（白点とグリーンラインは自動調整されます。）",
+                              text: "（白点とグリーンラインは鼻の位置と連動し、自動調整されます。）",
                               style: TextStyle(
                                 fontSize: 12,
                               )),
@@ -113,21 +127,9 @@ class HelpPage extends StatelessWidget {
                               style: TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold)),
                           TextSpan(
-                              text: "姿勢を正す。", style: TextStyle(fontSize: 16))
-                        ]),
-                  ),
-                  SizedBox(height: 10),
-                  RichText(
-                    text: TextSpan(
-                        style: DefaultTextStyle.of(context).style,
-                        children: [
-                          TextSpan(
-                              text: "3. ",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold)),
-                          TextSpan(
-                              text: "計測スタート！白点が枠内から出ないように姿勢を保ち続けましょう。",
-                              style: TextStyle(fontSize: 16))
+                              text:
+                                  "開始ボタン押下で計測スタート！白点がグリーンラインの間から出ないように姿勢を保ち続けましょう。\n計測開始でグリーンラインが固定されます。",
+                              style: TextStyle(fontSize: 16)),
                         ]),
                   ),
                 ],
@@ -138,8 +140,8 @@ class HelpPage extends StatelessWidget {
             ),
             _PageContents(
               size: size,
-              image: "images/IMG_0295.JPG",
-              title: "白点とラインカラーの関係",
+              image: "images/IMG_0310.JPG",
+              title: "3. 白点とラインカラーの関係",
               description: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -201,12 +203,12 @@ class HelpPage extends StatelessWidget {
               padding: const EdgeInsets.all(10.0),
               child: Text(
                 "オススメ！",
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             _PageContents(
               size: size,
-              image: "images/IMG_0215.jpg",
+              image: "images/IMG_0343.JPG",
               title: " 使わなくなった端末を活用できます ",
               description: Column(
                 children: [
@@ -265,6 +267,7 @@ class _Question extends StatelessWidget {
                 Flexible(
                   child: Text(
                     question,
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -288,7 +291,13 @@ class _Question extends StatelessWidget {
                 SizedBox(
                   width: 10,
                 ),
-                Flexible(child: Text(answer)),
+                Flexible(
+                    child: Text(
+                  answer,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.greenAccent.shade700),
+                )),
               ],
             ),
           ],
