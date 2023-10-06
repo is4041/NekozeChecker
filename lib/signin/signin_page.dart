@@ -191,20 +191,20 @@ class _PageTwo extends StatelessWidget {
   Widget build(BuildContext context) {
     return _PageContents(
       size: size,
-      image: "images/IMG_0203.JPG",
+      image: "images/IMG_0345.JPG",
       title: "スマートフォンをセットする",
       description: Column(
         children: [
           Text(
-            "椅子に座ったら上の画像のようにスマートフォンをセットし、STARTボタンを押してカメラを起動しましょう。",
+            "上の画像のようにスマートフォンをセットし、STARTボタンを押してカメラを起動します。",
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(
             height: 10,
           ),
           Text(
-            "※スマートフォンを立て掛けられればOKです。",
-            style: TextStyle(fontSize: 12),
+            "◎カメラに顔が映る範囲であればどこにセットしても大丈夫ですが緑の点線内がより正確に猫背を検知できます。",
+            style: TextStyle(fontSize: 16),
           ),
         ],
       ),
@@ -223,7 +223,7 @@ class _PageThree extends StatelessWidget {
     return _PageContents(
       size: size,
       image: "images/IMG_Unsplash.jpg",
-      title: "画面内に顔が映るようにする",
+      title: "カメラに顔が映るようにする",
       description: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -233,11 +233,9 @@ class _PageThree extends StatelessWidget {
               TextSpan(
                   text: "1. ",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              TextSpan(text: "姿勢を正します。", style: TextStyle(fontSize: 16)),
               TextSpan(
-                  text: "画面内に顔が映るように端末の位置を調整する。",
-                  style: TextStyle(fontSize: 16)),
-              TextSpan(
-                  text: "（白点とグリーンラインは自動調整されます。）",
+                  text: "（白点とグリーンラインは鼻の位置と連動し、自動調整されます。）",
                   style: TextStyle(
                     fontSize: 12,
                   )),
@@ -250,19 +248,9 @@ class _PageThree extends StatelessWidget {
               TextSpan(
                   text: "2. ",
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              TextSpan(text: "姿勢を正す。", style: TextStyle(fontSize: 16))
-            ]),
-          ),
-          SizedBox(height: 10),
-          RichText(
-            text:
-                TextSpan(style: DefaultTextStyle.of(context).style, children: [
               TextSpan(
-                  text: "3. ",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              TextSpan(
-                  text: "計測スタート！白点が枠内から出ないように姿勢を保ち続けましょう。",
-                  style: TextStyle(fontSize: 16))
+                  text: "開始ボタン押下で計測スタート！白点がグリーンラインの間から出ないように姿勢を保ち続けましょう。",
+                  style: TextStyle(fontSize: 16)),
             ]),
           ),
         ],
@@ -280,7 +268,7 @@ class _PageFour extends StatelessWidget {
   Widget build(BuildContext context) {
     return _PageContents(
       size: screenSize,
-      image: "images/IMG_0295.JPG",
+      image: "images/IMG_0310.JPG",
       title: "白点とラインカラーの関係",
       description: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -346,7 +334,7 @@ class _PageFive extends StatelessWidget {
   Widget build(BuildContext context) {
     return _PageContents(
       size: screenSize,
-      image: "images/IMG_0215.jpg",
+      image: "images/IMG_0343.JPG",
       title: " 使わなくなった端末を活用できます ",
       description: Column(
         children: [
