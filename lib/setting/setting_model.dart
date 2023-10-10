@@ -3,6 +3,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:posture_correction/signin/signin_page.dart';
 import 'package:posture_correction/utils.dart';
 
 class SettingModel extends ChangeNotifier {
@@ -36,6 +37,7 @@ class SettingModel extends ChangeNotifier {
   //白点がグリーンラインの枠外に出た時に警告するまでの時間を更新
   Future<void> upDateTimeToNotification() async {
     searchListIndex();
+    if (tryOutMode == true) return;
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty) {
       return;
@@ -62,6 +64,7 @@ class SettingModel extends ChangeNotifier {
   //グリーンラインの間隔の調整内容を更新する
   Future<void> changeGreenLineRange() async {
     notifyListeners();
+    if (tryOutMode == true) return;
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty) {
       return;
@@ -72,10 +75,13 @@ class SettingModel extends ChangeNotifier {
         .update({
       "greenLineRange": Utils.greenLineRange,
     });
+    notifyListeners();
   }
 
   //ネコモードのオンオフ
   Future<void> isOnNekoMode() async {
+    notifyListeners();
+    if (tryOutMode == true) return;
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty) {
       return;
@@ -86,32 +92,6 @@ class SettingModel extends ChangeNotifier {
         .update({
       "nekoMode": Utils.nekoMode,
     });
-    notifyListeners();
-  }
-
-  //匿名アカウントからgoogleアカウントへの更新
-  Future<void> googleSignIn() async {
-    final connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult == ConnectivityResult.none) {
-      throw ("通信状態をご確認ください");
-    } else if (Utils.userId.isEmpty) {
-      throw ("ユーザー情報が取得できていません。ホーム画面に戻るとユーザー情報が取得されます。");
-    }
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser!.authentication;
-
-    // Create a new credential
-    final OAuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    final userInfo =
-        await FirebaseAuth.instance.currentUser!.linkWithCredential(credential);
-    print(userInfo.user!.uid);
-    print(userInfo.user!.email);
     notifyListeners();
   }
 

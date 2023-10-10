@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
+import '../camera/camera_page.dart';
+
 final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
 
@@ -29,16 +31,11 @@ class SignInModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  //匿名でサインイン
-  Future<void> signInWithAnonymousUser() async {
-    await firebaseAuth.signInAnonymously();
-    final uid = firebaseAuth.currentUser!.uid;
-    await FirebaseFirestore.instance.collection("users").doc(uid).set({
-      "createdAt": Timestamp.now(),
-      "greenLineRange": 15,
-      "nekoMode": false,
-      "timeToNotification": 15,
-      "userId": uid,
+//画面遷移後に通知音がなるのを防ぐ
+  void audioStop() {
+    Future.delayed(Duration(seconds: 1), () {
+      notificationTimer?.cancel();
+      audioPlayer.stop();
     });
   }
 

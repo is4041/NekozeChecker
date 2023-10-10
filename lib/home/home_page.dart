@@ -1,14 +1,11 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:posture_correction/camera/camera_page.dart';
-import 'package:posture_correction/help/help_page.dart';
 import 'package:posture_correction/home/home_model.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:volume_watcher/volume_watcher.dart';
 
 class HomePage extends StatelessWidget {
   @override
