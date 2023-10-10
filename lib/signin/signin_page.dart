@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:posture_correction/signin/signin_model.dart';
@@ -11,6 +12,10 @@ import 'package:sign_button/sign_button.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../bottomnavigation.dart';
+import '../camera/camera_page.dart';
+
+//おためしモードがtrueでfirebaseの処理を避ける
+bool tryOutMode = false;
 
 class SignInPage extends StatelessWidget {
   @override
@@ -366,159 +371,501 @@ class _PageSix extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleTouchContainer(
-      child: Column(
+      child: Stack(
         children: [
-          Stack(
-            children: [
-              SizedBox(
-                height: size,
-                width: double.infinity,
-                child: Opacity(
-                  opacity: 0.8,
-                  child: FadeInImage.memoryNetwork(
-                    placeholder: kTransparentImage,
-                    image:
-                        "https://images.unsplash.com/photo-1547960450-2ea08b931270?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2832&q=80",
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                child: Container(
-                  height: size,
-                  width: double.infinity,
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "ねこぜ",
-                          style: TextStyle(
-                              fontSize: 50,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.greenAccent.shade700),
-                        ),
-                        Text(
-                          "ちぇっかー",
-                          style: TextStyle(
-                              fontSize: 50,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[50]),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
           SizedBox(
-            height: size * 0.1,
-          ),
-          SizedBox(
-            height: 40,
-            width: 240,
-            child: ElevatedButton(
-              onPressed: () async {
-                model.startLoading();
-                try {
-                  await model.signInWithAnonymousUser();
-                } catch (e) {
-                  await showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return CupertinoAlertDialog(
-                          title: Text("エラー"),
-                          content: Text("通信状態をご確認ください"),
-                          actions: [
-                            TextButton(
-                              child: const Text("OK"),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            )
-                          ],
-                        );
-                      });
-                }
-                model.endLoading();
-              },
-              style: ElevatedButton.styleFrom(
-                  elevation: 5,
-                  backgroundColor: Colors.greenAccent.shade700,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
-                  )),
-              child: Text(
-                "はじめる",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            height: size,
+            width: double.infinity,
+            child: Opacity(
+              opacity: 0.8,
+              child: FadeInImage.memoryNetwork(
+                placeholder: kTransparentImage,
+                image:
+                    "https://images.unsplash.com/photo-1547960450-2ea08b931270?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2832&q=80",
+                fit: BoxFit.cover,
               ),
             ),
           ),
-          SizedBox(height: 20),
-          //Googleでサインイン
-          SignInButton(
-              buttonType: ButtonType.google,
-              onPressed: () async {
-                model.startLoading();
-                try {
-                  await model.signInWithGoogle();
-                } catch (e) {
-                  if (e.toString() !=
-                      "Null check operator used on a null value") {
-                    await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text("エラー"),
-                            content: Text(e.toString()),
-                            actions: [
-                              TextButton(
-                                child: const Text("OK"),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              )
-                            ],
-                          );
-                        });
-                  }
-                }
-                model.endLoading();
-              }),
-          SizedBox(height: 20),
-          //Appleでサインイン
-          SignInButton(
-              buttonType: ButtonType.apple,
-              onPressed: () async {
-                model.startLoading();
-                try {
-                  await model.signInWithApple();
-                } catch (e) {
-                  if (e.toString() !=
-                      "SignInWithAppleAuthorizationError(AuthorizationErrorCode.canceled, The operation couldn’t be completed. (com.apple.AuthenticationServices.AuthorizationError error 1001.))") {
-                    print(e);
-                    await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text("エラー"),
-                            content: Text(e.toString()),
-                            actions: [
-                              TextButton(
-                                child: const Text("OK"),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              )
-                            ],
-                          );
-                        });
-                  }
-                }
-                model.endLoading();
-              }),
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+            child: Container(
+              height: size,
+              width: double.infinity,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "ねこぜ",
+                      style: TextStyle(
+                          fontSize: 50,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.greenAccent.shade700),
+                    ),
+                    Text(
+                      "ちぇっかー",
+                      style: TextStyle(
+                          fontSize: 50,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[50]),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment(0, 0.5),
+            child: FittedBox(
+              child: Container(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      width: 240,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return SingleTouchContainer(
+                                  child: CupertinoAlertDialog(
+                                    title: Text("おためしモード"),
+                                    content: Column(
+                                      children: [
+                                        Text(
+                                            "おためしモードではデータは保存されません。\nGoogleやAppleでサインインすることでデータの永続化、グラフの閲覧、その他詳細な設定ができるようになります。"),
+                                      ],
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text(
+                                          "はじめる",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        onPressed: () async {
+                                          tryOutMode = true;
+                                          final value = await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      CameraPage()));
+                                          model.audioStop();
+                                          //カメラページから戻った際に計測結果をダイアログで表示
+                                          if (value != null) {
+                                            await showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    insetPadding:
+                                                        EdgeInsets.all(10),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.0),
+                                                    ),
+                                                    title: RichText(
+                                                      text: TextSpan(
+                                                          style: DefaultTextStyle
+                                                                  .of(context)
+                                                              .style,
+                                                          children: [
+                                                            TextSpan(
+                                                                text:
+                                                                    "計測評価は...",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        22)),
+                                                            TextSpan(
+                                                                text:
+                                                                    "${((value[1] / value[0]) * 100).toStringAsFixed(1)}",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        30,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .greenAccent
+                                                                        .shade700)),
+                                                            TextSpan(
+                                                                text: "点",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 22,
+                                                                )),
+                                                            if (Utils.nekoMode)
+                                                              TextSpan(
+                                                                  text: "ニャ",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        22,
+                                                                  )),
+                                                            TextSpan(
+                                                                text: "!!!",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 22,
+                                                                )),
+                                                          ]),
+                                                    ),
+                                                    content: Container(
+                                                      height: 300,
+                                                      width: 300,
+                                                      decoration: BoxDecoration(
+                                                        border: Border.all(
+                                                          color: Colors
+                                                              .greenAccent
+                                                              .shade700,
+                                                          width: 3,
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10.0),
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(10.0),
+                                                        child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                children: [
+                                                                  Text(
+                                                                    "計測時間",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            20),
+                                                                  ),
+                                                                  Text(
+                                                                    "${value[0] ~/ 60 ~/ 60}時間${value[0] ~/ 60 % 60}分${value[0] % 60}秒",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            20),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                children: [
+                                                                  Text(
+                                                                    "姿勢(良)",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            20,
+                                                                        color: Colors
+                                                                            .greenAccent
+                                                                            .shade700),
+                                                                  ),
+                                                                  Text(
+                                                                    "${value[1] ~/ 60 ~/ 60}時間${value[1] ~/ 60 % 60}分${value[1] % 60}秒",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          20,
+                                                                      color: Colors
+                                                                          .greenAccent
+                                                                          .shade700,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                children: [
+                                                                  Text(
+                                                                    "姿勢(猫背)",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            20,
+                                                                        color: Colors
+                                                                            .red),
+                                                                  ),
+                                                                  Text(
+                                                                    "${value[2] ~/ 60 ~/ 60}時間${value[2] ~/ 60 % 60}分${value[2] % 60}秒",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            20,
+                                                                        color: Color(
+                                                                            0xffff1a1a)),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                children: [
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .end,
+                                                                    children: [
+                                                                      Text(
+                                                                        "警告回数 ",
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                20),
+                                                                      ),
+                                                                      Text(
+                                                                        "(設定：${Utils.timeToNotification}秒)",
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                15),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  Text(
+                                                                    "${value[3]}回",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            20),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                children: [
+                                                                  Text(
+                                                                    "グリーンラインの幅",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            15),
+                                                                  ),
+                                                                  Text(
+                                                                    Utils.nekoMode ==
+                                                                            true
+                                                                        ? "${value[4]}ニャ"
+                                                                        : value[
+                                                                            4],
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            15),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              SizedBox(
+                                                                height: 20,
+                                                              ),
+                                                              Row(children: [
+                                                                Expanded(
+                                                                    flex: 1,
+                                                                    child: Align(
+                                                                        alignment: Alignment.center,
+                                                                        child: Container(
+                                                                            height: 100,
+                                                                            child: AspectRatio(
+                                                                              aspectRatio: 1,
+                                                                              child: PieChart(
+                                                                                PieChartData(
+                                                                                  borderData: FlBorderData(show: false),
+                                                                                  startDegreeOffset: 270,
+                                                                                  sectionsSpace: 0,
+                                                                                  centerSpaceRadius: 40,
+                                                                                  sections: _showingSectionsOnDialog(value),
+                                                                                ),
+                                                                              ),
+                                                                            )))),
+                                                                Expanded(
+                                                                    flex: 1,
+                                                                    child: Container(
+                                                                        height: 100,
+                                                                        child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                                                                          Row(
+                                                                            children: [
+                                                                              Text(
+                                                                                "●",
+                                                                                style: TextStyle(
+                                                                                  fontSize: 23,
+                                                                                  color: Colors.greenAccent.shade700,
+                                                                                ),
+                                                                              ),
+                                                                              Text(
+                                                                                "：${((value[1] / value[0]) * 100).toStringAsFixed(1)}％",
+                                                                                style: TextStyle(
+                                                                                  fontSize: 20,
+                                                                                  color: Colors.greenAccent.shade700,
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          Row(children: [
+                                                                            Text(
+                                                                              "●",
+                                                                              style: TextStyle(fontSize: 23, color: Color(0xffff1a1a)),
+                                                                            ),
+                                                                            Text(
+                                                                              "：${((value[2] / value[0]) * 100).toStringAsFixed(1)}％",
+                                                                              style: TextStyle(fontSize: 20, color: Color(0xffff1a1a)),
+                                                                            ),
+                                                                          ]),
+                                                                        ]))),
+                                                              ]),
+                                                            ]),
+                                                      ),
+                                                    ),
+                                                    actions: [
+                                                      Center(
+                                                        child: ElevatedButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        30.0),
+                                                            child: Text(
+                                                              "OK",
+                                                              style: TextStyle(
+                                                                  fontSize: 25,
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          50),
+                                                            ),
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .greenAccent
+                                                                    .shade700,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  );
+                                                });
+                                          }
+                                          tryOutMode = false;
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: const Text(
+                                          "戻る",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.red),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                );
+                              });
+                        },
+                        style: ElevatedButton.styleFrom(
+                            elevation: 5,
+                            backgroundColor: Colors.greenAccent.shade700,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            )),
+                        child: Text(
+                          "おためしモード",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: size * 0.08),
+                    //Googleでサインイン
+                    SignInButton(
+                        buttonType: ButtonType.google,
+                        onPressed: () async {
+                          model.startLoading();
+                          try {
+                            await model.signInWithGoogle();
+                          } catch (e) {
+                            if (e.toString() !=
+                                "Null check operator used on a null value") {
+                              await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("エラー"),
+                                      content: Text(e.toString()),
+                                      actions: [
+                                        TextButton(
+                                          child: const Text("OK"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  });
+                            }
+                          }
+                          model.endLoading();
+                        }),
+                    SizedBox(height: size * 0.08),
+                    //Appleでサインイン
+                    SignInButton(
+                        buttonType: ButtonType.apple,
+                        onPressed: () async {
+                          model.startLoading();
+                          try {
+                            await model.signInWithApple();
+                          } catch (e) {
+                            if (e.toString() !=
+                                "SignInWithAppleAuthorizationError(AuthorizationErrorCode.canceled, The operation couldn’t be completed. (com.apple.AuthenticationServices.AuthorizationError error 1001.))") {
+                              print(e);
+                              await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("エラー"),
+                                      content: Text(e.toString()),
+                                      actions: [
+                                        TextButton(
+                                          child: const Text("OK"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  });
+                            }
+                          }
+                          model.endLoading();
+                        }),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -579,4 +926,29 @@ class _PageContents extends StatelessWidget {
       ],
     );
   }
+}
+
+//計測を終えた後アラートダイアログに結果を円グラフで表示
+List<PieChartSectionData> _showingSectionsOnDialog(value) {
+  return List.generate(2, (i) {
+    final radius = 15.0;
+    switch (i) {
+      case 0:
+        return PieChartSectionData(
+          color: Color(0xff00c904),
+          value: value[1].toDouble(),
+          radius: radius,
+          showTitle: false,
+        );
+      case 1:
+        return PieChartSectionData(
+          color: Color(0xffff1a1a),
+          value: value[2].toDouble(),
+          showTitle: false,
+          radius: radius,
+        );
+      default:
+        throw Error();
+    }
+  });
 }

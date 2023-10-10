@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import 'package:posture_correction/setting/setting_page.dart';
+import 'package:posture_correction/signin/signin_page.dart';
 import 'package:posture_correction/single_touch_container.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
@@ -288,30 +289,34 @@ class CameraPage extends StatelessWidget {
                                               ? () async {
                                                   if (_processing) return;
                                                   _processing = true;
-                                                  try {
-                                                    await model.addData();
-                                                  } catch (e) {
-                                                    await showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return CupertinoAlertDialog(
-                                                            title: Text("エラー"),
-                                                            content: Text(
-                                                                "保存に失敗しました"),
-                                                            actions: [
-                                                              TextButton(
-                                                                onPressed: () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                },
-                                                                child:
-                                                                    Text("OK"),
-                                                              )
-                                                            ],
-                                                          );
-                                                        });
+                                                  if (tryOutMode != true) {
+                                                    try {
+                                                      await model.addData();
+                                                    } catch (e) {
+                                                      await showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return CupertinoAlertDialog(
+                                                              title:
+                                                                  Text("エラー"),
+                                                              content: Text(
+                                                                  "保存に失敗しました"),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  },
+                                                                  child: Text(
+                                                                      "OK"),
+                                                                )
+                                                              ],
+                                                            );
+                                                          });
+                                                    }
                                                   }
 
                                                   notificationTimer?.cancel();

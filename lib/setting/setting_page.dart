@@ -1,17 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:posture_correction/camera/camera_page.dart';
 import 'package:posture_correction/setting/setting_model.dart';
 import 'package:posture_correction/single_touch_container.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
 
-// bool? configurable = true;
-
 class SettingPage extends StatelessWidget {
   SettingPage({this.fromCameraPage = false, this.configurable = true});
-  bool fromCameraPage;
-  bool configurable;
+  final bool fromCameraPage;
+  final bool configurable;
   @override
   Widget build(BuildContext context) {
     bool _processing = false;
@@ -363,133 +360,6 @@ class SettingPage extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          //googleアカウント提携ボタン（匿名ログイン時のみ押下可）appleでログイン時は非表示
-                          Visibility(
-                            visible: Utils.providerId != "apple.com" &&
-                                Utils.userId.isNotEmpty,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10.0),
-                                  child: Text(
-                                    "アカウント提携",
-                                    style: TextStyle(
-                                        fontSize: 13, color: Colors.black54),
-                                  ),
-                                ),
-                                Ink(
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                        top: BorderSide(
-                                            color: Colors.grey, width: 0.5),
-                                        bottom: BorderSide(
-                                            color: Colors.grey, width: 0.5),
-                                      ),
-                                      color: Colors.white),
-                                  height: 50,
-                                  width: double.infinity,
-                                  //匿名ログイン時
-                                  child: Utils.providerId == ""
-                                      ? InkWell(
-                                          highlightColor: Colors.grey[400],
-                                          onTap: () async {
-                                            try {
-                                              await model.googleSignIn();
-                                              await showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return CupertinoAlertDialog(
-                                                      title: Text(
-                                                          "アカウント提携が完了しました"),
-                                                      actions: [
-                                                        TextButton(
-                                                          child:
-                                                              const Text("OK"),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                        )
-                                                      ],
-                                                    );
-                                                  });
-                                            } catch (e) {
-                                              if (e.toString() ==
-                                                  "[firebase_auth/credential-already-in-use] This credential is already associated with a different user account.") {
-                                                await showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return CupertinoAlertDialog(
-                                                        title: Text("エラー"),
-                                                        content: Text(
-                                                            "このアカウントはすでに別のユーザーアカウントに関連付けられています。\n今お使いの端末でこのアカウントに提携するためには全データ削除（初期化）を行った後SignInWithGoogleボタンから提携してください。"),
-                                                        actions: [
-                                                          TextButton(
-                                                            child: const Text(
-                                                                "OK"),
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                          )
-                                                        ],
-                                                      );
-                                                    });
-                                              } else if (e.toString() !=
-                                                  "Null check operator used on a null value") {
-                                                print(e.toString());
-                                                await showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return CupertinoAlertDialog(
-                                                        title: Text("エラー"),
-                                                        content:
-                                                            Text(e.toString()),
-                                                        actions: [
-                                                          TextButton(
-                                                            child: const Text(
-                                                                "OK"),
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                          )
-                                                        ],
-                                                      );
-                                                    });
-                                              }
-                                            }
-                                          },
-                                          child: Center(
-                                            child: Text(
-                                              "Googleアカウント提携",
-                                              style: TextStyle(fontSize: 17),
-                                            ),
-                                          ),
-                                        )
-                                      //googleログイン時
-                                      : Center(
-                                          child: Text(
-                                            "Googleアカウント提携済",
-                                            style: TextStyle(
-                                                fontSize: 17,
-                                                color: Colors.grey),
-                                          ),
-                                        ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 50,
-                          ),
                           //ログアウトボタン（google,appleログイン時のみ表示）
                           Visibility(
                             visible: Utils.providerId == "google.com" ||
