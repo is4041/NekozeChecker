@@ -115,7 +115,7 @@ class SettingModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  //ログアウト（googleアカウントのみ）
+  //ログアウト（google・Appleのみ）
   Future<void> logout() async {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
@@ -139,7 +139,7 @@ class SettingModel extends ChangeNotifier {
     Utils.totalMeasurementTimeForTheDay = 0;
   }
 
-  //全データ削除（初期化）
+  //アカウント削除
   Future<void> deleteUser() async {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
@@ -147,18 +147,11 @@ class SettingModel extends ChangeNotifier {
     } else if (Utils.userId.isEmpty) {
       throw ("ユーザー情報が取得できていません。ホーム画面に戻るとユーザー情報が取得されます。");
     }
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(Utils.userId)
-        .collection("measurements")
-        .doc()
-        .delete();
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(Utils.userId)
-        .delete();
-    //先に上記の要素を削除しないとcurrentUserは削除不可になる
-    await FirebaseAuth.instance.currentUser!.delete();
+    try {
+      await FirebaseAuth.instance.currentUser!.delete();
+    } catch (e) {
+      throw ("アカウントが削除出来ませんでした。\nログインし直してもう一度試してください。");
+    }
     await FirebaseAuth.instance.signOut();
     Utils.userId = "";
     Utils.timeToNotification = 15;

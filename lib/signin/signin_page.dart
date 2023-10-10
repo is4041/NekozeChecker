@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:posture_correction/signin/signin_model.dart';
+import 'package:posture_correction/single_touch_container.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:sign_button/sign_button.dart';
@@ -165,11 +166,11 @@ class _PageOne extends StatelessWidget {
     return _PageContents(
       size: size,
       image: "images/IMG_0196.JPG",
-      title: "猫背チェッカーへようこそ",
+      title: "ねこぜチェッカーへようこそ",
       description: Column(
         children: [
           Text(
-            "猫背チェッカーはゲームやデスクワーク中の猫背や居眠りを検知すると警告音でお知らせするアプリです。",
+            "ねこぜチェッカーはゲームやデスクワーク中の猫背や居眠りを検知すると警告音でお知らせするアプリです。",
             style: TextStyle(fontSize: 16),
           ),
           SizedBox(
@@ -364,160 +365,162 @@ class _PageSix extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Stack(
-          children: [
-            SizedBox(
-              height: size,
-              width: double.infinity,
-              child: Opacity(
-                opacity: 0.8,
-                child: FadeInImage.memoryNetwork(
-                  placeholder: kTransparentImage,
-                  image:
-                      "https://images.unsplash.com/photo-1547960450-2ea08b931270?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2832&q=80",
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-              child: Container(
+    return SingleTouchContainer(
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              SizedBox(
                 height: size,
                 width: double.infinity,
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "ねこぜ",
-                        style: TextStyle(
-                            fontSize: 50,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.greenAccent.shade700),
-                      ),
-                      Text(
-                        "ちぇっかー",
-                        style: TextStyle(
-                            fontSize: 50,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey[50]),
-                      ),
-                    ],
+                child: Opacity(
+                  opacity: 0.8,
+                  child: FadeInImage.memoryNetwork(
+                    placeholder: kTransparentImage,
+                    image:
+                        "https://images.unsplash.com/photo-1547960450-2ea08b931270?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2832&q=80",
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: size * 0.1,
-        ),
-        SizedBox(
-          height: 40,
-          width: 240,
-          child: ElevatedButton(
-            onPressed: () async {
-              model.startLoading();
-              try {
-                await model.signInWithAnonymousUser();
-              } catch (e) {
-                await showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return CupertinoAlertDialog(
-                        title: Text("エラー"),
-                        content: Text("通信状態をご確認ください"),
-                        actions: [
-                          TextButton(
-                            child: const Text("OK"),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          )
-                        ],
-                      );
-                    });
-              }
-              model.endLoading();
-            },
-            style: ElevatedButton.styleFrom(
-                elevation: 5,
-                backgroundColor: Colors.greenAccent.shade700,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                )),
-            child: Text(
-              "はじめる",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                child: Container(
+                  height: size,
+                  width: double.infinity,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "ねこぜ",
+                          style: TextStyle(
+                              fontSize: 50,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.greenAccent.shade700),
+                        ),
+                        Text(
+                          "ちぇっかー",
+                          style: TextStyle(
+                              fontSize: 50,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[50]),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: size * 0.1,
+          ),
+          SizedBox(
+            height: 40,
+            width: 240,
+            child: ElevatedButton(
+              onPressed: () async {
+                model.startLoading();
+                try {
+                  await model.signInWithAnonymousUser();
+                } catch (e) {
+                  await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return CupertinoAlertDialog(
+                          title: Text("エラー"),
+                          content: Text("通信状態をご確認ください"),
+                          actions: [
+                            TextButton(
+                              child: const Text("OK"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
+                        );
+                      });
+                }
+                model.endLoading();
+              },
+              style: ElevatedButton.styleFrom(
+                  elevation: 5,
+                  backgroundColor: Colors.greenAccent.shade700,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  )),
+              child: Text(
+                "はじめる",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
             ),
           ),
-        ),
-        SizedBox(height: 20),
-        //Googleでサインイン
-        SignInButton(
-            buttonType: ButtonType.google,
-            onPressed: () async {
-              model.startLoading();
-              try {
-                await model.signInWithGoogle();
-              } catch (e) {
-                if (e.toString() !=
-                    "Null check operator used on a null value") {
-                  await showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text("エラー"),
-                          content: Text(e.toString()),
-                          actions: [
-                            TextButton(
-                              child: const Text("OK"),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            )
-                          ],
-                        );
-                      });
+          SizedBox(height: 20),
+          //Googleでサインイン
+          SignInButton(
+              buttonType: ButtonType.google,
+              onPressed: () async {
+                model.startLoading();
+                try {
+                  await model.signInWithGoogle();
+                } catch (e) {
+                  if (e.toString() !=
+                      "Null check operator used on a null value") {
+                    await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("エラー"),
+                            content: Text(e.toString()),
+                            actions: [
+                              TextButton(
+                                child: const Text("OK"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              )
+                            ],
+                          );
+                        });
+                  }
                 }
-              }
-              model.endLoading();
-            }),
-        SizedBox(height: 20),
-        //Appleでサインイン
-        SignInButton(
-            buttonType: ButtonType.apple,
-            onPressed: () async {
-              model.startLoading();
-              try {
-                await model.signInWithApple();
-              } catch (e) {
-                if (e.toString() !=
-                    "SignInWithAppleAuthorizationError(AuthorizationErrorCode.canceled, The operation couldn’t be completed. (com.apple.AuthenticationServices.AuthorizationError error 1001.))") {
-                  print(e);
-                  await showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text("エラー"),
-                          content: Text(e.toString()),
-                          actions: [
-                            TextButton(
-                              child: const Text("OK"),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            )
-                          ],
-                        );
-                      });
+                model.endLoading();
+              }),
+          SizedBox(height: 20),
+          //Appleでサインイン
+          SignInButton(
+              buttonType: ButtonType.apple,
+              onPressed: () async {
+                model.startLoading();
+                try {
+                  await model.signInWithApple();
+                } catch (e) {
+                  if (e.toString() !=
+                      "SignInWithAppleAuthorizationError(AuthorizationErrorCode.canceled, The operation couldn’t be completed. (com.apple.AuthenticationServices.AuthorizationError error 1001.))") {
+                    print(e);
+                    await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text("エラー"),
+                            content: Text(e.toString()),
+                            actions: [
+                              TextButton(
+                                child: const Text("OK"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              )
+                            ],
+                          );
+                        });
+                  }
                 }
-              }
-              model.endLoading();
-            }),
-      ],
+                model.endLoading();
+              }),
+        ],
+      ),
     );
   }
 }
