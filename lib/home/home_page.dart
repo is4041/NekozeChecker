@@ -57,7 +57,6 @@ class HomePage extends StatelessWidget {
                           model.audioStop();
                           //カメラページから戻った際に計測結果をダイアログで表示
                           if (value != null) {
-                            model.getAverageData();
                             await showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -351,6 +350,26 @@ class HomePage extends StatelessWidget {
                                     ],
                                   );
                                 });
+                            try {
+                              await model.getAverageData();
+                            } catch (e) {
+                              await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CupertinoAlertDialog(
+                                      title: Text("エラー"),
+                                      content: Text(e.toString()),
+                                      actions: [
+                                        TextButton(
+                                          child: const Text("OK"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  });
+                            }
                           }
                         },
                         child: Column(

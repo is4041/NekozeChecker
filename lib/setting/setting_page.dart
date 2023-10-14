@@ -360,102 +360,99 @@ class SettingPage extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          //ログアウトボタン（google,appleログイン時のみ表示）
-                          Visibility(
-                            visible: Utils.providerId == "google.com" ||
-                                Utils.providerId == "apple.com",
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 10.0),
-                                  child: Text(
-                                    "ログアウト",
-                                    style: TextStyle(
-                                        fontSize: 13, color: Colors.black54),
-                                  ),
+                          //ログアウトボタン
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: Text(
+                                  "ログアウト",
+                                  style: TextStyle(
+                                      fontSize: 13, color: Colors.black54),
                                 ),
-                                Ink(
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                          top: BorderSide(
-                                              color: Colors.grey, width: 0.5),
-                                          bottom: BorderSide(
-                                              color: Colors.grey, width: 0.5),
-                                        ),
-                                        color: Colors.white),
-                                    height: 50,
-                                    width: double.infinity,
-                                    //google,appleでログイン時
-                                    child: InkWell(
-                                      highlightColor: Colors.grey[400],
-                                      onTap: () async {
-                                        await showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return SingleTouchContainer(
-                                                child: CupertinoAlertDialog(
-                                                  title: Text("ログアウトしますか？"),
-                                                  actions: [
-                                                    TextButton(
-                                                      child: Text("はい"),
-                                                      onPressed: () async {
-                                                        if (_processing) return;
-                                                        _processing = true;
-                                                        try {
-                                                          await model.logout();
-                                                        } catch (e) {
-                                                          await showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                return CupertinoAlertDialog(
-                                                                  title: Text(
-                                                                      "エラー"),
-                                                                  content: Text(
-                                                                      e.toString()),
-                                                                  actions: [
-                                                                    TextButton(
-                                                                      child: const Text(
-                                                                          "OK"),
-                                                                      onPressed:
-                                                                          () {
-                                                                        Navigator.of(context)
-                                                                            .pop();
-                                                                      },
-                                                                    )
-                                                                  ],
-                                                                );
-                                                              });
-                                                        }
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        _processing = false;
-                                                      },
-                                                    ),
-                                                    TextButton(
-                                                      child: Text("キャンセル"),
-                                                      onPressed: () async {
-                                                        if (_processing) return;
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                    )
-                                                  ],
-                                                ),
-                                              );
-                                            });
-                                      },
-                                      child: const Center(
-                                        child: Text(
-                                          "ログアウト",
-                                          style: TextStyle(fontSize: 17),
-                                        ),
+                              ),
+                              Ink(
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                        top: BorderSide(
+                                            color: Colors.grey, width: 0.5),
+                                        bottom: BorderSide(
+                                            color: Colors.grey, width: 0.5),
                                       ),
-                                    )),
-                              ],
-                            ),
+                                      color: Colors.white),
+                                  height: 50,
+                                  width: double.infinity,
+                                  child: InkWell(
+                                    highlightColor: Colors.grey[400],
+                                    onTap: () async {
+                                      await showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return SingleTouchContainer(
+                                              child: CupertinoAlertDialog(
+                                                title: Text("ログアウトしますか？"),
+                                                actions: [
+                                                  TextButton(
+                                                    child: Text("はい"),
+                                                    onPressed: () async {
+                                                      if (_processing) return;
+                                                      _processing = true;
+                                                      try {
+                                                        await model.logout();
+                                                      } catch (e) {
+                                                        await showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return CupertinoAlertDialog(
+                                                                title:
+                                                                    Text("エラー"),
+                                                                content: Text(e
+                                                                    .toString()),
+                                                                actions: [
+                                                                  TextButton(
+                                                                    child:
+                                                                        const Text(
+                                                                            "OK"),
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
+                                                                    },
+                                                                  )
+                                                                ],
+                                                              );
+                                                            });
+                                                      }
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      _processing = false;
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: Text("キャンセル"),
+                                                    onPressed: () async {
+                                                      if (_processing) return;
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          });
+                                    },
+                                    child: const Center(
+                                      child: Text(
+                                        "ログアウト",
+                                        style: TextStyle(fontSize: 17),
+                                      ),
+                                    ),
+                                  )),
+                            ],
                           ),
                           SizedBox(
                             height: 250,
@@ -468,7 +465,7 @@ class SettingPage extends StatelessWidget {
                                   fontSize: 13, color: Colors.black54),
                             ),
                           ),
-                          //全データ消去（初期化）ボタン
+                          //アカウント削除ボタン
                           Ink(
                             decoration: BoxDecoration(
                                 border: Border(

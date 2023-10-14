@@ -773,8 +773,7 @@ class _PageSix extends StatelessWidget {
                                         child: const Text(
                                           "戻る",
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.red),
+                                              fontWeight: FontWeight.bold),
                                         ),
                                         onPressed: () {
                                           Navigator.of(context).pop();

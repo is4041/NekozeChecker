@@ -38,10 +38,10 @@ class SettingModel extends ChangeNotifier {
   Future<void> upDateTimeToNotification() async {
     searchListIndex();
     if (tryOutMode == true) return;
+    if (FirebaseAuth.instance.currentUser == null) return;
     final connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty) {
+    if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty)
       return;
-    }
     await FirebaseFirestore.instance
         .collection("users")
         .doc(Utils.userId)
@@ -65,10 +65,10 @@ class SettingModel extends ChangeNotifier {
   Future<void> changeGreenLineRange() async {
     notifyListeners();
     if (tryOutMode == true) return;
+    if (FirebaseAuth.instance.currentUser == null) return;
     final connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty) {
+    if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty)
       return;
-    }
     await FirebaseFirestore.instance
         .collection("users")
         .doc(Utils.userId)
@@ -82,10 +82,10 @@ class SettingModel extends ChangeNotifier {
   Future<void> isOnNekoMode() async {
     notifyListeners();
     if (tryOutMode == true) return;
+    if (FirebaseAuth.instance.currentUser == null) return;
     final connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty) {
+    if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty)
       return;
-    }
     await FirebaseFirestore.instance
         .collection("users")
         .doc(Utils.userId)
@@ -95,11 +95,14 @@ class SettingModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  //ログアウト（google・Appleのみ）
+  //ログアウト
   Future<void> logout() async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      throw ("エラーが発生しました。一度アプリを再起動してください。");
+    }
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
-      throw ("通信状態をご確認ください");
+      throw ("ログアウトに失敗しました。通信状態をご確認ください");
     } else if (Utils.userId.isEmpty) {
       throw ("ユーザー情報が取得できていません。ホーム画面に戻るとユーザー情報が取得されます。");
     }
@@ -107,7 +110,6 @@ class SettingModel extends ChangeNotifier {
     Utils.userId = "";
     Utils.timeToNotification = 15;
     Utils.greenLineRange = 15;
-    Utils.providerId = "";
     Utils.percentOfAllGoodPostureSec = 0;
     Utils.percentOfTodayGoodPostureSec = 0;
     Utils.percentOfThisMonthGoodPostureSec = 0;
@@ -121,9 +123,12 @@ class SettingModel extends ChangeNotifier {
 
   //アカウント削除
   Future<void> deleteUser() async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      throw ("エラーが発生しました。一度アプリを再起動してください。");
+    }
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
-      throw ("通信状態をご確認ください");
+      throw ("削除に失敗しました。通信状態をご確認ください");
     } else if (Utils.userId.isEmpty) {
       throw ("ユーザー情報が取得できていません。ホーム画面に戻るとユーザー情報が取得されます。");
     }
@@ -136,7 +141,6 @@ class SettingModel extends ChangeNotifier {
     Utils.userId = "";
     Utils.timeToNotification = 15;
     Utils.greenLineRange = 15;
-    Utils.providerId = "";
     Utils.percentOfAllGoodPostureSec = 0;
     Utils.percentOfTodayGoodPostureSec = 0;
     Utils.percentOfThisMonthGoodPostureSec = 0;

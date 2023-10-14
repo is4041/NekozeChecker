@@ -289,34 +289,30 @@ class CameraPage extends StatelessWidget {
                                               ? () async {
                                                   if (_processing) return;
                                                   _processing = true;
-                                                  if (tryOutMode != true) {
-                                                    try {
-                                                      await model.addData();
-                                                    } catch (e) {
-                                                      await showDialog(
-                                                          context: context,
-                                                          builder: (BuildContext
-                                                              context) {
-                                                            return CupertinoAlertDialog(
-                                                              title:
-                                                                  Text("エラー"),
-                                                              content: Text(
-                                                                  "保存に失敗しました"),
-                                                              actions: [
-                                                                TextButton(
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop();
-                                                                  },
-                                                                  child: Text(
-                                                                      "OK"),
-                                                                )
-                                                              ],
-                                                            );
-                                                          });
-                                                    }
+                                                  try {
+                                                    await model.addData();
+                                                  } catch (e) {
+                                                    await showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return CupertinoAlertDialog(
+                                                            title: Text("エラー"),
+                                                            content: Text(
+                                                                e.toString()),
+                                                            actions: [
+                                                              TextButton(
+                                                                onPressed: () {
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                },
+                                                                child:
+                                                                    Text("OK"),
+                                                              )
+                                                            ],
+                                                          );
+                                                        });
                                                   }
 
                                                   notificationTimer?.cancel();
