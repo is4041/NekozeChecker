@@ -17,10 +17,14 @@ class HomeModel extends ChangeNotifier {
     //オンラインとオフラインで処理を分ける
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
-      showConnectError(context);
+      await showConnectError(context);
     } else {
-      await getUserData();
-      await getAverageData();
+      try {
+        await getUserData();
+        await getAverageData();
+      } catch (e) {
+        await showError(context);
+      }
     }
   }
 
@@ -45,21 +49,34 @@ class HomeModel extends ChangeNotifier {
         });
   }
 
+  //ログイン出来ていない時に表示
+  Future<void> showError(context) async {
+    return await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text("エラー"),
+            content: Text("エラーが発生しました。一度アプリを再起動してください。"),
+            actions: [
+              TextButton(
+                child: const Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
   //ユーザーデータを取得する
   Future<void> getUserData() async {
-    await FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user!.providerData.isEmpty) {
-        Utils.providerId == "";
-      } else if (user.providerData[0].providerId == "google.com") {
-        Utils.providerId = "google.com";
-      } else if (user.providerData[0].providerId == "apple.com")
-        Utils.providerId = "apple.com";
-    });
-
+    if (FirebaseAuth.instance.currentUser == null) {
+      throw ("エラーが発生しました。一度アプリを再起動してください。");
+    }
     final user = await FirebaseAuth.instance.currentUser!;
     Utils.userId = user.uid;
 
-    print("providerId : ${Utils.providerId}");
     print("userId : ${Utils.userId}");
 
     final document = await FirebaseFirestore.instance
@@ -76,6 +93,9 @@ class HomeModel extends ChangeNotifier {
 
   //平均データを計算する
   Future<void> getAverageData() async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      throw ("エラーが発生しました。一度アプリを再起動してください。");
+    }
     //今日のデータリスト
     List dataListOfToday = [];
     List dataListOfTodayBadPosture = [];

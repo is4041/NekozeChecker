@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -28,6 +29,7 @@ class GraphModel extends ChangeNotifier {
 
   //当月の計測データをfirebaseから取得、配列化する
   Future<void> fetchGraphData() async {
+    if (FirebaseAuth.instance.currentUser == null) return;
     List arrayOfMonthMeasuringSec = [];
     List arrayOfMonthMeasuringBadSec = [];
     rateOfGoodPosture = 0;

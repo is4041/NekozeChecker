@@ -7,10 +7,8 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../camera/camera_page.dart';
 
-final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-final GoogleSignIn googleSignIn = GoogleSignIn();
-
 class SignInModel extends ChangeNotifier {
+  final GoogleSignIn googleSignIn = GoogleSignIn();
   bool isLoading = false;
   int activePage = 0;
 
@@ -49,6 +47,9 @@ class SignInModel extends ChangeNotifier {
     );
     final userCredential =
         await FirebaseAuth.instance.signInWithCredential(credential);
+    if (FirebaseAuth.instance.currentUser == null) {
+      throw ("エラーが発生しました。一度アプリを再起動してください。");
+    }
     final uid = userCredential.user!.uid;
     final document =
         await FirebaseFirestore.instance.collection("users").doc(uid).get();
@@ -57,7 +58,7 @@ class SignInModel extends ChangeNotifier {
     if (exists == false) {
       await FirebaseFirestore.instance.collection("users").doc(uid).set({
         "createdAt": Timestamp.now(),
-        "greenLineRange": 15,
+        "greenLineRange": 15.0,
         "nekoMode": false,
         "timeToNotification": 15,
         "userId": uid,
@@ -81,6 +82,9 @@ class SignInModel extends ChangeNotifier {
     );
     final userCredential =
         await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+    if (FirebaseAuth.instance.currentUser == null) {
+      throw ("エラーが発生しました。一度アプリを再起動してください。");
+    }
     final uid = userCredential.user!.uid;
     final document =
         await FirebaseFirestore.instance.collection("users").doc(uid).get();
@@ -89,7 +93,7 @@ class SignInModel extends ChangeNotifier {
     if (exists == false) {
       await FirebaseFirestore.instance.collection("users").doc(uid).set({
         "createdAt": Timestamp.now(),
-        "greenLineRange": 15,
+        "greenLineRange": 15.0,
         "nekoMode": false,
         "timeToNotification": 15,
         "userId": uid,

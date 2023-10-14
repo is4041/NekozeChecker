@@ -5,12 +5,15 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import 'package:posture_correction/camera/camera_page.dart';
 import 'package:posture_correction/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+
+import '../signin/signin_page.dart';
 
 Timer? timer;
 Timer? badPostureTimer;
@@ -142,9 +145,13 @@ class CameraModel extends ChangeNotifier {
 
   //firebaseにデータを保存
   Future<void> addData() async {
+    if (tryOutMode == true) return;
+    if (FirebaseAuth.instance.currentUser == null) {
+      throw ("エラーが発生しました。一度アプリを再起動してください。");
+    }
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none || Utils.userId.isEmpty) {
-      throw ("通信状態をご確認ください");
+      throw ("保存に失敗しました。通信状態をご確認ください");
     }
     final createdAt = Timestamp.now().toDate().toString().substring(0, 19);
 
@@ -162,11 +169,11 @@ class CameraModel extends ChangeNotifier {
       "timeToNotification": Utils.timeToNotification,
     });
 
-    lastMeasuredOn();
+    await lastMeasuredOn();
   }
 
   //最終計測日を更新
-  void lastMeasuredOn() async {
+  Future<void> lastMeasuredOn() async {
     await FirebaseFirestore.instance
         .collection("users")
         .doc(Utils.userId)
