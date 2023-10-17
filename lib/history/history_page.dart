@@ -462,75 +462,67 @@ class HistoryPage extends StatelessWidget {
                                                                   (BuildContext
                                                                       context) {
                                                                 return SingleTouchContainer(
-                                                                  child:
-                                                                      CupertinoAlertDialog(
-                                                                    title: Text(
-                                                                        "データ削除"),
-                                                                    content: Text(
-                                                                        "計測データの平均値が変化しますが\nデータを削除しますか？"),
-                                                                    actions: [
-                                                                      TextButton(
-                                                                        child:
-                                                                            const Text(
-                                                                          "削除",
-                                                                          style:
-                                                                              TextStyle(color: Colors.red),
-                                                                        ),
-                                                                        onPressed:
-                                                                            () async {
-                                                                          if (_processing)
-                                                                            return;
-                                                                          _processing =
-                                                                              true;
-                                                                          try {
-                                                                            await model.delete(data[index]);
-                                                                            Navigator.of(context).pop();
-                                                                            final snackBar =
-                                                                                SnackBar(
-                                                                              backgroundColor: Colors.red,
-                                                                              content: Text("削除しました"),
-                                                                            );
-                                                                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                                                          } catch (e) {
-                                                                            await showDialog(
-                                                                                barrierColor: Colors.transparent,
-                                                                                context: context,
-                                                                                builder: (BuildContext context) {
-                                                                                  return CupertinoAlertDialog(
-                                                                                    title: Text("エラー"),
-                                                                                    content: Text(e.toString()),
-                                                                                    actions: [
-                                                                                      TextButton(
-                                                                                        child: Text(
-                                                                                          "OK",
+                                                                  child: CupertinoAlertDialog(
+                                                                      title: Text(
+                                                                          "データ削除"),
+                                                                      content: Text(
+                                                                          "計測データの平均値が変化しますが\nデータを削除しますか？"),
+                                                                      actions: [
+                                                                        TextButton(
+                                                                          child:
+                                                                              const Text(
+                                                                            "削除",
+                                                                            style:
+                                                                                TextStyle(color: Colors.red),
+                                                                          ),
+                                                                          onPressed:
+                                                                              () async {
+                                                                            if (_processing)
+                                                                              return;
+                                                                            _processing =
+                                                                                true;
+                                                                            try {
+                                                                              await model.delete(data[index]);
+                                                                              Navigator.of(context).pop();
+                                                                              final snackBar = SnackBar(backgroundColor: Colors.red, content: Text("削除しました"));
+                                                                              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                                                            } catch (e) {
+                                                                              await showDialog(
+                                                                                  barrierColor: Colors.transparent,
+                                                                                  context: context,
+                                                                                  builder: (BuildContext context) {
+                                                                                    return CupertinoAlertDialog(
+                                                                                      title: Text("エラー"),
+                                                                                      content: Text(e.toString()),
+                                                                                      actions: [
+                                                                                        TextButton(
+                                                                                          child: Text(
+                                                                                            "OK",
+                                                                                          ),
+                                                                                          onPressed: () {
+                                                                                            Navigator.of(context).pop();
+                                                                                          },
                                                                                         ),
-                                                                                        onPressed: () {
-                                                                                          Navigator.of(context).pop();
-                                                                                        },
-                                                                                      ),
-                                                                                    ],
-                                                                                  );
-                                                                                });
-                                                                          }
-                                                                          Navigator.of(context)
-                                                                              .pop();
-                                                                          _processing =
-                                                                              false;
-                                                                        },
-                                                                      ),
-                                                                      TextButton(
-                                                                        child: Text(
-                                                                            "キャンセル"),
-                                                                        onPressed:
-                                                                            () {
-                                                                          if (_processing)
-                                                                            return;
-                                                                          Navigator.of(context)
-                                                                              .pop();
-                                                                        },
-                                                                      ),
-                                                                    ],
-                                                                  ),
+                                                                                      ],
+                                                                                    );
+                                                                                  });
+                                                                            }
+                                                                            Navigator.of(context).pop();
+                                                                            _processing =
+                                                                                false;
+                                                                          },
+                                                                        ),
+                                                                        TextButton(
+                                                                          child:
+                                                                              Text("キャンセル"),
+                                                                          onPressed:
+                                                                              () {
+                                                                            if (_processing)
+                                                                              return;
+                                                                            Navigator.of(context).pop();
+                                                                          },
+                                                                        ),
+                                                                      ]),
                                                                 );
                                                               },
                                                             );
