@@ -50,20 +50,6 @@ class SignInModel extends ChangeNotifier {
     if (FirebaseAuth.instance.currentUser == null) {
       throw ("エラーが発生しました。一度アプリを再起動してください。");
     }
-    final uid = userCredential.user!.uid;
-    final document =
-        await FirebaseFirestore.instance.collection("users").doc(uid).get();
-    final exists = document.exists;
-    //初回ログイン時だけ作動
-    if (exists == false) {
-      await FirebaseFirestore.instance.collection("users").doc(uid).set({
-        "createdAt": Timestamp.now(),
-        "greenLineRange": 15.0,
-        "nekoMode": false,
-        "timeToNotification": 15,
-        "userId": uid,
-      });
-    }
     return userCredential;
   }
 
@@ -84,20 +70,6 @@ class SignInModel extends ChangeNotifier {
         await FirebaseAuth.instance.signInWithCredential(oauthCredential);
     if (FirebaseAuth.instance.currentUser == null) {
       throw ("エラーが発生しました。一度アプリを再起動してください。");
-    }
-    final uid = userCredential.user!.uid;
-    final document =
-        await FirebaseFirestore.instance.collection("users").doc(uid).get();
-    final exists = document.exists;
-    //初回ログイン時だけ作動
-    if (exists == false) {
-      await FirebaseFirestore.instance.collection("users").doc(uid).set({
-        "createdAt": Timestamp.now(),
-        "greenLineRange": 15.0,
-        "nekoMode": false,
-        "timeToNotification": 15,
-        "userId": uid,
-      });
     }
     return userCredential;
   }

@@ -3,6 +3,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:posture_correction/home/home_model.dart';
 import 'package:posture_correction/signin/signin_page.dart';
 import 'package:posture_correction/utils.dart';
 
@@ -119,6 +120,7 @@ class SettingModel extends ChangeNotifier {
     Utils.totalMeasurementTimeForAll = 0;
     Utils.totalMeasurementTimeForThisMonth = 0;
     Utils.totalMeasurementTimeForTheDay = 0;
+    gotData = false;
   }
 
   //アカウント削除
@@ -135,7 +137,7 @@ class SettingModel extends ChangeNotifier {
     try {
       await FirebaseAuth.instance.currentUser!.delete();
     } catch (e) {
-      throw ("アカウントが削除出来ませんでした。\nログインし直してもう一度試してください。");
+      throw ("アカウントが削除出来ませんでした。\n一度ログアウトし、再ログインした後にもう一度試してください。");
     }
     await FirebaseAuth.instance.signOut();
     Utils.userId = "";
@@ -150,5 +152,6 @@ class SettingModel extends ChangeNotifier {
     Utils.totalMeasurementTimeForAll = 0;
     Utils.totalMeasurementTimeForThisMonth = 0;
     Utils.totalMeasurementTimeForTheDay = 0;
+    gotData = false;
   }
 }

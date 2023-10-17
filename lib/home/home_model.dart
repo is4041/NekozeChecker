@@ -10,6 +10,8 @@ import 'package:posture_correction/camera/camera_page.dart';
 
 import '../utils.dart';
 
+bool gotData = false;
+
 class HomeModel extends ChangeNotifier {
   final _getDate = Timestamp.now().toDate();
 
@@ -20,7 +22,10 @@ class HomeModel extends ChangeNotifier {
       await showConnectError(context);
     } else {
       try {
-        await getUserData();
+        if (gotData == false) {
+          await addUserData();
+          await getUserData();
+        }
         await getAverageData();
       } catch (e) {
         await showError(context);
@@ -53,30 +58,43 @@ class HomeModel extends ChangeNotifier {
   Future<void> showError(context) async {
     return await showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return CupertinoAlertDialog(
             title: Text("エラー"),
             content: Text("エラーが発生しました。一度アプリを再起動してください。"),
-            actions: [
-              TextButton(
-                child: const Text("OK"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
           );
         });
   }
 
-  //ユーザーデータを取得する
-  Future<void> getUserData() async {
-    if (FirebaseAuth.instance.currentUser == null) {
+  //firebaseにユーザー情報を追加する
+  Future<void> addUserData() async {
+    final uid = await FirebaseAuth.instance.currentUser?.uid.toString();
+    if (uid == null) {
       throw ("エラーが発生しました。一度アプリを再起動してください。");
     }
-    final user = await FirebaseAuth.instance.currentUser!;
-    Utils.userId = user.uid;
+    final document =
+        await FirebaseFirestore.instance.collection("users").doc(uid).get();
+    final exists = document.exists;
+    //初回ログイン時だけ作動
+    if (exists == false) {
+      await FirebaseFirestore.instance.collection("users").doc(uid).set({
+        "createdAt": Timestamp.now(),
+        "greenLineRange": 15.0,
+        "nekoMode": false,
+        "timeToNotification": 15,
+        "userId": uid,
+      });
+    }
+  }
 
+  //ユーザーデータを取得する
+  Future<void> getUserData() async {
+    final user = await FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw ("エラーが発生しました。一度アプリを再起動してください。");
+    }
+    Utils.userId = user.uid;
     print("userId : ${Utils.userId}");
 
     final document = await FirebaseFirestore.instance
@@ -87,11 +105,11 @@ class HomeModel extends ChangeNotifier {
     Utils.greenLineRange = document["greenLineRange"];
     Utils.nekoMode = document["nekoMode"];
     Utils.timeToNotification = document["timeToNotification"];
-
     Utils.showTutorial = false;
+    gotData = true;
   }
 
-  //平均データを計算する
+  //データを『今日・今月・全体』にわけて配列にいれる
   Future<void> getAverageData() async {
     if (FirebaseAuth.instance.currentUser == null) {
       throw ("エラーが発生しました。一度アプリを再起動してください。");
