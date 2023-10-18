@@ -1,6 +1,7 @@
 # NekozeChecker
 
 NekozeCheckerはゲームやデスクワーク中の猫背を検知すると警告音でお知らせします。
+<img src="https://github.com/is4041/NekozeChecker/assets/80022698/26d28ec1-a8b7-40d0-9814-4547a613b14d" width="500">
 
 # 概要
 
@@ -11,5 +12,5 @@ NekozeCheckerはゲームやデスクワーク中の猫背を検知すると警�
 - Dart 3.0.6
 - Xcode 14.3.1
 - Firebase
-  ・ Firestore Database
-  ・ Authentication
+  - Firestore Database
+  - Authentication
