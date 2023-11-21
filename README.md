@@ -7,8 +7,7 @@ NekozeCheckerはゲームやデスクワーク中の猫背を検知すると警�
 # 概要
 
 スマートフォンのカメラを使用し鼻の位置をリアルタイムで取得し、猫背による鼻の位置の低下を検知すると警告音が鳴ります。
-
-![RPReplay_Final1697693579](https://github.com/is4041/NekozeChecker/assets/80022698/2f261c6d-9547-4e6b-819c-f0d7734a159c)
+<img src="https://github.com/is4041/NekozeChecker/assets/80022698/a19a32a9-db4e-4c79-bd21-f1bab4de2cc7" height="500" width="282">
 <img src="https://github.com/is4041/NekozeChecker/assets/80022698/34f658db-070c-4bdb-a443-ba606b267eaa" height="500" width="282">
 <img src="https://github.com/is4041/NekozeChecker/assets/80022698/cf2ec988-0a5e-49a3-a4e8-3dfe6d368282" height="500" width="282">
 
